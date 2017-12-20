@@ -19,7 +19,7 @@ namespace Assets.Scripts.LSystems
 
         public void Draw(Vector3 startingPosition)
         {
-            _turtlePen.Draw(startingPosition, "F");
+            _turtlePen.Draw(startingPosition, "FF+F");
         }
     }
 }

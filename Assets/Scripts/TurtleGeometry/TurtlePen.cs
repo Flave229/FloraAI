@@ -35,6 +35,12 @@ namespace Assets.Scripts.TurtleGeometry
                     case 'F':
                         MoveForward();
                         break;
+                    case '+':
+                        RotateRight();
+                        break;
+                    case '-':
+                        RotateRight();
+                        break;
                 }
             }
         }
@@ -46,6 +52,16 @@ namespace Assets.Scripts.TurtleGeometry
             var rotatedY = ForwardStep * Math.Cos(_currentRotation.y);
             _currentPosition = new Vector3((float)(_currentPosition.x + rotatedX), (float)(_currentPosition.y + rotatedY), _currentPosition.z);
             _renderSystem.DrawCylinder(lastPosition, _currentPosition, 0.1);
+        }
+
+        private void RotateRight()
+        {
+            _currentRotation.x += RotationStep;
+        }
+
+        private void RotateLeft()
+        {
+            _currentRotation.x -= RotationStep;
         }
     }
 }
