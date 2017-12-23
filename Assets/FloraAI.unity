@@ -118,6 +118,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 14345946}
+  - component: {fileID: 14345947}
   m_Layer: 0
   m_Name: Dirt
   m_TagString: Untagged
@@ -203,6 +204,17 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &14345947
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 14345945}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5ccfe8da0044f3044b0c13a65fd894a8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &48053451
 GameObject:
   m_ObjectHideFlags: 0

@@ -14,6 +14,11 @@ namespace Assets.Scripts
             _position = position;
         }
 
+        public void Update()
+        {
+            _lindenMayerSystem.Update();
+        }
+
         public void Generate()
         {
             _lindenMayerSystem.Draw(_position);

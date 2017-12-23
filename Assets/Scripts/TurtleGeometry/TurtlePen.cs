@@ -25,6 +25,7 @@ namespace Assets.Scripts.TurtleGeometry
 
         public void Draw(Vector3 startingPosition, string commandString)
         {
+            _renderSystem.ClearObjects();
             _currentPosition = startingPosition;
             _currentRotation = new Vector3(0, 0, 0);
 
@@ -39,7 +40,13 @@ namespace Assets.Scripts.TurtleGeometry
                         RotateRight();
                         break;
                     case '-':
-                        RotateRight();
+                        RotateLeft();
+                        break;
+                    case '[':
+                        PushTransformation();
+                        break;
+                    case ']':
+                        PopTransformation();
                         break;
                 }
             }
@@ -48,20 +55,32 @@ namespace Assets.Scripts.TurtleGeometry
         private void MoveForward()
         {
             var lastPosition = _currentPosition;
-            var rotatedX = ForwardStep * Math.Sin(_currentRotation.x);
-            var rotatedY = ForwardStep * Math.Cos(_currentRotation.y);
+            var rotatedX = ForwardStep * Math.Sin(_currentRotation.x * (Math.PI / 180));
+            var rotatedY = ForwardStep * Math.Cos(_currentRotation.x * (Math.PI / 180));
             _currentPosition = new Vector3((float)(_currentPosition.x + rotatedX), (float)(_currentPosition.y + rotatedY), _currentPosition.z);
             _renderSystem.DrawCylinder(lastPosition, _currentPosition, 0.1);
         }
 
         private void RotateRight()
         {
-            _currentRotation.x += RotationStep;
+            _currentRotation.x -= RotationStep;
         }
 
         private void RotateLeft()
         {
-            _currentRotation.x -= RotationStep;
+            _currentRotation.x += RotationStep;
+        }
+
+        private void PushTransformation()
+        {
+            _positionStack.Push(_currentPosition);
+            _rotationStack.Push(_currentRotation);
+        }
+
+        private void PopTransformation()
+        {
+            _currentPosition = _positionStack.Pop();
+            _currentRotation = _rotationStack.Pop();
         }
     }
 }
