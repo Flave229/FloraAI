@@ -14,23 +14,22 @@ namespace Assets.Scripts.Render
             _gameObjects = new List<GameObject>();
         }
 
-        public void DrawCylinder(Vector3 startPosition, Vector3 endPosition, double v)
+        public void DrawCylinder(Vector3 position, Vector3 rotation)
         {
-            // Cylinder default height is 2
-            Vector3 distance = endPosition - startPosition;
-            float length = distance.magnitude;
-
-            double angleX = Math.Acos(distance.y / Math.Sqrt(distance.y * distance.y + distance.x * distance.x));
-
-            if (distance.x > 0)
-                angleX *= -1;
-
             var cylinderObject = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-            cylinderObject.transform.position = startPosition + (distance / 2);
-            cylinderObject.transform.Rotate(0, 0, (float)(angleX * (180 / Math.PI)));
-            cylinderObject.transform.localScale = new Vector3(0.01f, length / 2, 0.01f);
+            cylinderObject.transform.position = position;
+            cylinderObject.transform.Rotate(rotation.x * (float)(180 / Math.PI), rotation.y * (float)(180 / Math.PI), rotation.z * (float)(180 / Math.PI));
+            cylinderObject.transform.localScale = new Vector3(0.01f, 0.025f, 0.01f);
 
             _gameObjects.Add(cylinderObject);
+        }
+
+        public void DrawSphere(Vector3 position)
+        {
+            var sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            sphere.transform.position = position;
+            sphere.transform.localScale = new Vector3(0.01f, 0.01f, 0.01f);
+            _gameObjects.Add(sphere);
         }
 
         public void ClearObjects()

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Assets.Scripts.Render;
 using UnityEngine;
+using Assets.Scripts.Common.MathHelper;
 
 namespace Assets.Scripts.TurtleGeometry
 {
@@ -55,20 +56,20 @@ namespace Assets.Scripts.TurtleGeometry
         private void MoveForward()
         {
             var lastPosition = _currentPosition;
-            var rotatedX = ForwardStep * Math.Sin(_currentRotation.x * (Math.PI / 180));
-            var rotatedY = ForwardStep * Math.Cos(_currentRotation.x * (Math.PI / 180));
-            _currentPosition = new Vector3((float)(_currentPosition.x + rotatedX), (float)(_currentPosition.y + rotatedY), _currentPosition.z);
-            _renderSystem.DrawCylinder(lastPosition, _currentPosition, 0.1);
+            _currentPosition += Matrix.RotateVector(new Vector3(0, ForwardStep, 0), _currentRotation);
+            _renderSystem.DrawCylinder(lastPosition + ((_currentPosition - lastPosition) / 2), _currentRotation);
+            _renderSystem.DrawSphere(_currentPosition);
+            _renderSystem.DrawSphere(lastPosition);
         }
 
         private void RotateRight()
         {
-            _currentRotation.x -= RotationStep;
+            _currentRotation.x += RotationStep;
         }
 
         private void RotateLeft()
         {
-            _currentRotation.x += RotationStep;
+            _currentRotation.x -= RotationStep;
         }
 
         private void PushTransformation()
