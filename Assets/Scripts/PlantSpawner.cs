@@ -18,31 +18,62 @@ namespace Assets.Scripts
             GeometryRenderSystem renderSystem = new GeometryRenderSystem();
             TurtlePen turtlePen = new TurtlePen(renderSystem)
             {
-                ForwardStep = 0.05f,
-                RotationStep = 15 * (float)(Math.PI / 180)
+                ForwardStep = 0.7f,
+                RotationStep = 22.5f
+                //RotationStep = 2.0f
             };
             Dictionary<string, List<LSystemRule>> rules = new Dictionary<string, List<LSystemRule>>
             {
+                {
+                    "A",  new List<LSystemRule>
+                    {
+                        new LSystemRule
+                        {
+                            Probability = 1,
+                            Rule = "[&FL!A]/////'[&FL!A]///////'[&FL!A]"
+                        } 
+                    }
+                },
                 {
                     "F",  new List<LSystemRule>
                     {
                         new LSystemRule
                         {
                             Probability = 1,
-                            Rule = "F[+F]F[-F]F"
-                        } 
+                            Rule = "S/////F"
+                        }
                     }
-                }
+                },
+                {
+                    "S",  new List<LSystemRule>
+                    {
+                        new LSystemRule
+                        {
+                            Probability = 1,
+                            Rule = "FL"
+                        }
+                    }
+                },
+                //{
+                //    "L",  new List<LSystemRule>
+                //    {
+                //        new LSystemRule
+                //        {
+                //            Probability = 1,
+                //            Rule = "['''^^]"
+                //        }
+                //    }
+                //}
             };
             RuleSet ruleSet = new RuleSet(rules);
-            LSystem lindenMayerSystem = new LSystem(turtlePen, ruleSet, "F");
+            LSystem lindenMayerSystem = new LSystem(turtlePen, ruleSet, "A");
             _plant = new Plant(lindenMayerSystem, new Vector3(transform.position.x + 1, transform.position.y + 0.775f, transform.position.z + 1));
         }
 
         private void Update()
         {
             var currentTime = DateTime.Now;
-            if (_iterations < 5 && (currentTime - _startTime).Seconds > 5)
+            if (_iterations < 5 && (currentTime - _startTime).Seconds > 3)
             {
                 _plant.Update();
                 _plant.Generate();

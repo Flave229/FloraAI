@@ -22,9 +22,6 @@ namespace Assets.Scripts
         public void Generate()
         {
             _lindenMayerSystem.Draw(_position);
-            //var cylinderObject = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-            //cylinderObject.transform.position = _position;
-            //cylinderObject.transform.localScale = new Vector3(0.1f, 1, 0.1f);
         }
     }
 }

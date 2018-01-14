@@ -14,12 +14,12 @@ namespace Assets.Scripts.Render
             _gameObjects = new List<GameObject>();
         }
 
-        public void DrawCylinder(Vector3 position, Vector3 rotation)
+        public void DrawCylinder(Vector3 position, Vector3 rotation, float height)
         {
             var cylinderObject = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
             cylinderObject.transform.position = position;
-            cylinderObject.transform.Rotate(rotation.x * (float)(180 / Math.PI), rotation.y * (float)(180 / Math.PI), rotation.z * (float)(180 / Math.PI));
-            cylinderObject.transform.localScale = new Vector3(0.01f, 0.025f, 0.01f);
+            cylinderObject.transform.Rotate(rotation);
+            cylinderObject.transform.localScale = new Vector3(0.01f, height, 0.01f);
 
             _gameObjects.Add(cylinderObject);
         }

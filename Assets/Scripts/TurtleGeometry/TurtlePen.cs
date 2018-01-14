@@ -38,10 +38,26 @@ namespace Assets.Scripts.TurtleGeometry
                         MoveForward();
                         break;
                     case '+':
-                        RotateRight();
+                        //IncreaseVerticalAxis();
+                        IncreaseRollAxis();
                         break;
                     case '-':
-                        RotateLeft();
+                        //DecreaseVerticalAxis();
+                        DecreaseRollAxis();
+                        break;
+                    case '&':
+                        IncreaseLateralAxis();
+                        break;
+                    case '^':
+                        DecreaseLateralAxis();
+                        break;
+                    case '\\':
+                        IncreaseVerticalAxis();
+                        //IncreaseRollAxis();
+                        break;
+                    case '/':
+                        DecreaseVerticalAxis();
+                        //DecreaseRollAxis();
                         break;
                     case '[':
                         PushTransformation();
@@ -57,19 +73,39 @@ namespace Assets.Scripts.TurtleGeometry
         {
             var lastPosition = _currentPosition;
             _currentPosition += Matrix.RotateVector(new Vector3(0, ForwardStep, 0), _currentRotation);
-            _renderSystem.DrawCylinder(lastPosition + ((_currentPosition - lastPosition) / 2), _currentRotation);
+            _renderSystem.DrawCylinder(lastPosition + ((_currentPosition - lastPosition) / 2), _currentRotation, ForwardStep / 2);
             _renderSystem.DrawSphere(_currentPosition);
             _renderSystem.DrawSphere(lastPosition);
         }
 
-        private void RotateRight()
+        private void IncreaseLateralAxis()
         {
             _currentRotation.x += RotationStep;
         }
 
-        private void RotateLeft()
+        private void DecreaseLateralAxis()
         {
             _currentRotation.x -= RotationStep;
+        }
+
+        private void IncreaseVerticalAxis()
+        {
+            _currentRotation.y += RotationStep;
+        }
+
+        private void DecreaseVerticalAxis()
+        {
+            _currentRotation.y -= RotationStep;
+        }
+
+        private void IncreaseRollAxis()
+        {
+            _currentRotation.z += RotationStep;
+        }
+
+        private void DecreaseRollAxis()
+        {
+            _currentRotation.z -= RotationStep;
         }
 
         private void PushTransformation()
