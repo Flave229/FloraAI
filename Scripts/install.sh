@@ -17,7 +17,7 @@ install() {
   download "$package"
 
   echo "Installing "`basename "$package"`
-  sudo installer -dumplog -package `basename "$package"` -target /
+  sudo installer -dumplog -package `basename "$package"` -target
   echo "Installation for "`basename "$package"`" successful"
 }
 
