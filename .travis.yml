@@ -1,12 +1,16 @@
-anguage: objective-c
-osx_image: xcode8.1
+language: objective-c
+osx_image: xcode61
 rvm:
-- 2.2
+- 2.1.2
+cache:
+  directories:
+    - ./Unity
 before_install:
 - chmod a+x ./Scripts/install.sh
-- chmod a+x ./Scripts/build.sh
 install:
 - ./Scripts/install.sh
+before_script:
+- chmod a+x ./Scripts/build.sh
 script:
 - ./Scripts/build.sh
 sudo: required
