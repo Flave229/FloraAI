@@ -18,11 +18,8 @@ install() {
   package=$1
   filename='basename "$package"'
   packagePath="Unity/$filename"
-  if [ ! -f $packagePath ] ; then
-    echo "$packagePath not found. Downloading 'basename "$packagePath"'"
-	download "$package"
-  fi
-
+  download "$package"
+  
   echo "Installing "`basename "$package"`
   sudo installer -dumplog -package `basename "$package"` -target /
 }
