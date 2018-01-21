@@ -9,3 +9,4 @@ install:
 - ./Scripts/install.sh
 script:
 - ./Scripts/build.sh
+sudo: required
