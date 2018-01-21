@@ -1,4 +1,5 @@
 ﻿using Assets.Scripts.LSystems;
+using Assets.Scripts.TurtleGeometry;
 using UnityEngine;
 
 namespace Assets.Scripts
@@ -6,22 +7,25 @@ namespace Assets.Scripts
     public class Plant
     {
         private readonly LSystem _lindenMayerSystem;
+        private TurtlePen _turtlePen;
         private readonly Vector3 _position;
 
-        public Plant(LSystem lindenMayerSystem, Vector3 position)
+        public Plant(LSystem lindenMayerSystem, TurtlePen turtlePen, Vector3 position)
         {
             _lindenMayerSystem = lindenMayerSystem;
+            _turtlePen = turtlePen;
             _position = position;
         }
 
         public void Update()
         {
-            _lindenMayerSystem.Update();
+            _lindenMayerSystem.Iterate();
         }
 
         public void Generate()
         {
-            _lindenMayerSystem.Draw(_position);
+            _lindenMayerSystem.Iterate();
+            _turtlePen.Draw(_position, _lindenMayerSystem.GetCommandString());
         }
     }
 }

@@ -13,6 +13,8 @@ namespace Assets.Scripts
         private int _iterations;
         private Plant _plant;
 
+        public int MaximumIterations;
+
         private void Start()
         {
             GeometryRenderSystem renderSystem = new GeometryRenderSystem();
@@ -54,26 +56,26 @@ namespace Assets.Scripts
                         }
                     }
                 },
-                //{
-                //    "L",  new List<LSystemRule>
-                //    {
-                //        new LSystemRule
-                //        {
-                //            Probability = 1,
-                //            Rule = "['''^^]"
-                //        }
-                //    }
-                //}
+                {
+                    "L",  new List<LSystemRule>
+                    {
+                        new LSystemRule
+                        {
+                            Probability = 1,
+                            Rule = "['''^^]"
+                        }
+                    }
+                }
             };
             RuleSet ruleSet = new RuleSet(rules);
-            LSystem lindenMayerSystem = new LSystem(turtlePen, ruleSet, "A");
-            _plant = new Plant(lindenMayerSystem, new Vector3(transform.position.x + 1, transform.position.y + 0.775f, transform.position.z + 1));
+            LSystem lindenMayerSystem = new LSystem(ruleSet, "A");
+            _plant = new Plant(lindenMayerSystem, turtlePen, new Vector3(transform.position.x + 1, transform.position.y + 0.775f, transform.position.z + 1));
         }
 
         private void Update()
         {
             var currentTime = DateTime.Now;
-            if (_iterations < 5 && (currentTime - _startTime).Seconds > 3)
+            if (_iterations < MaximumIterations && (currentTime - _startTime).Seconds > 3)
             {
                 _plant.Update();
                 _plant.Generate();

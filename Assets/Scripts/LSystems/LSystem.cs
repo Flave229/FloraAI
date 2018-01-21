@@ -1,22 +1,17 @@
-﻿using Assets.Scripts.TurtleGeometry;
-using UnityEngine;
-
-namespace Assets.Scripts.LSystems
+﻿namespace Assets.Scripts.LSystems
 {
     public class LSystem
     {
         private string _currentString;
-        private readonly TurtlePen _turtlePen;
         private RuleSet _rules;
 
-        public LSystem(TurtlePen turtlePen, RuleSet rules, string axiom)
+        public LSystem(RuleSet rules, string axiom)
         {
             _currentString = axiom;
-            _turtlePen = turtlePen;
             _rules = rules;
         }
 
-        public void Update()
+        public void Iterate()
         {
             var newString = "";
 
@@ -26,9 +21,9 @@ namespace Assets.Scripts.LSystems
             _currentString = newString;
         }
 
-        public void Draw(Vector3 startingPosition)
+        public string GetCommandString()
         {
-            _turtlePen.Draw(startingPosition, _currentString);
+            return _currentString;
         }
     }
 }
