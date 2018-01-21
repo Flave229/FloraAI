@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Assets.Scripts.Render;
 using UnityEngine;
 using Assets.Scripts.Common.MathHelper;

@@ -2,18 +2,18 @@
 using Assets.Scripts.LSystems;
 using NUnit.Framework;
 
-namespace Assets.Testing.LSystemTests.GivenASingleAxiomWithARuleSet
+namespace Assets.Testing.LSystemTests.GivenASingleRuleSet
 {
-    public class WhenTheRuleSetModifiesTheAxiom
+    class WhenASingleRuleSetDoesNotModifyTheAxiom
     {
         [Test]
-        public void ThenTheCommandStringIsEqualToTheRuleSet()
+        public void ThenTheCommandStringRemainsUnchanged()
         {
             var axiom = "A";
             var ruleSet = new Dictionary<string, List<LSystemRule>>
             {
                 {
-                    axiom, new List<LSystemRule>
+                    "B", new List<LSystemRule>
                     {
                         new LSystemRule
                         {
@@ -26,7 +26,7 @@ namespace Assets.Testing.LSystemTests.GivenASingleAxiomWithARuleSet
 
             var subject = new LSystem(new RuleSet(ruleSet), axiom);
             subject.Iterate();
-            Assert.That(subject.GetCommandString(), Is.EqualTo("TestString"));
+            Assert.That(subject.GetCommandString(), Is.EqualTo("A"));
         }
     }
 }
