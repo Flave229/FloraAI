@@ -10,3 +10,4 @@ install:
 script:
 - ./Scripts/build.sh
 sudo: required
+dist: trusty
