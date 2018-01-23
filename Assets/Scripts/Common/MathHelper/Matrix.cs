@@ -6,6 +6,7 @@ namespace Assets.Scripts.Common.MathHelper
     {
         public static Vector3 RotateVector(Vector4 vector, Vector3 rotation)
         {
+
             return Quaternion.Euler(rotation.x, rotation.y, rotation.z) * vector;
         }
 

@@ -7,11 +7,13 @@ namespace Assets.Scripts.TurtleGeometry
 {
     public class TurtlePen
     {
+        private Vector3 _rightVector;
+
         private readonly GeometryRenderSystem _renderSystem;
-        private Stack<Vector3> _positionStack;
-        private Stack<Vector3> _rotationStack;
+        private readonly Stack<Vector3> _positionStack;
+        private readonly Stack<Vector3> _directionStack;
         private Vector3 _currentPosition;
-        private Vector3 _currentRotation;
+        private Vector3 _currentDirection;
 
         public float ForwardStep;
         public float RotationStep;
@@ -19,7 +21,7 @@ namespace Assets.Scripts.TurtleGeometry
         public TurtlePen(GeometryRenderSystem renderSystem)
         {
             _positionStack = new Stack<Vector3>();
-            _rotationStack = new Stack<Vector3>();
+            _directionStack = new Stack<Vector3>();
             _renderSystem = renderSystem;
         }
 
@@ -27,7 +29,8 @@ namespace Assets.Scripts.TurtleGeometry
         {
             _renderSystem.ClearObjects();
             _currentPosition = startingPosition;
-            _currentRotation = new Vector3(0, 0, 0);
+            _currentDirection = Vector3.up;
+            _rightVector = Vector3.right;
 
             foreach (var command in commandString)
             {
@@ -37,26 +40,40 @@ namespace Assets.Scripts.TurtleGeometry
                         MoveForward();
                         break;
                     case '+':
+                        TurnLeft();
                         //IncreaseVerticalAxis();
-                        IncreaseRollAxis();
+                        //IncreaseRollAxis();
+                        //IncreaseLateralAxis();
                         break;
                     case '-':
+                        TurnRight();
                         //DecreaseVerticalAxis();
-                        DecreaseRollAxis();
+                        //DecreaseRollAxis();
+                        //DecreaseLateralAxis();
                         break;
                     case '&':
-                        IncreaseLateralAxis();
+                        PitchDown();
+                        //IncreaseVerticalAxis();
+                        //IncreaseRollAxis();
+                        //IncreaseLateralAxis();
                         break;
                     case '^':
-                        DecreaseLateralAxis();
+                        PitchUp();
+                        //DecreaseVerticalAxis();
+                        //DecreaseRollAxis();
+                        //DecreaseLateralAxis();
                         break;
                     case '\\':
-                        IncreaseVerticalAxis();
+                        RollRight();
+                        //IncreaseVerticalAxis();
                         //IncreaseRollAxis();
+                        //IncreaseLateralAxis();
                         break;
                     case '/':
-                        DecreaseVerticalAxis();
+                        RollLeft();
+                        //DecreaseVerticalAxis();
                         //DecreaseRollAxis();
+                        //DecreaseLateralAxis();
                         break;
                     case '[':
                         PushTransformation();
@@ -68,55 +85,71 @@ namespace Assets.Scripts.TurtleGeometry
             }
         }
 
+        private void TurnRight()
+        {
+            Vector3 axis = Vector3.Cross(_currentDirection, _rightVector);
+            var angleAxis = Quaternion.AngleAxis(RotationStep, axis);
+            _currentDirection = angleAxis * _currentDirection;
+            _rightVector = angleAxis * _rightVector;
+
+            _currentDirection.Normalize();
+            _rightVector.Normalize();
+        }
+
+        private void TurnLeft()
+        {
+            Vector3 axis = Vector3.Cross(_currentDirection, _rightVector);
+            var angleAxis = Quaternion.AngleAxis(-RotationStep, axis);
+            _currentDirection = angleAxis * _currentDirection;
+            _rightVector = angleAxis * _rightVector;
+
+            _currentDirection.Normalize();
+            _rightVector.Normalize();
+        }
+
+        private void PitchUp()
+        {
+            _currentDirection = Quaternion.AngleAxis(RotationStep, _rightVector) * _currentDirection;
+            _currentDirection.Normalize();
+        }
+
+        private void PitchDown()
+        {
+            _currentDirection = Quaternion.AngleAxis(-RotationStep, _rightVector) * _currentDirection;
+            _currentDirection.Normalize();
+        }
+
+        private void RollRight()
+        {
+            _rightVector = Quaternion.AngleAxis(RotationStep, _currentDirection) * _rightVector;
+            _rightVector.Normalize();
+        }
+
+        private void RollLeft()
+        {
+            _rightVector = Quaternion.AngleAxis(-RotationStep, _currentDirection) * _rightVector;
+            _rightVector.Normalize();
+        }
+
         private void MoveForward()
         {
             var lastPosition = _currentPosition;
-            _currentPosition += Matrix.RotateVector(new Vector3(0, ForwardStep, 0), _currentRotation);
-            _renderSystem.DrawCylinder(lastPosition + ((_currentPosition - lastPosition) / 2), _currentRotation, ForwardStep / 2);
+            _currentPosition += ForwardStep * _currentDirection;
+            _renderSystem.DrawCylinder(lastPosition, _currentPosition);
             _renderSystem.DrawSphere(_currentPosition);
             _renderSystem.DrawSphere(lastPosition);
-        }
-
-        private void IncreaseLateralAxis()
-        {
-            _currentRotation.x += RotationStep;
-        }
-
-        private void DecreaseLateralAxis()
-        {
-            _currentRotation.x -= RotationStep;
-        }
-
-        private void IncreaseVerticalAxis()
-        {
-            _currentRotation.y += RotationStep;
-        }
-
-        private void DecreaseVerticalAxis()
-        {
-            _currentRotation.y -= RotationStep;
-        }
-
-        private void IncreaseRollAxis()
-        {
-            _currentRotation.z += RotationStep;
-        }
-
-        private void DecreaseRollAxis()
-        {
-            _currentRotation.z -= RotationStep;
         }
 
         private void PushTransformation()
         {
             _positionStack.Push(_currentPosition);
-            _rotationStack.Push(_currentRotation);
+            _directionStack.Push(_currentDirection);
         }
 
         private void PopTransformation()
         {
             _currentPosition = _positionStack.Pop();
-            _currentRotation = _rotationStack.Pop();
+            _currentDirection = _directionStack.Pop();
         }
     }
 }
