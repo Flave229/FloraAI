@@ -19,7 +19,7 @@ namespace Assets.Scripts.Render
             float height = Vector3.Distance(sourcePosition, targetPosition);
             cylinderObject.transform.position = Vector3.Lerp(sourcePosition, targetPosition, 0.5f);
             cylinderObject.transform.up = targetPosition - sourcePosition;
-            cylinderObject.transform.localScale = new Vector3(0.01f, height, 0.01f);
+            cylinderObject.transform.localScale = new Vector3(0.01f, height / 2, 0.01f);
 
             _gameObjects.Add(cylinderObject);
         }
