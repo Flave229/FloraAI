@@ -56,16 +56,16 @@ namespace Assets.Scripts
                         }
                     }
                 },
-                {
-                    "L",  new List<LSystemRule>
-                    {
-                        new LSystemRule
-                        {
-                            Probability = 1,
-                            Rule = ""
-                        }
-                    }
-                }
+                //{
+                //    "L",  new List<LSystemRule>
+                //    {
+                //        new LSystemRule
+                //        {
+                //            Probability = 1,
+                //            Rule = "['''^^]"
+                //        }
+                //    }
+                //}
             };
             RuleSet ruleSet = new RuleSet(rules);
             LSystem lindenMayerSystem = new LSystem(ruleSet, "A");
