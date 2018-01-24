@@ -21,7 +21,8 @@ namespace Assets.Scripts
             TurtlePen turtlePen = new TurtlePen(renderSystem)
             {
                 ForwardStep = 0.3f,
-                RotationStep = 22.5f
+                RotationStep = 22.5f,
+                BranchDiameter = 0.06f
                 //RotationStep = 2.0f
             };
             Dictionary<string, List<LSystemRule>> rules = new Dictionary<string, List<LSystemRule>>

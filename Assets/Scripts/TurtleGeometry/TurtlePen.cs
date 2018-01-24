@@ -12,23 +12,29 @@ namespace Assets.Scripts.TurtleGeometry
         private readonly GeometryRenderSystem _renderSystem;
         private readonly Stack<Vector3> _positionStack;
         private readonly Stack<Vector3> _directionStack;
+        private readonly Stack<float> _branchDiameterStack;
         private Vector3 _currentPosition;
         private Vector3 _currentDirection;
+        private float _currentBranchDiameter;
 
-        public float ForwardStep;
-        public float RotationStep;
-        
+        public float ForwardStep { get; set; }
+        public float RotationStep { get; set; }
+        public float BranchDiameter { get; set; }
+
         public TurtlePen(GeometryRenderSystem renderSystem)
         {
             _positionStack = new Stack<Vector3>();
             _directionStack = new Stack<Vector3>();
+            _branchDiameterStack = new Stack<float>();
             _renderSystem = renderSystem;
         }
+
 
         public void Draw(Vector3 startingPosition, string commandString)
         {
             _renderSystem.ClearObjects();
             _currentPosition = startingPosition;
+            _currentBranchDiameter = BranchDiameter;
             _currentDirection = Vector3.up;
             _rightVector = Vector3.right;
 
@@ -44,39 +50,24 @@ namespace Assets.Scripts.TurtleGeometry
                         break;
                     case '+':
                         TurnLeft();
-                        //IncreaseVerticalAxis();
-                        //IncreaseRollAxis();
-                        //IncreaseLateralAxis();
                         break;
                     case '-':
                         TurnRight();
-                        //DecreaseVerticalAxis();
-                        //DecreaseRollAxis();
-                        //DecreaseLateralAxis();
                         break;
                     case '&':
                         PitchDown();
-                        //IncreaseVerticalAxis();
-                        //IncreaseRollAxis();
-                        //IncreaseLateralAxis();
                         break;
                     case '^':
                         PitchUp();
-                        //DecreaseVerticalAxis();
-                        //DecreaseRollAxis();
-                        //DecreaseLateralAxis();
                         break;
                     case '\\':
                         RollRight();
-                        //IncreaseVerticalAxis();
-                        //IncreaseRollAxis();
-                        //IncreaseLateralAxis();
                         break;
                     case '/':
                         RollLeft();
-                        //DecreaseVerticalAxis();
-                        //DecreaseRollAxis();
-                        //DecreaseLateralAxis();
+                        break;
+                    case '!':
+                        DecreaseBranchDiameter();
                         break;
                     case '[':
                         PushTransformation();
@@ -88,11 +79,16 @@ namespace Assets.Scripts.TurtleGeometry
             }
         }
 
+        private void DecreaseBranchDiameter()
+        {
+            _currentBranchDiameter *= 0.8f;
+        }
+
         private void MoveForward()
         {
             var lastPosition = _currentPosition;
             _currentPosition += ForwardStep * _currentDirection;
-            _renderSystem.DrawCylinder(lastPosition, _currentPosition, 0.01f);
+            _renderSystem.DrawCylinder(lastPosition, _currentPosition, _currentBranchDiameter);
             //_renderSystem.DrawSphere(_currentPosition, 0.01f);
             //_renderSystem.DrawSphere(lastPosition, 0.01f);
         }
@@ -152,12 +148,14 @@ namespace Assets.Scripts.TurtleGeometry
         {
             _positionStack.Push(_currentPosition);
             _directionStack.Push(_currentDirection);
+            _branchDiameterStack.Push(_currentBranchDiameter);
         }
 
         private void PopTransformation()
         {
             _currentPosition = _positionStack.Pop();
             _currentDirection = _directionStack.Pop();
+            _currentBranchDiameter = _branchDiameterStack.Pop();
         }
     }
 }
