@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Assets.Scripts.Common;
 using Assets.Scripts.LSystems;
 using Assets.Scripts.Render;
 using Assets.Scripts.TurtleGeometry;
@@ -22,7 +23,12 @@ namespace Assets.Scripts
             {
                 ForwardStep = 0.3f,
                 RotationStep = 22.5f,
-                BranchDiameter = 0.06f
+                BranchDiameter = 0.06f,
+                BranchReductionRate = new MinMax<float>
+                {
+                    Min = 0.4f,
+                    Max = 0.8f
+                }
                 //RotationStep = 2.0f
             };
             Dictionary<string, List<LSystemRule>> rules = new Dictionary<string, List<LSystemRule>>
@@ -57,16 +63,16 @@ namespace Assets.Scripts
                         }
                     }
                 },
-                //{
-                //    "L",  new List<LSystemRule>
-                //    {
-                //        new LSystemRule
-                //        {
-                //            Probability = 1,
-                //            Rule = "['''^^]"
-                //        }
-                //    }
-                //}
+                {
+                    "L",  new List<LSystemRule>
+                    {
+                        new LSystemRule
+                        {
+                            Probability = 1,
+                            Rule = "['''^^L]"
+                        }
+                    }
+                }
             };
             RuleSet ruleSet = new RuleSet(rules);
             LSystem lindenMayerSystem = new LSystem(ruleSet, "A");

@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
+using Assets.Scripts.Common;
 using Assets.Scripts.Render;
 using UnityEngine;
 using Assets.Scripts.Common.MathHelper;
+using Random = System.Random;
 
 namespace Assets.Scripts.TurtleGeometry
 {
@@ -16,10 +18,12 @@ namespace Assets.Scripts.TurtleGeometry
         private Vector3 _currentPosition;
         private Vector3 _currentDirection;
         private float _currentBranchDiameter;
+        private Random _randomGenerator;
 
         public float ForwardStep { get; set; }
         public float RotationStep { get; set; }
         public float BranchDiameter { get; set; }
+        public MinMax<float> BranchReductionRate { get; set; }
 
         public TurtlePen(GeometryRenderSystem renderSystem)
         {
@@ -27,6 +31,7 @@ namespace Assets.Scripts.TurtleGeometry
             _directionStack = new Stack<Vector3>();
             _branchDiameterStack = new Stack<float>();
             _renderSystem = renderSystem;
+            _randomGenerator = new Random();
         }
 
 
@@ -81,7 +86,8 @@ namespace Assets.Scripts.TurtleGeometry
 
         private void DecreaseBranchDiameter()
         {
-            _currentBranchDiameter *= 0.8f;
+            double randomNumber = _randomGenerator.Next((int) (BranchReductionRate.Min * 100), (int) (BranchReductionRate.Max * 100));
+            _currentBranchDiameter *= (float)(randomNumber / 100);
         }
 
         private void MoveForward()
