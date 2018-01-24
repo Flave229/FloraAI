@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -13,22 +14,22 @@ namespace Assets.Scripts.Render
             _gameObjects = new List<GameObject>();
         }
 
-        public void DrawCylinder(Vector3 sourcePosition, Vector3 targetPosition)
+        public void DrawCylinder(Vector3 sourcePosition, Vector3 targetPosition, float diameter)
         {
             var cylinderObject = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
             float height = Vector3.Distance(sourcePosition, targetPosition);
             cylinderObject.transform.position = Vector3.Lerp(sourcePosition, targetPosition, 0.5f);
             cylinderObject.transform.up = targetPosition - sourcePosition;
-            cylinderObject.transform.localScale = new Vector3(0.01f, height / 2, 0.01f);
+            cylinderObject.transform.localScale = new Vector3(diameter, height / 2, diameter);
 
             _gameObjects.Add(cylinderObject);
         }
 
-        public void DrawSphere(Vector3 position)
+        public void DrawSphere(Vector3 position, float uniformScale)
         {
             var sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
             sphere.transform.position = position;
-            sphere.transform.localScale = new Vector3(0.01f, 0.01f, 0.01f);
+            sphere.transform.localScale = new Vector3(uniformScale, uniformScale, uniformScale);
             _gameObjects.Add(sphere);
         }
 

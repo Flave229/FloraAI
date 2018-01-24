@@ -39,6 +39,9 @@ namespace Assets.Scripts.TurtleGeometry
                     case 'F':
                         MoveForward();
                         break;
+                    case 'L':
+                        DrawLeaf();
+                        break;
                     case '+':
                         TurnLeft();
                         //IncreaseVerticalAxis();
@@ -85,6 +88,20 @@ namespace Assets.Scripts.TurtleGeometry
             }
         }
 
+        private void MoveForward()
+        {
+            var lastPosition = _currentPosition;
+            _currentPosition += ForwardStep * _currentDirection;
+            _renderSystem.DrawCylinder(lastPosition, _currentPosition, 0.01f);
+            //_renderSystem.DrawSphere(_currentPosition, 0.01f);
+            //_renderSystem.DrawSphere(lastPosition, 0.01f);
+        }
+
+        private void DrawLeaf()
+        {
+            _renderSystem.DrawSphere(_currentPosition, 0.1f);
+        }
+
         private void TurnRight()
         {
             Vector3 axis = Vector3.Cross(_currentDirection, _rightVector);
@@ -129,15 +146,6 @@ namespace Assets.Scripts.TurtleGeometry
         {
             _rightVector = Quaternion.AngleAxis(-RotationStep, _currentDirection) * _rightVector;
             _rightVector.Normalize();
-        }
-
-        private void MoveForward()
-        {
-            var lastPosition = _currentPosition;
-            _currentPosition += ForwardStep * _currentDirection;
-            _renderSystem.DrawCylinder(lastPosition, _currentPosition);
-            _renderSystem.DrawSphere(_currentPosition);
-            _renderSystem.DrawSphere(lastPosition);
         }
 
         private void PushTransformation()

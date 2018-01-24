@@ -215,7 +215,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ccfe8da0044f3044b0c13a65fd894a8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MaximumIterations: 3
+  MaximumIterations: 4
 --- !u!1 &48053451
 GameObject:
   m_ObjectHideFlags: 0
