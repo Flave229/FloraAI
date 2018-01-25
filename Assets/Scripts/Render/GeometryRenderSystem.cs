@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering;
 using Object = UnityEngine.Object;
 
 namespace Assets.Scripts.Render
@@ -25,11 +26,13 @@ namespace Assets.Scripts.Render
             _gameObjects.Add(cylinderObject);
         }
 
-        public void DrawSphere(Vector3 position, float uniformScale)
+        public void DrawSphere(Vector3 position, float uniformScale, Color color)
         {
             var sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
             sphere.transform.position = position;
             sphere.transform.localScale = new Vector3(uniformScale, uniformScale, uniformScale);
+            Debug.Log(color);
+            sphere.GetComponent<Renderer>().material.color = color;
             _gameObjects.Add(sphere);
         }
 
@@ -41,6 +44,18 @@ namespace Assets.Scripts.Render
             }
 
             _gameObjects.Clear();
+        }
+
+        public void DrawQuad(Vector3 position, Vector3 direction, Color color)
+        {
+            var quad = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            quad.transform.position = position;
+            quad.transform.localScale = new Vector3(0.00001f, 0.1f, 0.1f);
+            quad.transform.LookAt(direction);
+            quad.transform.up = direction;
+            quad.GetComponent<Renderer>().material.color = color;
+
+            _gameObjects.Add(quad);
         }
     }
 }

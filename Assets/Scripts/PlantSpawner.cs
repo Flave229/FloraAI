@@ -21,7 +21,7 @@ namespace Assets.Scripts
             GeometryRenderSystem renderSystem = new GeometryRenderSystem();
             TurtlePen turtlePen = new TurtlePen(renderSystem)
             {
-                ForwardStep = 0.3f,
+                ForwardStep = 0.1f,
                 RotationStep = 22.5f,
                 BranchDiameter = 0.06f,
                 BranchReductionRate = new MinMax<float>
@@ -69,7 +69,7 @@ namespace Assets.Scripts
                         new LSystemRule
                         {
                             Probability = 1,
-                            Rule = "['''^^L]"
+                            Rule = "['''^^O]"
                         }
                     }
                 }
