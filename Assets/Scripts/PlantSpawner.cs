@@ -10,13 +10,11 @@ namespace Assets.Scripts
 {
     class PlantSpawner : MonoBehaviour
     {
-        private DateTime _startTime;
-        private int _iterations;
         private Plant _plant;
 
         public int MaximumIterations;
 
-        private void Start()
+        private void Awake()
         {
             GeometryRenderSystem renderSystem = new GeometryRenderSystem();
             TurtlePen turtlePen = new TurtlePen(renderSystem)
@@ -79,16 +77,14 @@ namespace Assets.Scripts
             _plant = new Plant(lindenMayerSystem, turtlePen, new Vector3(transform.position.x + 1, transform.position.y + 0.775f, transform.position.z + 1));
         }
 
-        private void Update()
+        private void Start()
         {
-            var currentTime = DateTime.Now;
-            if (_iterations < MaximumIterations && (currentTime - _startTime).Seconds > 3)
+            for (int i = 0; i < MaximumIterations; ++i)
             {
                 _plant.Update();
-                _plant.Generate();
-                _startTime = currentTime;
-                _iterations++;
             }
+
+            _plant.Generate();
         }
     }
 }

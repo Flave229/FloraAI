@@ -24,7 +24,7 @@ namespace Assets.Scripts
 
         public void Generate()
         {
-            _lindenMayerSystem.Iterate();
+            Debug.Log(_lindenMayerSystem.GetCommandString());
             _turtlePen.Draw(_position, _lindenMayerSystem.GetCommandString());
         }
     }
