@@ -6,11 +6,11 @@ namespace Assets.Scripts.LSystems
 {
     public class RuleSet
     {
-        private readonly Dictionary<string, List<LSystemRule>> _rules;
+        public readonly Dictionary<string, List<LSystemRule>> Rules;
 
         public RuleSet(Dictionary<string, List<LSystemRule>> rules)
         {
-            _rules = rules;
+            Rules = rules;
         }
 
         public string GetRule(string key)
@@ -19,14 +19,14 @@ namespace Assets.Scripts.LSystems
             var randomNumber = randomGenerator.NextDouble();
             double probabilityTotal = 0;
 
-            if (_rules.ContainsKey(key) == false)
+            if (Rules.ContainsKey(key) == false)
                 return key;
 
-            for (int i = 0; i < _rules[key].Count; ++i)
+            for (int i = 0; i < Rules[key].Count; ++i)
             {
-                var ruleProbability = _rules[key][i].Probability;
+                var ruleProbability = Rules[key][i].Probability;
                 if (randomNumber < ruleProbability + probabilityTotal)
-                    return _rules[key][i].Rule;
+                    return Rules[key][i].Rule;
 
                 probabilityTotal += randomNumber;
             }
