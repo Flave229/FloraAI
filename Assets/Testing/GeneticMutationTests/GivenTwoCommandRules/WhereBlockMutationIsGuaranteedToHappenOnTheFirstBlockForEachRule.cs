@@ -9,13 +9,19 @@ namespace Assets.Testing.GeneticMutationTests.GivenTwoCommandRules
 {
     class WhereBlockMutationIsGuaranteedToHappenOnTheFirstBlockForEachRule
     {
+        private static int _calls;
+
         [Test]
         public void ThenTheFirstBlockIsMutated()
         {
             var actualRandom = new System.Random();
             var randomMock = new Mock<System.Random>();
             randomMock.Setup(x => x.NextDouble())
-                .Returns(-1); // Forces an always successful mutation on first run
+                .Returns(() =>
+                {
+                    ++_calls;
+                    return _calls == 4 || _calls == 5 ? -1 : 0;
+                }); // Forces an always successful mutation on first run
 
             randomMock.Setup(x => x.Next(It.IsAny<int>(), It.IsAny<int>()))
                 .Returns((int lowerBound, int upperBound) => actualRandom.Next(lowerBound, upperBound));

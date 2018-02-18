@@ -23,8 +23,8 @@ namespace Assets.Scripts.Genetic_Algorithm
             {
                 foreach (var lSystemRule in rule.Value)
                 {
-                    lSystemRule.Rule = BlockMutation(lSystemRule.Rule);
                     lSystemRule.Rule = SymbolMutation(lSystemRule.Rule);
+                    lSystemRule.Rule = BlockMutation(lSystemRule.Rule);
                 }
             }
             return ruleSet;
