@@ -24,6 +24,7 @@ namespace Assets.Scripts.Genetic_Algorithm
                 foreach (var lSystemRule in rule.Value)
                 {
                     lSystemRule.Rule = BlockMutation(lSystemRule.Rule);
+                    lSystemRule.Rule = SymbolMutation(lSystemRule.Rule);
                 }
             }
             return ruleSet;
@@ -93,6 +94,103 @@ namespace Assets.Scripts.Genetic_Algorithm
 
             newBlock += "]";
             return newBlock;
+        }
+
+        private string SymbolMutation(string rule)
+        {
+            string newRule = "";
+            for (int i = 0; i < rule.Length; ++i)
+            {
+                char character = rule[i];
+
+                switch (character)
+                {
+                    case '+':
+                        if (rule[i + 1] != 'F')
+                        {
+                            newRule += character;
+                            continue;
+                        }
+
+                        ++i;
+                        newRule += MutateCharacter("+F");
+                        continue;
+                    case '-':
+                        if (rule[i + 1] != 'F')
+                        {
+                            newRule += character;
+                            continue;
+                        }
+
+                        ++i;
+                        newRule += MutateCharacter("-F");
+                        break;
+                    case '&':
+                        if (rule[i + 1] != 'F')
+                        {
+                            newRule += character;
+                            continue;
+                        }
+
+                        ++i;
+                        newRule += MutateCharacter("&F");
+                        break;
+                    case '^':
+                        if (rule[i + 1] != 'F')
+                        {
+                            newRule += character;
+                            continue;
+                        }
+
+                        ++i;
+                        newRule += MutateCharacter("^F");
+                        break;
+                    case '\\':
+                        if (rule[i + 1] != 'F')
+                        {
+                            newRule += character;
+                            continue;
+                        }
+
+                        ++i;
+                        newRule += MutateCharacter("\\F");
+                        break;
+                    case '/':
+                        if (rule[i + 1] != 'F')
+                        {
+                            newRule += character;
+                            continue;
+                        }
+
+                        ++i;
+                        newRule += MutateCharacter("/F");
+                        break;
+                    case 'F':
+                        ++i;
+                        newRule += MutateCharacter("F");
+                        break;
+                    default:
+                        newRule += rule[i];
+                        break;
+                }
+            }
+            return newRule;
+        }
+
+
+        private string MutateCharacter(string character)
+        {
+            double randomChance = _randomGenerator.NextDouble();
+            if (randomChance >= _mutationChance)
+                return character;
+
+            string newMutatedCharacter = character;
+            while (newMutatedCharacter == character)
+            {
+                int randomMutableIndex = _randomGenerator.Next(0, _mutableList.Count);
+                newMutatedCharacter = _mutableList[randomMutableIndex];
+            }
+            return newMutatedCharacter;
         }
     }
 }
