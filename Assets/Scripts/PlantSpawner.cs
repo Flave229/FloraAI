@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Assets.Scripts.Common;
 using Assets.Scripts.LSystems;
 using Assets.Scripts.Render;

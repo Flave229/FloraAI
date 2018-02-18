@@ -2,15 +2,12 @@
 using Assets.Scripts.Common;
 using Assets.Scripts.Render;
 using UnityEngine;
-using Assets.Scripts.Common.MathHelper;
 using Random = System.Random;
 
 namespace Assets.Scripts.TurtleGeometry
 {
     public class TurtlePen
     {
-        private Vector3 _rightVector;
-
         private readonly GeometryRenderSystem _renderSystem;
         private readonly Random _randomGenerator;
         private readonly Stack<Vector3> _positionStack;
@@ -62,7 +59,6 @@ namespace Assets.Scripts.TurtleGeometry
             _currentPosition = startingPosition;
             _currentRotation = Quaternion.identity;
             _currentBranchDiameter = BranchDiameter;
-            _rightVector = Vector3.right;
             _currentColor = new Color(0.0f, 0.1f, 0.0f);
 
             foreach (var command in commandString)

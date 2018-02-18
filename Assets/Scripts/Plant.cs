@@ -7,7 +7,7 @@ namespace Assets.Scripts
     public class Plant
     {
         private readonly LSystem _lindenMayerSystem;
-        private TurtlePen _turtlePen;
+        private readonly TurtlePen _turtlePen;
         private readonly Vector3 _position;
 
         public Plant(LSystem lindenMayerSystem, TurtlePen turtlePen, Vector3 position)
