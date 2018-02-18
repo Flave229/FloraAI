@@ -106,55 +106,10 @@ namespace Assets.Scripts.Genetic_Algorithm
                 switch (character)
                 {
                     case '+':
-                        if (rule[i + 1] != 'F')
-                        {
-                            newRule += character;
-                            continue;
-                        }
-
-                        ++i;
-                        newRule += MutateCharacter("+F");
-                        continue;
                     case '-':
-                        if (rule[i + 1] != 'F')
-                        {
-                            newRule += character;
-                            continue;
-                        }
-
-                        ++i;
-                        newRule += MutateCharacter("-F");
-                        break;
                     case '&':
-                        if (rule[i + 1] != 'F')
-                        {
-                            newRule += character;
-                            continue;
-                        }
-
-                        ++i;
-                        newRule += MutateCharacter("&F");
-                        break;
                     case '^':
-                        if (rule[i + 1] != 'F')
-                        {
-                            newRule += character;
-                            continue;
-                        }
-
-                        ++i;
-                        newRule += MutateCharacter("^F");
-                        break;
                     case '\\':
-                        if (rule[i + 1] != 'F')
-                        {
-                            newRule += character;
-                            continue;
-                        }
-
-                        ++i;
-                        newRule += MutateCharacter("\\F");
-                        break;
                     case '/':
                         if (rule[i + 1] != 'F')
                         {
@@ -163,8 +118,8 @@ namespace Assets.Scripts.Genetic_Algorithm
                         }
 
                         ++i;
-                        newRule += MutateCharacter("/F");
-                        break;
+                        newRule += MutateCharacter(character + "F");
+                        continue;
                     case 'F':
                         ++i;
                         newRule += MutateCharacter("F");
