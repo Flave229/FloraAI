@@ -35,11 +35,24 @@ namespace Assets.Scripts.Genetic_Algorithm
             string newRuleString = ruleString.Substring(0, ruleString.IndexOf('['));
             while (characterIndex != -1)
             {
+                int oldIndex = characterIndex;
                 characterIndex = ruleString.IndexOf('[', characterIndex);
                 if (characterIndex == -1)
+                {
+                    characterIndex = oldIndex;
                     break;
-                
+                }
+
                 int endBracket = ruleString.IndexOf(']', characterIndex);
+                int nextStartBracket = ruleString.IndexOf('[', characterIndex + 1);
+                while (nextStartBracket < endBracket && nextStartBracket != -1)
+                {
+                    newRuleString += ruleString.Substring(characterIndex, nextStartBracket - characterIndex);
+                    characterIndex = nextStartBracket;
+                    endBracket = ruleString.IndexOf(']', characterIndex);
+                    nextStartBracket = ruleString.IndexOf('[', characterIndex + 1);
+                }
+
                 double randomChance = _randomGenerator.NextDouble();
 
                 var currentBlock = ruleString.Substring(characterIndex, endBracket - characterIndex + 1);
