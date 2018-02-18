@@ -4,7 +4,7 @@ using Assets.Scripts.LSystems;
 using NUnit.Framework;
 using UnityEngine;
 
-namespace Assets.Testing.GeneticOperationTests.GivenTwoParentsWithOneRuleOnTheLowestLayer
+namespace Assets.Testing.GeneticCrossoverTests.GivenTwoParentsWithOneRuleOnTheLowestLayer
 {
     class WhenTheParentsContainOnlyOneHierarchicalBracketLayer
     {
