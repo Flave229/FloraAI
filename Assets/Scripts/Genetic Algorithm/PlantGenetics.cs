@@ -7,7 +7,7 @@ namespace Assets.Scripts.Genetic_Algorithm
 {
     public class PlantGenetics
     {
-        private Random _randomGenerator;
+        private readonly Random _randomGenerator;
 
         public PlantGenetics()
         {
@@ -20,6 +20,12 @@ namespace Assets.Scripts.Genetic_Algorithm
 
             foreach (var leftParentRule in leftParentRuleSet.Rules)
             {
+                if (rightParentRuleSet.Rules.ContainsKey(leftParentRule.Key) == false)
+                {
+                    rules.Add(leftParentRule.Key, leftParentRule.Value);
+                    continue;
+                }
+
                 List<string> avaliableRules = new List<string>
                 {
                     leftParentRuleSet.Rules[leftParentRule.Key][0].Rule,
@@ -40,6 +46,15 @@ namespace Assets.Scripts.Genetic_Algorithm
                         Rule = crossOverRule
                     }
                 });
+            }
+
+            Dictionary<string, List<LSystemRule>> rulesNotIncludedOnLeftSide = rightParentRuleSet.Rules
+                .Where(rightRule => leftParentRuleSet.Rules.ContainsKey(rightRule.Key) == false)
+                .ToDictionary(x => x.Key, x => x.Value);
+
+            foreach (var rightParentRule in rulesNotIncludedOnLeftSide)
+            {
+                rules.Add(rightParentRule.Key, rightParentRule.Value);
             }
 
             return new RuleSet(rules);
