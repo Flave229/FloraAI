@@ -3,7 +3,7 @@ using Assets.Scripts.Genetic_Algorithm;
 using Assets.Scripts.LSystems;
 using NUnit.Framework;
 
-namespace Assets.Testing.GeneticOperationTests.GivenTwoValidParents
+namespace Assets.Testing.GeneticCrossoverTests.GivenTwoParentsWithOneRuleOnTheLowestLayer
 {
     class WhenTheParentsContainNoBrackets
     {
