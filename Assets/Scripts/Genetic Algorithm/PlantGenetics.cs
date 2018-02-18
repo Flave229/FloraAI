@@ -14,33 +14,33 @@ namespace Assets.Scripts.Genetic_Algorithm
             _randomGenerator = new Random();
         }
 
-        public RuleSet CrossOver(RuleSet leftParentRuleSets, RuleSet rightParentRuleSets)
+        public RuleSet CrossOver(RuleSet leftParentRuleSet, RuleSet rightParentRuleSet)
         {
-            List<string> avaliableRules = new List<string>
+            Dictionary<string, List<LSystemRule>> rules = new Dictionary<string, List<LSystemRule>>();
+
+            foreach (var leftParentRule in leftParentRuleSet.Rules)
             {
-                leftParentRuleSets.Rules["F"][0].Rule,
-                rightParentRuleSets.Rules["F"][0].Rule
-            };
-
-            int randomIndex = _randomGenerator.Next(0, 2);
-            List<string> rulesToPotentiallyReplace = GetLowestBracketedRules(avaliableRules[randomIndex]);
-            List<string> rulesToReplaceWith = GetLowestBracketedRules(avaliableRules[randomIndex == 1 ? 0 : 1]);
-
-            string crossOverRule = CrossOverLowestBracketHierarchy(avaliableRules[randomIndex], rulesToPotentiallyReplace, rulesToReplaceWith);
-
-            Dictionary<string, List<LSystemRule>> rules = new Dictionary<string, List<LSystemRule>>
-            {
+                List<string> avaliableRules = new List<string>
                 {
-                    "F", new List<LSystemRule>
+                    leftParentRuleSet.Rules[leftParentRule.Key][0].Rule,
+                    rightParentRuleSet.Rules[leftParentRule.Key][0].Rule
+                };
+
+                int randomIndex = _randomGenerator.Next(0, 2);
+                List<string> rulesToPotentiallyReplace = GetLowestBracketedRules(avaliableRules[randomIndex]);
+                List<string> rulesToReplaceWith = GetLowestBracketedRules(avaliableRules[randomIndex == 1 ? 0 : 1]);
+
+                string crossOverRule = CrossOverLowestBracketHierarchy(avaliableRules[randomIndex], rulesToPotentiallyReplace, rulesToReplaceWith);
+
+                rules.Add(leftParentRule.Key, new List<LSystemRule>
+                {
+                    new LSystemRule
                     {
-                        new LSystemRule
-                        {
-                            Probability = 1,
-                            Rule = crossOverRule
-                        }
+                        Probability = 1,
+                        Rule = crossOverRule
                     }
-                }
-            };
+                });
+            }
 
             return new RuleSet(rules);
         }
