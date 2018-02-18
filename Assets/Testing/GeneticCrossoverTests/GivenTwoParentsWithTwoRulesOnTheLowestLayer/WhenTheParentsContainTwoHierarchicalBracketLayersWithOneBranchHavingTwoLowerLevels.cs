@@ -11,7 +11,7 @@ namespace Assets.Testing.GeneticCrossoverTests.GivenTwoParentsWithTwoRulesOnTheL
         [Test]
         public void ThenAtLeastOneOfTheRulesFromTheChosenParentAreSwappedWithTheOtherParent()
         {
-            PlantGenetics genetics = new PlantGenetics();
+            PlantCrossOver crossOver = new PlantCrossOver(new System.Random());
             RuleSet leftParentRuleSets = new RuleSet(new Dictionary<string, List<LSystemRule>>
             {
                 { "F", new List<LSystemRule>
@@ -38,7 +38,7 @@ namespace Assets.Testing.GeneticCrossoverTests.GivenTwoParentsWithTwoRulesOnTheL
                 }
             });
 
-            RuleSet result = genetics.CrossOver(leftParentRuleSets, rightParentRuleSets);
+            RuleSet result = crossOver.CrossOver(leftParentRuleSets, rightParentRuleSets);
             string fRule = result.Rules["F"][0].Rule;
 
             Debug.Log(fRule);

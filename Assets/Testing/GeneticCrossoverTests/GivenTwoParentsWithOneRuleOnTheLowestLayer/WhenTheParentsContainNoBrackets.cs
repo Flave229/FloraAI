@@ -10,7 +10,7 @@ namespace Assets.Testing.GeneticCrossoverTests.GivenTwoParentsWithOneRuleOnTheLo
         [Test]
         public void ThenTheChildContainsEitherTheParentsDna()
         {
-            PlantGenetics genetics = new PlantGenetics();
+            PlantCrossOver crossOver = new PlantCrossOver(new System.Random());
             RuleSet leftParentRuleSets = new RuleSet(new Dictionary<string, List<LSystemRule>>
             {
                 { "F", new List<LSystemRule>
@@ -37,7 +37,7 @@ namespace Assets.Testing.GeneticCrossoverTests.GivenTwoParentsWithOneRuleOnTheLo
                 }
             });
 
-            RuleSet result = genetics.CrossOver(leftParentRuleSets, rightParentRuleSets);
+            RuleSet result = crossOver.CrossOver(leftParentRuleSets, rightParentRuleSets);
             string fRule = result.Rules["F"][0].Rule;
 
             Assert.That(fRule, Is.EqualTo(leftParentRuleSets.Rules["F"][0].Rule).Or.EqualTo(rightParentRuleSets.Rules["F"][0].Rule));
