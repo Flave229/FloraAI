@@ -31,7 +31,7 @@ namespace Assets.Scripts.Genetic_Algorithm
             float fitnessMagnitude = plantsAndFitness.Sum(x => x.Value);
             float randomNumber = (float)_randomGenerator.NextDouble();
 
-            if (fitnessMagnitude == 0.0f)
+            if (fitnessMagnitude <= 0.0001f)
                 return plantsAndFitness.ElementAt((int)(randomNumber * plantsAndFitness.Count)).Key;
             
             float fitnessSum = 0;
@@ -40,6 +40,8 @@ namespace Assets.Scripts.Genetic_Algorithm
             {
                 if (fitnessSum + plantFitness.Value / fitnessMagnitude >= randomNumber)
                     return plantFitness.Key;
+
+                fitnessSum += plantFitness.Value;
             }
 
             throw new Exception("No Parent could be found. This should not happen");
