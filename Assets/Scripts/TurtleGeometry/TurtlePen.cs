@@ -51,7 +51,7 @@ namespace Assets.Scripts.TurtleGeometry
             _decreasePitchQuaternion = Quaternion.AngleAxis(-RotationStep, new Vector3(1, 0, 0));
         }
         
-        public void Draw(Vector3 startingPosition, string commandString)
+        public void Draw(PersistentPlantGeometryStorage geometryStorage, Vector3 startingPosition, string commandString)
         {
             SetupQuaternions();
 
@@ -69,7 +69,7 @@ namespace Assets.Scripts.TurtleGeometry
                         MoveForward();
                         break;
                     case 'O':
-                        DrawLeaf();
+                        DrawLeaf(geometryStorage);
                         break;
                     case '+':
                         TurnLeft();
@@ -118,8 +118,9 @@ namespace Assets.Scripts.TurtleGeometry
             _renderSystem.DrawCylinder(lastPosition, _currentPosition, _currentBranchDiameter);
         }
 
-        private void DrawLeaf()
+        private void DrawLeaf(PersistentPlantGeometryStorage geometryStorage)
         {
+            geometryStorage.StoreLeaf(_currentPosition + ((ForwardStep) * GetDirection()));
             _renderSystem.DrawQuad(_currentPosition + ((ForwardStep) * GetDirection()), GetDirection(), _currentColor);
         }
 

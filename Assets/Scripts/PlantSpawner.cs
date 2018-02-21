@@ -72,8 +72,8 @@ namespace Assets.Scripts
                 }
             };
             RuleSet ruleSet = new RuleSet(rules);
-            LSystem lindenMayerSystem = new LSystem(ruleSet, "A");
-            _plant = new Plant(lindenMayerSystem, turtlePen, new Vector3(transform.position.x + 1, transform.position.y + 0.775f, transform.position.z + 1));
+            ILSystem lindenMayerSystem = new LSystem(ruleSet, "A");
+            _plant = new Plant(lindenMayerSystem, turtlePen, new PersistentPlantGeometryStorage(), new Vector3(transform.position.x + 1, transform.position.y + 0.775f, transform.position.z + 1));
         }
 
         private void Start()

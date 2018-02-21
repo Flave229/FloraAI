@@ -7,11 +7,21 @@ namespace Assets.Scripts.Genetic_Algorithm
 {
     public class PlantSelection
     {
-        private Random _randomGenerator;
+        private readonly Random _randomGenerator;
 
         public PlantSelection(Random randomGenerator)
         {
             _randomGenerator = randomGenerator;
+        }
+        
+        public List<List<LSystem>> SelectParentPairs(Dictionary<LSystem, float> plantsAndFitness, int iterations)
+        {
+            List<List<LSystem>> parentPairs = new List<List<LSystem>>();
+            for (int i = 0; i < iterations; ++i)
+            {
+                parentPairs.Add(ChooseParents(plantsAndFitness));
+            }
+            return parentPairs;
         }
 
         public List<LSystem> ChooseParents(Dictionary<LSystem, float> plantsAndFitness)

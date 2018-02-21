@@ -1,9 +1,15 @@
 ﻿namespace Assets.Scripts.LSystems
 {
-    public class LSystem
+    public interface ILSystem
+    {
+        void Iterate();
+        string GetCommandString();
+    }
+
+    public class LSystem : ILSystem
     {
         private string _currentString;
-        private RuleSet _rules;
+        private readonly RuleSet _rules;
 
         public LSystem(RuleSet rules, string axiom)
         {

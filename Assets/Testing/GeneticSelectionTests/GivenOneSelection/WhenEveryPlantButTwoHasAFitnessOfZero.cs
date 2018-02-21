@@ -4,12 +4,12 @@ using Assets.Scripts.Genetic_Algorithm;
 using Assets.Scripts.LSystems;
 using NUnit.Framework;
 
-namespace Assets.Testing.GeneticSelectionTests.GivenTwoValidParents
+namespace Assets.Testing.GeneticSelectionTests.GivenOneSelection
 {
     class WhenEveryPlantButTwoHasAFitnessOfZero
     {
         [Test]
-        public void ThenTheFirstPlantAndSecondPlantAreGuaranteedToBePlantsWithAHigherFitness()
+        public void ThenTheFirstPlantAndSecondPlantAreGuaranteedToBeChosenAsParents()
         {
             PlantSelection selection = new PlantSelection(new Random());
 

@@ -1,14 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Rendering;
 using Object = UnityEngine.Object;
 
 namespace Assets.Scripts.Render
 {
     public class GeometryRenderSystem
     {
-        private List<GameObject> _gameObjects;
+        private readonly List<GameObject> _gameObjects;
 
         public GeometryRenderSystem()
         {
@@ -24,16 +22,6 @@ namespace Assets.Scripts.Render
             cylinderObject.transform.localScale = new Vector3(diameter, height / 2, diameter);
 
             _gameObjects.Add(cylinderObject);
-        }
-
-        public void DrawSphere(Vector3 position, float uniformScale, Color color)
-        {
-            var sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            sphere.transform.position = position;
-            sphere.transform.localScale = new Vector3(uniformScale, uniformScale, uniformScale);
-            Debug.Log(color);
-            sphere.GetComponent<Renderer>().material.color = color;
-            _gameObjects.Add(sphere);
         }
 
         public void ClearObjects()
