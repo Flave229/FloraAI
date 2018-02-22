@@ -14,9 +14,9 @@ namespace Assets.Scripts.Genetic_Algorithm
             _randomGenerator = randomGenerator;
         }
         
-        public List<List<LSystem>> SelectParentPairs(Dictionary<LSystem, float> plantsAndFitness, int iterations)
+        public List<List<ILSystem>> SelectParentPairs(Dictionary<ILSystem, float> plantsAndFitness, int iterations)
         {
-            List<List<LSystem>> parentPairs = new List<List<LSystem>>();
+            List<List<ILSystem>> parentPairs = new List<List<ILSystem>>();
             for (int i = 0; i < iterations; ++i)
             {
                 parentPairs.Add(ChooseParents(plantsAndFitness));
@@ -24,19 +24,19 @@ namespace Assets.Scripts.Genetic_Algorithm
             return parentPairs;
         }
 
-        public List<LSystem> ChooseParents(Dictionary<LSystem, float> plantsAndFitness)
+        public List<ILSystem> ChooseParents(Dictionary<ILSystem, float> plantsAndFitness)
         {
-            LSystem firstParent = RouletteWheelChoice(plantsAndFitness);
-            LSystem secondParent = RouletteWheelChoice(plantsAndFitness.Where(x => x.Key != firstParent).ToDictionary(x => x.Key, y => y.Value));
+            ILSystem firstParent = RouletteWheelChoice(plantsAndFitness);
+            ILSystem secondParent = RouletteWheelChoice(plantsAndFitness.Where(x => x.Key != firstParent).ToDictionary(x => x.Key, y => y.Value));
 
-            return new List<LSystem>
+            return new List<ILSystem>
             {
                 firstParent,
                 secondParent
             };
         }
 
-        public LSystem RouletteWheelChoice(Dictionary<LSystem, float> plantsAndFitness)
+        public ILSystem RouletteWheelChoice(Dictionary<ILSystem, float> plantsAndFitness)
         {
             float fitnessMagnitude = plantsAndFitness.Sum(x => x.Value);
             float randomNumber = (float)_randomGenerator.NextDouble();

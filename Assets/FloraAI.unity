@@ -244,7 +244,17 @@ Prefab:
     - target: {fileID: 114816208724713728, guid: 1e11cffe420e09747a0e2dc64015659e,
         type: 2}
       propertyPath: MaximumIterations
-      value: 7
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 114816208724713728, guid: 1e11cffe420e09747a0e2dc64015659e,
+        type: 2}
+      propertyPath: MaximumGrowthIterations
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 114816208724713728, guid: 1e11cffe420e09747a0e2dc64015659e,
+        type: 2}
+      propertyPath: MaximumGeneticIterations
+      value: 20
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 1e11cffe420e09747a0e2dc64015659e, type: 2}

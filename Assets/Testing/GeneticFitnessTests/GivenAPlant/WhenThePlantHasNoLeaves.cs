@@ -7,9 +7,9 @@ using Moq;
 using NUnit.Framework;
 using UnityEngine;
 
-namespace Assets.Testing.GeneticFitnessTests.GivenTwoPlantsWithTheSameAmountOfLeaves
+namespace Assets.Testing.GeneticFitnessTests.GivenAPlant
 {
-    class WhenOnePlantHasLeavesThatAreHigher
+    class WhenThePlantHasNoLeaves
     {
         [Test]
         public void ThenThePlantWithHigherLeavesHasAHigherPositivePhototropismFitnessValue()

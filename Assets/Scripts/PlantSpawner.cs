@@ -1,22 +1,32 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Assets.Scripts.Common;
+using Assets.Scripts.Genetic_Algorithm;
 using Assets.Scripts.LSystems;
 using Assets.Scripts.Render;
 using Assets.Scripts.TurtleGeometry;
+using Moq;
 using UnityEngine;
 
 namespace Assets.Scripts
 {
     class PlantSpawner : MonoBehaviour
     {
-        private Plant _plant;
+        private List<Plant> _plants;
+        private PlantGenetics _genetics;
 
-        public int MaximumIterations;
+        public int MaximumGrowthIterations;
+        public int MaximumGeneticIterations;
+        private int _iterations;
+        private float _cooldown;
+        private TurtlePen _realTurtlePen;
 
         private void Awake()
         {
-            GeometryRenderSystem renderSystem = new GeometryRenderSystem();
-            TurtlePen turtlePen = new TurtlePen(renderSystem)
+            _iterations = 0;
+            Mock<GeometryRenderSystem> renderSystem = new Mock<GeometryRenderSystem>();
+            TurtlePen fakeTurtlePen = new TurtlePen(renderSystem.Object)
             {
                 ForwardStep = 0.1f,
                 RotationStep = 22.5f,
@@ -28,6 +38,19 @@ namespace Assets.Scripts
                 }
                 //RotationStep = 2.0f
             };
+            _realTurtlePen = new TurtlePen(new GeometryRenderSystem())
+            {
+                ForwardStep = 0.1f,
+                RotationStep = 22.5f,
+                BranchDiameter = 0.06f,
+                BranchReductionRate = new MinMax<float>
+                {
+                    Min = 0.4f,
+                    Max = 0.8f
+                }
+                //RotationStep = 2.0f
+            };
+            _genetics = new PlantGenetics(new System.Random(), fakeTurtlePen, 0.1f);
             Dictionary<string, List<LSystemRule>> rules = new Dictionary<string, List<LSystemRule>>
             {
                 {
@@ -73,17 +96,42 @@ namespace Assets.Scripts
             };
             RuleSet ruleSet = new RuleSet(rules);
             ILSystem lindenMayerSystem = new LSystem(ruleSet, "A");
-            _plant = new Plant(lindenMayerSystem, turtlePen, new PersistentPlantGeometryStorage(), new Vector3(transform.position.x + 1, transform.position.y + 0.775f, transform.position.z + 1));
+            Plant plant = new Plant(lindenMayerSystem, fakeTurtlePen, new PersistentPlantGeometryStorage(), new Vector3(transform.position.x + 1, transform.position.y + 0.775f, transform.position.z + 1));
+            ILSystem lindenMayerSystem2 = new LSystem(ruleSet, "A");
+            Plant plant2 = new Plant(lindenMayerSystem2, fakeTurtlePen, new PersistentPlantGeometryStorage(), new Vector3(transform.position.x + 1, transform.position.y + 0.775f, transform.position.z + 1));
+
+            _plants = _genetics.GenerateChildPopulation(new List<Plant> { plant, plant2 });
         }
 
         private void Start()
         {
-            for (int i = 0; i < MaximumIterations; ++i)
-            {
-                _plant.Update();
-            }
+        }
 
-            _plant.Generate();
+        private void Update()
+        {
+            _cooldown -= Time.deltaTime;
+            if (_cooldown <= 0.0f && _iterations < MaximumGeneticIterations)
+            {
+                _cooldown = 5.0f;
+                ++_iterations;
+                
+                foreach (var plant in _plants)
+                {
+                    for (int j = 0; j < MaximumGrowthIterations; ++j)
+                    {
+                        plant.Update();
+                    }
+
+                    plant.Generate();
+                }
+
+                // Need to get fittest plant
+                Plant fittestPlant = _genetics.GetFittestPlant(_plants);
+                Plant plantToDraw = new Plant(fittestPlant.LindenMayerSystem, _realTurtlePen, new PersistentPlantGeometryStorage(), new Vector3(transform.position.x + 1, transform.position.y + 0.775f, transform.position.z + 1));
+                plantToDraw.Generate();
+
+                _plants = _genetics.GenerateChildPopulation(_plants);
+            }
         }
     }
 }

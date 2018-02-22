@@ -9,36 +9,37 @@ using UnityEngine;
 
 namespace Assets.Testing.GeneticFitnessTests.GivenTwoPlantsWithTheSameAmountOfLeaves
 {
-    class WhenOnePlantHasLeavesThatAreHigher
+    class WhenBothPlantsHaveLeavesAtTheSameHeightButAtDifferentAngles
     {
         [Test]
-        public void ThenThePlantWithHigherLeavesHasAHigherPositivePhototropismFitnessValue()
+        public void ThenTheTwoPlantsWillHaveTheSamePositivePhototropismFitnessValue()
         {
             PlantFitness plantFitness = new PlantFitness();
 
             Mock<GeometryRenderSystem> geometryRenderMock = new Mock<GeometryRenderSystem>();
             TurtlePen turtlePen = new TurtlePen(geometryRenderMock.Object)
             {
-                ForwardStep = 1
+                ForwardStep = 1,
+                RotationStep = 22.5f,
             };
 
             Mock<ILSystem> lSystem1Mock = new Mock<ILSystem>();
-            lSystem1Mock.Setup(x => x.GetCommandString()).Returns("FO");
+            lSystem1Mock.Setup(x => x.GetCommandString()).Returns("-F-FO");
             PersistentPlantGeometryStorage geometryStorage1 = new PersistentPlantGeometryStorage();
             Plant plant1 = new Plant(lSystem1Mock.Object, turtlePen, geometryStorage1, Vector3.zero);
             plant1.Generate();
             float plant1Fitness = plantFitness.EvaluatePositivePhototrophicFitness(plant1);
 
             Mock<ILSystem> lSystem2Mock = new Mock<ILSystem>();
-            lSystem2Mock.Setup(x => x.GetCommandString()).Returns("FFO");
+            lSystem2Mock.Setup(x => x.GetCommandString()).Returns("+F+FO");
             PersistentPlantGeometryStorage geometryStorage2 = new PersistentPlantGeometryStorage();
             Plant plant2 = new Plant(lSystem2Mock.Object, turtlePen, geometryStorage2, Vector3.zero);
             plant2.Generate();
             float plant2Fitness = plantFitness.EvaluatePositivePhototrophicFitness(plant2);
 
-            Debug.Log("Small Plant Fitness: " + plant1Fitness);
-            Debug.Log("Larger Plant Fitness: " + plant2Fitness);
-            Assert.That(plant2Fitness, Is.GreaterThan(plant1Fitness));
+            Debug.Log("Plant 1 Fitness: " + plant1Fitness);
+            Debug.Log("Plant 2 Fitness: " + plant2Fitness);
+            Assert.That(plant2Fitness, Is.EqualTo(plant1Fitness));
         }
     }
 }

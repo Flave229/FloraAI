@@ -4,6 +4,7 @@
     {
         void Iterate();
         string GetCommandString();
+        RuleSet GetRuleSet();
     }
 
     public class LSystem : ILSystem
@@ -30,6 +31,11 @@
         public string GetCommandString()
         {
             return _currentString;
+        }
+
+        public RuleSet GetRuleSet()
+        {
+            return _rules;
         }
     }
 }

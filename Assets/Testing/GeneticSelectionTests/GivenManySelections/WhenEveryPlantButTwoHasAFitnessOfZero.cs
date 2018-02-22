@@ -28,7 +28,7 @@ namespace Assets.Testing.GeneticSelectionTests.GivenManySelections
 
             var firstLSystem = new LSystem(ruleSet, "A");
             var secondLSystem = new LSystem(ruleSet, "B");
-            Dictionary<LSystem, float> plantsAndFitness = new Dictionary<LSystem, float>
+            Dictionary<ILSystem, float> plantsAndFitness = new Dictionary<ILSystem, float>
             {
                 { firstLSystem, 5 },
                 { secondLSystem, 5 },
@@ -55,7 +55,7 @@ namespace Assets.Testing.GeneticSelectionTests.GivenManySelections
                 { new LSystem(ruleSet, "V"), 0 }
             };
 
-            List<List<LSystem>> chosenParents = selection.SelectParentPairs(plantsAndFitness, 5);
+            List<List<ILSystem>> chosenParents = selection.SelectParentPairs(plantsAndFitness, 5);
 
             Assert.That(chosenParents[0], Contains.Item(firstLSystem));
             Assert.That(chosenParents[0], Contains.Item(secondLSystem));

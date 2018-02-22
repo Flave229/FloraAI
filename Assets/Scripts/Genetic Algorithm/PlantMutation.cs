@@ -33,7 +33,11 @@ namespace Assets.Scripts.Genetic_Algorithm
         private string BlockMutation(string ruleString)
         {
             int characterIndex = 0;
-            string newRuleString = ruleString.Substring(0, ruleString.IndexOf('['));
+            int endBracketIndex = -1;
+
+            if (ruleString.IndexOf('[') == -1)
+                return ruleString;
+            string newRuleString = "";
             while (characterIndex != -1)
             {
                 int oldIndex = characterIndex;
@@ -43,24 +47,25 @@ namespace Assets.Scripts.Genetic_Algorithm
                     characterIndex = oldIndex;
                     break;
                 }
+                newRuleString += ruleString.Substring(endBracketIndex + 1, characterIndex - (endBracketIndex + 1));
 
-                int endBracket = ruleString.IndexOf(']', characterIndex);
+                endBracketIndex = ruleString.IndexOf(']', characterIndex);
                 int nextStartBracket = ruleString.IndexOf('[', characterIndex + 1);
-                while (nextStartBracket < endBracket && nextStartBracket != -1)
+                while (nextStartBracket < endBracketIndex && nextStartBracket != -1)
                 {
                     newRuleString += ruleString.Substring(characterIndex, nextStartBracket - characterIndex);
                     characterIndex = nextStartBracket;
-                    endBracket = ruleString.IndexOf(']', characterIndex);
+                    endBracketIndex = ruleString.IndexOf(']', characterIndex);
                     nextStartBracket = ruleString.IndexOf('[', characterIndex + 1);
                 }
 
                 double randomChance = _randomGenerator.NextDouble();
 
-                var currentBlock = ruleString.Substring(characterIndex, endBracket - characterIndex + 1);
+                var currentBlock = ruleString.Substring(characterIndex, endBracketIndex - characterIndex + 1);
                 if (randomChance >= _mutationChance)
                 {
                     newRuleString += currentBlock;
-                    characterIndex = endBracket + 1;
+                    characterIndex = endBracketIndex + 1;
                     if (characterIndex >= ruleString.Length)
                         break;
                     continue;
@@ -73,7 +78,7 @@ namespace Assets.Scripts.Genetic_Algorithm
                 }
                 
                 newRuleString += newBlock;
-                characterIndex = endBracket + 1;
+                characterIndex = endBracketIndex + 1;
                 if (characterIndex >= ruleString.Length)
                     break;
             }
@@ -121,7 +126,6 @@ namespace Assets.Scripts.Genetic_Algorithm
                         newRule += MutateCharacter(character + "F");
                         continue;
                     case 'F':
-                        ++i;
                         newRule += MutateCharacter("F");
                         break;
                     default:

@@ -9,10 +9,10 @@ using UnityEngine;
 
 namespace Assets.Testing.GeneticFitnessTests.GivenTwoPlantsWithTheSameAmountOfLeaves
 {
-    class WhenOnePlantHasLeavesThatAreHigher
+    class WhenBothPlantsHaveLeavesAtTheSameHeight
     {
         [Test]
-        public void ThenThePlantWithHigherLeavesHasAHigherPositivePhototropismFitnessValue()
+        public void ThenTheTwoPlantsWillHaveTheSamePositivePhototropismFitnessValue()
         {
             PlantFitness plantFitness = new PlantFitness();
 
@@ -23,7 +23,7 @@ namespace Assets.Testing.GeneticFitnessTests.GivenTwoPlantsWithTheSameAmountOfLe
             };
 
             Mock<ILSystem> lSystem1Mock = new Mock<ILSystem>();
-            lSystem1Mock.Setup(x => x.GetCommandString()).Returns("FO");
+            lSystem1Mock.Setup(x => x.GetCommandString()).Returns("FFO");
             PersistentPlantGeometryStorage geometryStorage1 = new PersistentPlantGeometryStorage();
             Plant plant1 = new Plant(lSystem1Mock.Object, turtlePen, geometryStorage1, Vector3.zero);
             plant1.Generate();
@@ -36,9 +36,9 @@ namespace Assets.Testing.GeneticFitnessTests.GivenTwoPlantsWithTheSameAmountOfLe
             plant2.Generate();
             float plant2Fitness = plantFitness.EvaluatePositivePhototrophicFitness(plant2);
 
-            Debug.Log("Small Plant Fitness: " + plant1Fitness);
-            Debug.Log("Larger Plant Fitness: " + plant2Fitness);
-            Assert.That(plant2Fitness, Is.GreaterThan(plant1Fitness));
+            Debug.Log("Plant 1 Fitness: " + plant1Fitness);
+            Debug.Log("Plant 2 Fitness: " + plant2Fitness);
+            Assert.That(plant2Fitness, Is.EqualTo(plant1Fitness));
         }
     }
 }
