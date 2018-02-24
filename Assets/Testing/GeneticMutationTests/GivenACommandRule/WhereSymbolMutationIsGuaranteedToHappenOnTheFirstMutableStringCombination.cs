@@ -12,7 +12,7 @@ namespace Assets.Testing.GeneticMutationTests.GivenACommandRule
         private static int _calls;
 
         [Test]
-        public void ThenTheFirstBlockIsMutated()
+        public void ThenTheFirstSymbolIsMutated()
         {
             var actualRandom = new System.Random();
             var randomMock = new Mock<System.Random>();
