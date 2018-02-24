@@ -12,7 +12,7 @@ namespace Assets.Scripts.Genetic_Algorithm
 
             foreach (var leafPosition in leafPositions)
             {
-                fitness += leafPosition.y;
+                fitness += leafPosition.y * 3;
             }
 
             return fitness;

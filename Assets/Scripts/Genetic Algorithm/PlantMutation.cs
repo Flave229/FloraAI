@@ -14,7 +14,7 @@ namespace Assets.Scripts.Genetic_Algorithm
         {
             _randomGenerator = randomGenerator;
             _mutationChance = mutationChance;
-            _mutableList = new List<string> { "F", "+F", "-F", "&F", "^F", "\\F", "/F" };
+            _mutableList = new List<string> { "F", "+F", "-F", "&F", "^F", "\\F", "/F", "L" };
         }
 
         public RuleSet Mutate(RuleSet ruleSet)
@@ -62,7 +62,7 @@ namespace Assets.Scripts.Genetic_Algorithm
                 double randomChance = _randomGenerator.NextDouble();
 
                 var currentBlock = ruleString.Substring(characterIndex, endBracketIndex - characterIndex + 1);
-                if (randomChance >= _mutationChance)
+                if (randomChance >= (_mutationChance / 4)) // Lowering chance of block mutation
                 {
                     newRuleString += currentBlock;
                     characterIndex = endBracketIndex + 1;
@@ -126,7 +126,8 @@ namespace Assets.Scripts.Genetic_Algorithm
                         newRule += MutateCharacter(character + "F");
                         continue;
                     case 'F':
-                        newRule += MutateCharacter("F");
+                    case 'L':
+                        newRule += MutateCharacter(character.ToString());
                         break;
                     default:
                         newRule += rule[i];

@@ -22,7 +22,7 @@ namespace Assets.Scripts.Genetic_Algorithm
             {
                 if (rightParentRuleSet.Rules.ContainsKey(leftParentRule.Key) == false)
                 {
-                    rules.Add(leftParentRule.Key, leftParentRule.Value);
+                    rules.Add(leftParentRule.Key, new List<LSystemRule>(leftParentRule.Value));
                     continue;
                 }
 

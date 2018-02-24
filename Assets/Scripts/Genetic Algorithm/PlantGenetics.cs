@@ -34,7 +34,7 @@ namespace Assets.Scripts.Genetic_Algorithm
                 fitnessPerParent.Add(plant.LindenMayerSystem, fitness);
             }
 
-            List<List<ILSystem>> parentPairs = _selection.SelectParentPairs(fitnessPerParent, 50);
+            List<List<ILSystem>> parentPairs = _selection.SelectParentPairs(fitnessPerParent, 5);
 
             List<Plant> childPlants = new List<Plant>();
             foreach (List<ILSystem> parentPair in parentPairs)
@@ -47,9 +47,9 @@ namespace Assets.Scripts.Genetic_Algorithm
             return childPlants;
         }
 
-        public Plant GetFittestPlant(List<Plant> parents)
+        public KeyValuePair<Plant, float> GetFittestPlant(List<Plant> parents)
         {
-            Plant fittestPlant = null;
+            Plant fittestPlant = parents[0];
             float maxFitnessValue = 0;
             foreach (Plant plant in parents)
             {
@@ -62,7 +62,7 @@ namespace Assets.Scripts.Genetic_Algorithm
                 }
             }
 
-            return fittestPlant;
+            return new KeyValuePair<Plant, float>(fittestPlant, maxFitnessValue);
         }
     }
 }

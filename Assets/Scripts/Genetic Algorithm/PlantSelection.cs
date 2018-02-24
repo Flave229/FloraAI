@@ -51,7 +51,7 @@ namespace Assets.Scripts.Genetic_Algorithm
                 if (fitnessSum + plantFitness.Value / fitnessMagnitude >= randomNumber)
                     return plantFitness.Key;
 
-                fitnessSum += plantFitness.Value;
+                fitnessSum += plantFitness.Value / fitnessMagnitude;
             }
 
             throw new Exception("No Parent could be found. This should not happen");
