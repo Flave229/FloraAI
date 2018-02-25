@@ -1,18 +1,48 @@
 ﻿using System.Collections.Generic;
+using Assets.Scripts.Data;
 using UnityEngine;
 
 namespace Assets.Scripts.Genetic_Algorithm
 {
     class PlantFitness
     {
-        public float EvaluatePositivePhototrophicFitness(Plant plant)
+        private readonly Vector3 _lightPosition;
+
+        public PlantFitness(Vector3 lightPosition)
         {
-            List<Vector3> leafPositions = plant.GeometryStorage.LeafPositions;
+            _lightPosition = lightPosition;
+        }
+
+        public float EvaluateFitness(Plant plant)
+        {
+            float fitness = EvaluateUpwardsPhototrophicFitness(plant);
+            fitness += EvaluateDynamicPhototrophicFitness(plant);
+            return fitness;
+        }
+
+        public float EvaluateUpwardsPhototrophicFitness(Plant plant)
+        {
+            List<Leaf> leaves = plant.GeometryStorage.Leaves;
             float fitness = 0;
 
-            foreach (var leafPosition in leafPositions)
+            foreach (var leaf in leaves)
             {
-                fitness += leafPosition.y * 3;
+                fitness += leaf.Position.y * 3;
+            }
+
+            return fitness;
+        }
+
+        public float EvaluateDynamicPhototrophicFitness(Plant plant)
+        {
+            List<Leaf> leaves = plant.GeometryStorage.Leaves;
+            float fitness = 0;
+
+            foreach (var leaf in leaves)
+            {
+                // Work out dot product between toSun vector and normal
+                Vector3 toSun = _lightPosition - leaf.RightVector;
+                fitness += Vector3.Dot(leaf.Position, toSun);
             }
 
             return fitness;

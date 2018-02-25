@@ -120,7 +120,7 @@ namespace Assets.Scripts.TurtleGeometry
 
         private void DrawLeaf(PersistentPlantGeometryStorage geometryStorage)
         {
-            geometryStorage.StoreLeaf(_currentPosition + ((ForwardStep) * GetDirection()));
+            geometryStorage.StoreLeaf(_currentPosition + ((ForwardStep) * GetDirection()), Vector3.Cross(GetDirection(), new Vector3(0,1,0)));
             _renderSystem.DrawQuad(_currentPosition + ((ForwardStep) * GetDirection()), GetDirection(), _currentColor);
         }
 

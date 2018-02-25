@@ -12,9 +12,9 @@ namespace Assets.Testing.GeneticFitnessTests.GivenTwoPlantsWithTheSameAmountOfLe
     class WhenBothPlantsHaveLeavesAtTheSameHeightButAtDifferentAngles
     {
         [Test]
-        public void ThenTheTwoPlantsWillHaveTheSamePositivePhototropismFitnessValue()
+        public void ThenTheTwoPlantsWillHaveTheSameUpwardsPhototropismFitnessValue()
         {
-            PlantFitness plantFitness = new PlantFitness();
+            PlantFitness plantFitness = new PlantFitness(Vector3.zero);
 
             Mock<GeometryRenderSystem> geometryRenderMock = new Mock<GeometryRenderSystem>();
             TurtlePen turtlePen = new TurtlePen(geometryRenderMock.Object)
@@ -28,14 +28,14 @@ namespace Assets.Testing.GeneticFitnessTests.GivenTwoPlantsWithTheSameAmountOfLe
             PersistentPlantGeometryStorage geometryStorage1 = new PersistentPlantGeometryStorage();
             Plant plant1 = new Plant(lSystem1Mock.Object, turtlePen, geometryStorage1, Vector3.zero);
             plant1.Generate();
-            float plant1Fitness = plantFitness.EvaluatePositivePhototrophicFitness(plant1);
+            float plant1Fitness = plantFitness.EvaluateUpwardsPhototrophicFitness(plant1);
 
             Mock<ILSystem> lSystem2Mock = new Mock<ILSystem>();
             lSystem2Mock.Setup(x => x.GetCommandString()).Returns("+F+FO");
             PersistentPlantGeometryStorage geometryStorage2 = new PersistentPlantGeometryStorage();
             Plant plant2 = new Plant(lSystem2Mock.Object, turtlePen, geometryStorage2, Vector3.zero);
             plant2.Generate();
-            float plant2Fitness = plantFitness.EvaluatePositivePhototrophicFitness(plant2);
+            float plant2Fitness = plantFitness.EvaluateUpwardsPhototrophicFitness(plant2);
 
             Debug.Log("Plant 1 Fitness: " + plant1Fitness);
             Debug.Log("Plant 2 Fitness: " + plant2Fitness);

@@ -15,13 +15,13 @@ namespace Assets.Scripts.Genetic_Algorithm
         private readonly PlantSelection _selection;
         private readonly PlantFitness _fitness;
 
-        public PlantGenetics(Random randomGenerator, TurtlePen turtlePen, float mutationChance)
+        public PlantGenetics(Random randomGenerator, TurtlePen turtlePen, Vector3 lightPosition, float mutationChance)
         {
             _turtlePen = turtlePen;
             _crossOver = new PlantCrossOver(randomGenerator);
             _mutation = new PlantMutation(randomGenerator, mutationChance);
             _selection = new PlantSelection(randomGenerator);
-            _fitness = new PlantFitness();
+            _fitness = new PlantFitness(lightPosition);
         }
 
         public List<Plant> GenerateChildPopulation(List<Plant> parents)
@@ -30,7 +30,7 @@ namespace Assets.Scripts.Genetic_Algorithm
 
             foreach (Plant plant in parents)
             {
-                float fitness = _fitness.EvaluatePositivePhototrophicFitness(plant);
+                float fitness = _fitness.EvaluateUpwardsPhototrophicFitness(plant);
                 fitnessPerParent.Add(plant.LindenMayerSystem, fitness);
             }
 
@@ -53,7 +53,7 @@ namespace Assets.Scripts.Genetic_Algorithm
             float maxFitnessValue = 0;
             foreach (Plant plant in parents)
             {
-                float fitness = _fitness.EvaluatePositivePhototrophicFitness(plant);
+                float fitness = _fitness.EvaluateUpwardsPhototrophicFitness(plant);
 
                 if (fitness > maxFitnessValue)
                 {

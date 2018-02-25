@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using Assets.Scripts.Common;
 using Assets.Scripts.Genetic_Algorithm;
 using Assets.Scripts.LSystems;
@@ -15,12 +13,13 @@ namespace Assets.Scripts
     {
         private List<Plant> _plants;
         private PlantGenetics _genetics;
-
-        public int MaximumGrowthIterations;
-        public int MaximumGeneticIterations;
         private int _iterations;
         private float _cooldown;
         private TurtlePen _realTurtlePen;
+
+        public int MaximumGrowthIterations;
+        public int MaximumGeneticIterations;
+        public Light Light;
 
         private void Awake()
         {
@@ -50,7 +49,7 @@ namespace Assets.Scripts
                 }
                 //RotationStep = 2.0f
             };
-            _genetics = new PlantGenetics(new System.Random(), fakeTurtlePen, 0.1f);
+            _genetics = new PlantGenetics(new System.Random(), fakeTurtlePen, Light.transform.position, 0.1f);
             Dictionary<string, List<LSystemRule>> rules = new Dictionary<string, List<LSystemRule>>
             {
                 {

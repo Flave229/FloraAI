@@ -1,20 +1,25 @@
 ﻿using System.Collections.Generic;
+using Assets.Scripts.Data;
 using UnityEngine;
 
 namespace Assets.Scripts.Render
 {
     public class PersistentPlantGeometryStorage
     {
-        public readonly List<Vector3> LeafPositions;
+        public readonly List<Leaf> Leaves;
 
         public PersistentPlantGeometryStorage()
         {
-            LeafPositions = new List<Vector3>();
+            Leaves = new List<Leaf>();
         }
         
-        public void StoreLeaf(Vector3 position)
+        public void StoreLeaf(Vector3 position, Vector3 rightVector)
         {
-            LeafPositions.Add(position);
+            Leaves.Add(new Leaf
+            {
+                Position = position,
+                RightVector = rightVector
+            });
         }
     }
 }
