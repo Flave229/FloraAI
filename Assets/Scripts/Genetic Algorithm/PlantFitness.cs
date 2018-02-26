@@ -40,7 +40,7 @@ namespace Assets.Scripts.Genetic_Algorithm
 
             foreach (var leaf in leaves)
             {
-                Vector3 toSun = Vector3.Normalize(_lightPosition);
+                Vector3 toSun = Vector3.Normalize(_lightPosition - leaf.Position);
                 fitness += Mathf.Max(Vector3.Dot(Vector3.Normalize(leaf.RightVector), toSun), 0);
             }
 

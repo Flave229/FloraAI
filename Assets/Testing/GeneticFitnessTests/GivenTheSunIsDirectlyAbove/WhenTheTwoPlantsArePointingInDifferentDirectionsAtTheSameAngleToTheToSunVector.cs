@@ -1,4 +1,5 @@
-﻿using Assets.Scripts;
+﻿using System;
+using Assets.Scripts;
 using Assets.Scripts.Genetic_Algorithm;
 using Assets.Scripts.LSystems;
 using Assets.Scripts.Render;
@@ -39,7 +40,7 @@ namespace Assets.Testing.GeneticFitnessTests.GivenTheSunIsDirectlyAbove
 
             Debug.Log("Plant 1 Fitness: " + plant1Fitness);
             Debug.Log("Plant 2 Fitness: " + plant2Fitness);
-            Assert.That(plant2Fitness, Is.EqualTo(plant1Fitness));
+            Assert.That(Math.Round(plant2Fitness, 2), Is.EqualTo(Math.Round(plant1Fitness, 2)));
         }
     }
 }
