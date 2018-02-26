@@ -20,18 +20,18 @@ namespace Assets.Testing.GeneticFitnessTests.GivenTheSunIsDirectlyAbove
             TurtlePen turtlePen = new TurtlePen(geometryRenderMock.Object)
             {
                 ForwardStep = 1,
-                RotationStep = 22.5f,
+                RotationStep = 90.0f,
             };
 
             Mock<ILSystem> lSystem1Mock = new Mock<ILSystem>();
-            lSystem1Mock.Setup(x => x.GetCommandString()).Returns("-F-FO");
+            lSystem1Mock.Setup(x => x.GetCommandString()).Returns("F-O");
             PersistentPlantGeometryStorage geometryStorage1 = new PersistentPlantGeometryStorage();
             Plant plant1 = new Plant(lSystem1Mock.Object, turtlePen, geometryStorage1, Vector3.zero);
             plant1.Generate();
             float plant1Fitness = plantFitness.EvaluateDynamicPhototrophicFitness(plant1);
 
             Mock<ILSystem> lSystem2Mock = new Mock<ILSystem>();
-            lSystem2Mock.Setup(x => x.GetCommandString()).Returns("+F+FO");
+            lSystem2Mock.Setup(x => x.GetCommandString()).Returns("F\\\\+O");
             PersistentPlantGeometryStorage geometryStorage2 = new PersistentPlantGeometryStorage();
             Plant plant2 = new Plant(lSystem2Mock.Object, turtlePen, geometryStorage2, Vector3.zero);
             plant2.Generate();

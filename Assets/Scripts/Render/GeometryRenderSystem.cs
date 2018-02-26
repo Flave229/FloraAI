@@ -4,7 +4,14 @@ using Object = UnityEngine.Object;
 
 namespace Assets.Scripts.Render
 {
-    public class GeometryRenderSystem
+    public interface IRenderSystem
+    {
+        void DrawCylinder(Vector3 sourcePosition, Vector3 targetPosition, float diameter);
+        void DrawQuad(Vector3 position, Vector3 direction, Color color, ref Vector3 right);
+        void ClearObjects();
+    }
+
+    public class GeometryRenderSystem : IRenderSystem
     {
         private readonly List<GameObject> _gameObjects;
 
@@ -34,7 +41,7 @@ namespace Assets.Scripts.Render
             _gameObjects.Clear();
         }
 
-        public void DrawQuad(Vector3 position, Vector3 direction, Color color)
+        public void DrawQuad(Vector3 position, Vector3 direction, Color color, ref Vector3 right)
         {
             var quad = GameObject.CreatePrimitive(PrimitiveType.Cube);
             quad.transform.position = position;
@@ -42,6 +49,8 @@ namespace Assets.Scripts.Render
             quad.transform.LookAt(direction);
             quad.transform.up = direction;
             quad.GetComponent<Renderer>().material.color = color;
+
+            right = quad.transform.right;
 
             _gameObjects.Add(quad);
         }

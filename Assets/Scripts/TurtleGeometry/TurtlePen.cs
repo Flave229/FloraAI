@@ -8,7 +8,7 @@ namespace Assets.Scripts.TurtleGeometry
 {
     public class TurtlePen
     {
-        private readonly GeometryRenderSystem _renderSystem;
+        private readonly IRenderSystem _renderSystem;
         private readonly Random _randomGenerator;
         private readonly Stack<Vector3> _positionStack;
         private readonly Stack<Quaternion> _rotationStack;
@@ -31,7 +31,7 @@ namespace Assets.Scripts.TurtleGeometry
         public float BranchDiameter { get; set; }
         public MinMax<float> BranchReductionRate { get; set; }
 
-        public TurtlePen(GeometryRenderSystem renderSystem)
+        public TurtlePen(IRenderSystem renderSystem)
         {
             _positionStack = new Stack<Vector3>();
             _rotationStack = new Stack<Quaternion>();
@@ -120,8 +120,10 @@ namespace Assets.Scripts.TurtleGeometry
 
         private void DrawLeaf(PersistentPlantGeometryStorage geometryStorage)
         {
-            geometryStorage.StoreLeaf(_currentPosition + ((ForwardStep) * GetDirection()), Vector3.Cross(GetDirection(), new Vector3(0,1,0)));
-            _renderSystem.DrawQuad(_currentPosition + ((ForwardStep) * GetDirection()), GetDirection(), _currentColor);
+            Vector3 leafPosition = _currentPosition + ((ForwardStep) * GetDirection());
+            Vector3 rightVector = Vector3.zero;
+            _renderSystem.DrawQuad(leafPosition, GetDirection(), _currentColor, ref rightVector);
+            geometryStorage.StoreLeaf(leafPosition, rightVector);
         }
 
         private void TurnRight()

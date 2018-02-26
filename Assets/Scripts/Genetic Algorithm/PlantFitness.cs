@@ -40,9 +40,8 @@ namespace Assets.Scripts.Genetic_Algorithm
 
             foreach (var leaf in leaves)
             {
-                // Work out dot product between toSun vector and normal
-                Vector3 toSun = _lightPosition - leaf.RightVector;
-                fitness += Vector3.Dot(leaf.Position, toSun);
+                Vector3 toSun = Vector3.Normalize(_lightPosition);
+                fitness += Mathf.Max(Vector3.Dot(Vector3.Normalize(leaf.RightVector), toSun), 0);
             }
 
             return fitness;

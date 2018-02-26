@@ -15,16 +15,16 @@ namespace Assets.Testing.GeneticFitnessTests.GivenTheSunIsDirectlyAbove
         public void ThenTheDynamicPhototrophicFitnessIsHigherForTheLeafPointingDirectlyAtTheSun()
         {
             PlantFitness plantFitness = new PlantFitness(new Vector3(0, 3, 0));
-
-            Mock<GeometryRenderSystem> geometryRenderMock = new Mock<GeometryRenderSystem>();
-            TurtlePen turtlePen = new TurtlePen(geometryRenderMock.Object)
+            
+            Vector3 rightVector = new Vector3(0, 1, 0);
+            TurtlePen turtlePen = new TurtlePen(new GeometryRenderSystem())
             {
                 ForwardStep = 1,
                 RotationStep = 90.0f,
             };
 
             Mock<ILSystem> lSystem1Mock = new Mock<ILSystem>();
-            lSystem1Mock.Setup(x => x.GetCommandString()).Returns("F");
+            lSystem1Mock.Setup(x => x.GetCommandString()).Returns("F-O");
             PersistentPlantGeometryStorage geometryStorage1 = new PersistentPlantGeometryStorage();
             Plant plant1 = new Plant(lSystem1Mock.Object, turtlePen, geometryStorage1, Vector3.zero);
             plant1.Generate();
@@ -39,7 +39,7 @@ namespace Assets.Testing.GeneticFitnessTests.GivenTheSunIsDirectlyAbove
 
             Debug.Log("Plant 1 Fitness: " + plant1Fitness);
             Debug.Log("Plant 2 Fitness: " + plant2Fitness);
-            Assert.That(plant2Fitness, Is.GreaterThan(plant1Fitness));
+            Assert.That(plant1Fitness, Is.GreaterThan(plant2Fitness));
         }
     }
 }
