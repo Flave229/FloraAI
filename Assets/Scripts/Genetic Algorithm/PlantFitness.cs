@@ -6,11 +6,11 @@ namespace Assets.Scripts.Genetic_Algorithm
 {
     class PlantFitness
     {
-        private readonly Vector3 _lightPosition;
+        private readonly SunInformation _sunInformation;
 
-        public PlantFitness(Vector3 lightPosition)
+        public PlantFitness(SunInformation sunInformation)
         {
-            _lightPosition = lightPosition;
+            _sunInformation = sunInformation;
         }
 
         public float EvaluateFitness(Plant plant)
@@ -27,10 +27,10 @@ namespace Assets.Scripts.Genetic_Algorithm
 
             foreach (var leaf in leaves)
             {
-                fitness += leaf.Position.y * 3;
+                fitness += leaf.Position.y;
             }
 
-            return fitness;
+            return fitness * 3;
         }
 
         public float EvaluateDynamicPhototrophicFitness(Plant plant)
@@ -40,8 +40,11 @@ namespace Assets.Scripts.Genetic_Algorithm
 
             foreach (var leaf in leaves)
             {
-                Vector3 toSun = Vector3.Normalize(_lightPosition - leaf.Position);
-                fitness += Mathf.Max(Vector3.Dot(Vector3.Normalize(leaf.RightVector), toSun), 0);
+                Vector3 summerToSun = Quaternion.Euler(0, (float) _sunInformation.Azimuth, (float)_sunInformation.SummerAltitude) * new Vector3(1, 0, 0);
+                Vector3 winterToSun = Quaternion.Euler(0, (float) _sunInformation.Azimuth, (float)_sunInformation.WinterAltitude) * new Vector3(1, 0, 0);
+
+                fitness += Mathf.Max(Vector3.Dot(Vector3.Normalize(leaf.Normal), summerToSun), 0);
+                fitness += Mathf.Max(Vector3.Dot(Vector3.Normalize(leaf.Normal), winterToSun), 0);
             }
 
             return fitness;

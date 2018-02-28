@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Assets.Scripts.Data;
 using Assets.Scripts.LSystems;
 using Assets.Scripts.Render;
 using Assets.Scripts.TurtleGeometry;
@@ -15,13 +16,13 @@ namespace Assets.Scripts.Genetic_Algorithm
         private readonly PlantSelection _selection;
         private readonly PlantFitness _fitness;
 
-        public PlantGenetics(Random randomGenerator, TurtlePen turtlePen, Vector3 lightPosition, float mutationChance)
+        public PlantGenetics(Random randomGenerator, TurtlePen turtlePen, SunInformation sunInformation, float mutationChance)
         {
             _turtlePen = turtlePen;
             _crossOver = new PlantCrossOver(randomGenerator);
             _mutation = new PlantMutation(randomGenerator, mutationChance);
             _selection = new PlantSelection(randomGenerator);
-            _fitness = new PlantFitness(lightPosition);
+            _fitness = new PlantFitness(sunInformation);
         }
 
         public List<Plant> GenerateChildPopulation(List<Plant> parents)
@@ -30,11 +31,11 @@ namespace Assets.Scripts.Genetic_Algorithm
 
             foreach (Plant plant in parents)
             {
-                float fitness = _fitness.EvaluateUpwardsPhototrophicFitness(plant);
+                float fitness = _fitness.EvaluateFitness(plant);
                 fitnessPerParent.Add(plant.LindenMayerSystem, fitness);
             }
 
-            List<List<ILSystem>> parentPairs = _selection.SelectParentPairs(fitnessPerParent, 5);
+            List<List<ILSystem>> parentPairs = _selection.SelectParentPairs(fitnessPerParent, 50);
 
             List<Plant> childPlants = new List<Plant>();
             foreach (List<ILSystem> parentPair in parentPairs)
@@ -53,7 +54,7 @@ namespace Assets.Scripts.Genetic_Algorithm
             float maxFitnessValue = 0;
             foreach (Plant plant in parents)
             {
-                float fitness = _fitness.EvaluateUpwardsPhototrophicFitness(plant);
+                float fitness = _fitness.EvaluateFitness(plant);
 
                 if (fitness > maxFitnessValue)
                 {

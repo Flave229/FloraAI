@@ -1,5 +1,6 @@
 ﻿using System;
 using Assets.Scripts;
+using Assets.Scripts.Data;
 using Assets.Scripts.Genetic_Algorithm;
 using Assets.Scripts.LSystems;
 using Assets.Scripts.Render;
@@ -15,7 +16,12 @@ namespace Assets.Testing.GeneticFitnessTests.GivenTheSunIsDirectlyAbove
         [Test]
         public void ThenTheDynamicPhototrophicFitnessIsTheSame()
         {
-            PlantFitness plantFitness = new PlantFitness(new Vector3(0, 3, 0));
+            PlantFitness plantFitness = new PlantFitness(new SunInformation
+            {
+                SummerAltitude = 90,
+                WinterAltitude = 90,
+                Azimuth = 0
+            });
 
             Mock<GeometryRenderSystem> geometryRenderMock = new Mock<GeometryRenderSystem>();
             TurtlePen turtlePen = new TurtlePen(geometryRenderMock.Object)

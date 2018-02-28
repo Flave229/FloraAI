@@ -45,7 +45,7 @@ namespace Assets.Scripts.Render
         {
             var quad = GameObject.CreatePrimitive(PrimitiveType.Cube);
             quad.transform.position = position;
-            quad.transform.localScale = new Vector3(0.00001f, 0.1f, 0.1f);
+            quad.transform.localScale = new Vector3(0.1f, 0.1f, 0.00001f);
             quad.transform.LookAt(direction);
             quad.transform.up = direction;
             quad.GetComponent<Renderer>().material.color = color;

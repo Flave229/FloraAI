@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Assets.Scripts.Common;
+using Assets.Scripts.Data;
 using Assets.Scripts.Genetic_Algorithm;
 using Assets.Scripts.LSystems;
 using Assets.Scripts.Render;
@@ -19,7 +20,9 @@ namespace Assets.Scripts
 
         public int MaximumGrowthIterations;
         public int MaximumGeneticIterations;
-        public Light Light;
+        public double WinterAltitude;
+        public double SummerAltitude;
+        public double Azimuth;
 
         private void Awake()
         {
@@ -49,7 +52,12 @@ namespace Assets.Scripts
                 }
                 //RotationStep = 2.0f
             };
-            _genetics = new PlantGenetics(new System.Random(), fakeTurtlePen, Light.transform.position, 0.1f);
+            _genetics = new PlantGenetics(new System.Random(), fakeTurtlePen, new SunInformation
+            {
+                WinterAltitude = WinterAltitude,
+                Azimuth = Azimuth,
+                SummerAltitude = SummerAltitude
+            }, 0.01f);
             Dictionary<string, List<LSystemRule>> rules = new Dictionary<string, List<LSystemRule>>
             {
                 {
@@ -109,9 +117,8 @@ namespace Assets.Scripts
         private void Update()
         {
             _cooldown -= Time.deltaTime;
-            if (_cooldown <= 0.0f && _iterations < MaximumGeneticIterations)
+            if (_iterations < MaximumGeneticIterations)
             {
-                _cooldown = 5.0f;
                 ++_iterations;
                 
                 foreach (var plant in _plants)
@@ -122,20 +129,25 @@ namespace Assets.Scripts
                     }
 
                     plant.Generate();
-                    Debug.Log("Total Command: " + plant.LindenMayerSystem.GetCommandString());
                 }
 
                 // Need to get fittest plant
-                KeyValuePair<Plant, float> fittestPlant = _genetics.GetFittestPlant(_plants);
-                Plant plantToDraw = new Plant(fittestPlant.Key.LindenMayerSystem, _realTurtlePen, new PersistentPlantGeometryStorage(), new Vector3(transform.position.x + 1, transform.position.y + 0.775f, transform.position.z + 1));
-                plantToDraw.Generate();
-
-                foreach (var rule in fittestPlant.Key.LindenMayerSystem.GetRuleSet().Rules)
+                if (_cooldown <= 0.0f)
                 {
-                    Debug.Log("Rule " + rule.Key + ": " + rule.Value[0].Rule);
+                    _cooldown = 5.0f;
+                    KeyValuePair<Plant, float> fittestPlant = _genetics.GetFittestPlant(_plants);
+                    Plant plantToDraw = new Plant(fittestPlant.Key.LindenMayerSystem, _realTurtlePen,
+                        new PersistentPlantGeometryStorage(),
+                        new Vector3(transform.position.x + 1, transform.position.y + 0.775f, transform.position.z + 1));
+                    plantToDraw.Generate();
+
+                    foreach (var rule in fittestPlant.Key.LindenMayerSystem.GetRuleSet().Rules)
+                    {
+                        Debug.Log("Rule " + rule.Key + ": " + rule.Value[0].Rule);
+                    }
+                    Debug.Log("Total Command: " + fittestPlant.Key.LindenMayerSystem.GetCommandString());
+                    Debug.Log("Fitness: " + fittestPlant.Value);
                 }
-                Debug.Log("Total Command: " + fittestPlant.Key.LindenMayerSystem.GetCommandString());
-                Debug.Log("Fitness: " + fittestPlant.Value);
 
                 _plants = _genetics.GenerateChildPopulation(_plants);
             }

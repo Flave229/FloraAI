@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.45136225, g: 0.5009361, b: 0.5727624, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657755, g: 0.4964127, b: 0.57481825, a: 1}
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
@@ -254,13 +254,23 @@ Prefab:
     - target: {fileID: 114816208724713728, guid: 1e11cffe420e09747a0e2dc64015659e,
         type: 2}
       propertyPath: MaximumGeneticIterations
-      value: 200
+      value: 1000
       objectReference: {fileID: 0}
     - target: {fileID: 114816208724713728, guid: 1e11cffe420e09747a0e2dc64015659e,
         type: 2}
       propertyPath: Light
       value: 
       objectReference: {fileID: 322178185}
+    - target: {fileID: 114816208724713728, guid: 1e11cffe420e09747a0e2dc64015659e,
+        type: 2}
+      propertyPath: WinterAltitude
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 114816208724713728, guid: 1e11cffe420e09747a0e2dc64015659e,
+        type: 2}
+      propertyPath: SummerAltitude
+      value: 60
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 1e11cffe420e09747a0e2dc64015659e, type: 2}
   m_IsPrefabParent: 0
@@ -323,13 +333,13 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 322178184}
-  m_LocalRotation: {x: 0.23981522, y: -0.40830466, z: 0.11208256, w: 0.8736209}
+  m_LocalRotation: {x: 0.42261827, y: 0, z: 0, w: 0.9063079}
   m_LocalPosition: {x: 0, y: 3, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 30.7, y: -50.1, z: 0}
+  m_LocalEulerAnglesHint: {x: 50, y: 0, z: 0}
 --- !u!114 &322178187
 MonoBehaviour:
   m_ObjectHideFlags: 0

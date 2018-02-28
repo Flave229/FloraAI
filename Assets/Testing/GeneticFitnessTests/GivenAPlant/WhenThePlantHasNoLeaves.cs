@@ -1,4 +1,5 @@
 ﻿using Assets.Scripts;
+using Assets.Scripts.Data;
 using Assets.Scripts.Genetic_Algorithm;
 using Assets.Scripts.LSystems;
 using Assets.Scripts.Render;
@@ -17,7 +18,7 @@ namespace Assets.Testing.GeneticFitnessTests.GivenAPlant
         [SetUp]
         public void SetUp()
         {
-            _plantFitness = new PlantFitness(Vector3.zero);
+            _plantFitness = new PlantFitness(new SunInformation());
 
             Mock<GeometryRenderSystem> geometryRenderMock = new Mock<GeometryRenderSystem>();
             TurtlePen turtlePen = new TurtlePen(geometryRenderMock.Object)

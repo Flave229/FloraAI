@@ -18,7 +18,7 @@ namespace Assets.Scripts.Render
             Leaves.Add(new Leaf
             {
                 Position = position,
-                RightVector = rightVector
+                Normal = rightVector
             });
         }
     }

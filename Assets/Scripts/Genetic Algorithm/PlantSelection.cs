@@ -38,7 +38,7 @@ namespace Assets.Scripts.Genetic_Algorithm
 
         public ILSystem RouletteWheelChoice(Dictionary<ILSystem, float> plantsAndFitness)
         {
-            float fitnessMagnitude = plantsAndFitness.Sum(x => x.Value);
+            float fitnessMagnitude = plantsAndFitness.Sum(x => (float)Math.Pow(x.Value, 1.2));
             float randomNumber = (float)_randomGenerator.NextDouble();
 
             if (fitnessMagnitude <= 0.0001f)
@@ -48,10 +48,11 @@ namespace Assets.Scripts.Genetic_Algorithm
 
             foreach (var plantFitness in plantsAndFitness)
             {
-                if (fitnessSum + plantFitness.Value / fitnessMagnitude >= randomNumber)
+                float exponentialNormalisedValue = (float) Math.Pow(plantFitness.Value, 1.2);
+                if (fitnessSum + exponentialNormalisedValue >= randomNumber)
                     return plantFitness.Key;
 
-                fitnessSum += plantFitness.Value / fitnessMagnitude;
+                fitnessSum += exponentialNormalisedValue;
             }
 
             throw new Exception("No Parent could be found. This should not happen");
