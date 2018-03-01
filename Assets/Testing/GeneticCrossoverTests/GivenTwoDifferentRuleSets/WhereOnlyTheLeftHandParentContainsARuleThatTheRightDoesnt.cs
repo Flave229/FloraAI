@@ -47,7 +47,7 @@ namespace Assets.Testing.GeneticCrossoverTests.GivenTwoDifferentRuleSets
                 }
             });
 
-            RuleSet result = crossOver.CrossOver(leftParentRuleSets, rightParentRuleSets);
+            RuleSet result = crossOver.CrossOverV2(leftParentRuleSets, rightParentRuleSets);
             Assert.That(result.Rules["A"], Is.Not.Null);
         }
     }

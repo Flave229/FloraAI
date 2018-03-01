@@ -9,7 +9,7 @@ namespace Assets.Testing.GeneticCrossoverTests.GivenTwoDifferentRuleSets
     class WhereBothParentsContainTheRuleWithInterchangableBrackets
     {
         [Test]
-        public void ThenTheChildContainsOneParentsDnaWithTheLowerBracketHierarchySwappedWithTheOtherParent()
+        public void ThenTheChildContainsAMixtureOfTheGeneticCode()
         {
             PlantCrossOver crossOver = new PlantCrossOver(new System.Random());
             RuleSet leftParentRuleSets = new RuleSet(new Dictionary<string, List<LSystemRule>>
@@ -56,13 +56,14 @@ namespace Assets.Testing.GeneticCrossoverTests.GivenTwoDifferentRuleSets
                 }
             });
 
-            RuleSet result = crossOver.CrossOver(leftParentRuleSets, rightParentRuleSets);
+            RuleSet result = crossOver.CrossOverV2(leftParentRuleSets, rightParentRuleSets);
             string fRule = result.Rules["F"][0].Rule;
             string aRule = result.Rules["A"][0].Rule;
 
             Debug.Log(fRule);
-            Assert.That(fRule, Is.EqualTo("+F[-F-F]").Or.EqualTo("-F[+F+F]"));
-            Assert.That(aRule, Is.EqualTo("+A[-A-A]").Or.EqualTo("-A[+A+A]"));
+            Debug.Log(aRule);
+            Assert.That(fRule, Is.EqualTo("+F[+F+F]").Or.EqualTo("+F[-F-F]").Or.EqualTo("-F[+F+F]").Or.EqualTo("-F[-F-F]"));
+            Assert.That(aRule, Is.EqualTo("+A[+A+A]").Or.EqualTo("+A[-A-A]").Or.EqualTo("-A[+A+A]").Or.EqualTo("-A[-A-A]"));
         }
     }
 }

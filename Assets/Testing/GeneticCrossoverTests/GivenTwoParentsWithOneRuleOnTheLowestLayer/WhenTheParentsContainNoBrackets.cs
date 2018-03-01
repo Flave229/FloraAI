@@ -37,7 +37,7 @@ namespace Assets.Testing.GeneticCrossoverTests.GivenTwoParentsWithOneRuleOnTheLo
                 }
             });
 
-            RuleSet result = crossOver.CrossOver(leftParentRuleSets, rightParentRuleSets);
+            RuleSet result = crossOver.CrossOverV2(leftParentRuleSets, rightParentRuleSets);
             string fRule = result.Rules["F"][0].Rule;
 
             Assert.That(fRule, Is.EqualTo(leftParentRuleSets.Rules["F"][0].Rule).Or.EqualTo(rightParentRuleSets.Rules["F"][0].Rule));
