@@ -35,12 +35,13 @@ namespace Assets.Scripts.Genetic_Algorithm
                 fitnessPerParent.Add(plant.LindenMayerSystem, fitness);
             }
 
-            List<List<ILSystem>> parentPairs = _selection.SelectParentPairs(fitnessPerParent, 50);
+            List<List<ILSystem>> parentPairs = _selection.SelectParentPairs(fitnessPerParent, 20);
 
             List<Plant> childPlants = new List<Plant>();
             foreach (List<ILSystem> parentPair in parentPairs)
             {
-                RuleSet childRuleSet = _crossOver.CrossOver(parentPair[0].GetRuleSet(), parentPair[1].GetRuleSet());
+                //RuleSet childRuleSet = _crossOver.CrossOver(parentPair[0].GetRuleSet(), parentPair[1].GetRuleSet());
+                RuleSet childRuleSet = _crossOver.CrossOverV2(parentPair[0].GetRuleSet(), parentPair[1].GetRuleSet());
                 childRuleSet = _mutation.Mutate(childRuleSet);
                 childPlants.Add(new Plant(new LSystem(childRuleSet, "A"), _turtlePen, new PersistentPlantGeometryStorage(), Vector3.zero));
             }

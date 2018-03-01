@@ -8,13 +8,15 @@ namespace Assets.Scripts.Genetic_Algorithm
     {
         private readonly Random _randomGenerator;
         private readonly float _mutationChance;
-        private readonly List<string> _mutableList;
+        private List<string> _mutableCharacters;
+        private List<string> _mutableSymbols;
 
         public PlantMutation(Random randomGenerator, float mutationChance)
         {
             _randomGenerator = randomGenerator;
             _mutationChance = mutationChance;
-            _mutableList = new List<string> { "F", "+F", "-F", "&F", "^F", "\\F", "/F", "L" };
+            _mutableCharacters = new List<string> {"F", "L"};
+            _mutableSymbols = new List<string> { "", "+", "-", "&", "^", "\\", "/"};
         }
 
         public RuleSet Mutate(RuleSet ruleSet)
@@ -93,8 +95,9 @@ namespace Assets.Scripts.Genetic_Algorithm
 
             for (int i = 0; i < randomAmount; ++i)
             {
-                int randomCharacter = _randomGenerator.Next(0, _mutableList.Count);
-                newBlock += _mutableList[randomCharacter];
+                int randomCharacter = _randomGenerator.Next(0, _mutableCharacters.Count);
+                int randomSymbol = _randomGenerator.Next(0, _mutableSymbols.Count);
+                newBlock += _mutableSymbols[randomSymbol] + _mutableCharacters[randomCharacter];
             }
 
             newBlock += "]";
@@ -118,12 +121,13 @@ namespace Assets.Scripts.Genetic_Algorithm
                     case '/':
                         if (rule[i + 1] != 'F')
                         {
-                            newRule += character;
+                            newRule += MutateSymbol(character.ToString(), false);
                             continue;
                         }
 
                         ++i;
-                        newRule += MutateCharacter(character + "F");
+                        newRule += MutateSymbol(character.ToString(), true);
+                        newRule += MutateCharacter("F");
                         continue;
                     case 'F':
                     case 'L':
@@ -137,20 +141,29 @@ namespace Assets.Scripts.Genetic_Algorithm
             return newRule;
         }
 
+        private string MutateSymbol(string symbol, bool includeEmptyCharacter)
+        {
+            double randomChance = _randomGenerator.NextDouble();
+            if (randomChance >= _mutationChance)
+                return symbol;
+
+            string newMutatedCharacter = symbol;
+            while (newMutatedCharacter == symbol && (includeEmptyCharacter || newMutatedCharacter != ""))
+            {
+                int randomSymbol = _randomGenerator.Next(0, _mutableSymbols.Count);
+                newMutatedCharacter = _mutableSymbols[randomSymbol];
+            }
+            return newMutatedCharacter;
+        }
 
         private string MutateCharacter(string character)
         {
             double randomChance = _randomGenerator.NextDouble();
             if (randomChance >= _mutationChance)
                 return character;
-
-            string newMutatedCharacter = character;
-            while (newMutatedCharacter == character)
-            {
-                int randomMutableIndex = _randomGenerator.Next(0, _mutableList.Count);
-                newMutatedCharacter = _mutableList[randomMutableIndex];
-            }
-            return newMutatedCharacter;
+            
+            int randomCharacter = _randomGenerator.Next(0, _mutableCharacters.Count);
+            return _mutableCharacters[randomCharacter];
         }
     }
 }

@@ -14,6 +14,135 @@ namespace Assets.Scripts.Genetic_Algorithm
             _randomGenerator = randomGenerator;
         }
 
+        public RuleSet CrossOverV2(RuleSet leftParentRuleSet, RuleSet rightParentRuleSet)
+        {
+            Dictionary<string, List<LSystemRule>> rules = new Dictionary<string, List<LSystemRule>>();
+
+            foreach (var leftParentRule in leftParentRuleSet.Rules)
+            {
+                if (rightParentRuleSet.Rules.ContainsKey(leftParentRule.Key) == false)
+                {
+                    rules.Add(leftParentRule.Key, new List<LSystemRule>(leftParentRule.Value));
+                    continue;
+                }
+
+                Dictionary<int, List<string>> allHierarchicalRules = SeperateBracketHierarchy(leftParentRule.Value[0].Rule); // Only accepts one possibility
+                Dictionary<int, List<string>> hierarchicalBracketedRightRules = SeperateBracketHierarchy(rightParentRuleSet.Rules[leftParentRule.Key][0].Rule); // Only accepts one possibility
+
+                foreach (var rightRule in hierarchicalBracketedRightRules)
+                {
+                    if (allHierarchicalRules.ContainsKey(rightRule.Key))
+                        allHierarchicalRules[rightRule.Key].AddRange(rightRule.Value);
+                    else
+                        allHierarchicalRules.Add(rightRule.Key, rightRule.Value);
+                }
+
+                string crossOverRule = CrossOverCompleteBracketHierarchy(allHierarchicalRules);
+
+                rules.Add(leftParentRule.Key, new List<LSystemRule>
+                {
+                    new LSystemRule
+                    {
+                        Probability = 1,
+                        Rule = crossOverRule
+                    }
+                });
+            }
+
+            Dictionary<string, List<LSystemRule>> rulesNotIncludedOnLeftSide = rightParentRuleSet.Rules
+                .Where(rightRule => leftParentRuleSet.Rules.ContainsKey(rightRule.Key) == false)
+                .ToDictionary(x => x.Key, x => x.Value);
+
+            foreach (var rightParentRule in rulesNotIncludedOnLeftSide)
+            {
+                rules.Add(rightParentRule.Key, rightParentRule.Value);
+            }
+
+            return new RuleSet(rules);
+        }
+
+        private Dictionary<int, List<string>> SeperateBracketHierarchy(string rule)
+        {
+            int stringIndex = 0;
+            int bracketLayer = 0;
+            return SeperateBracketHierarchy(rule, ref stringIndex, ref bracketLayer);
+        }
+
+        private Dictionary<int, List<string>> SeperateBracketHierarchy(string rule, ref int stringIndex, ref int bracketsDeep)
+        {
+            Dictionary<int, List<string>> bracketHierarchy = new Dictionary<int, List<string>>();
+
+            string ruleOnThisLayer = "";
+            int deepestBracketInside = 0;
+            for (; stringIndex < rule.Length; ++stringIndex)
+            {
+                char character = rule[stringIndex];
+                switch (character)
+                {
+                    case '[':
+                        ++stringIndex;
+                        ruleOnThisLayer += "[%]";
+                        int bracketsBelowMe = bracketsDeep + 1;
+                        Dictionary<int, List<string>> lowerLevelBracketHierarchy = SeperateBracketHierarchy(rule, ref stringIndex, ref bracketsBelowMe);
+
+                        foreach (var subRule in lowerLevelBracketHierarchy)
+                        {
+                            if (bracketHierarchy.ContainsKey(subRule.Key))
+                                bracketHierarchy[subRule.Key].AddRange(subRule.Value);
+                            else
+                                bracketHierarchy.Add(subRule.Key, subRule.Value);
+                        }
+
+                        if (bracketsBelowMe > deepestBracketInside)
+                            deepestBracketInside = bracketsBelowMe;
+
+                        break;
+                    case ']':
+                        if (bracketHierarchy.ContainsKey(deepestBracketInside))
+                            bracketHierarchy[deepestBracketInside].Add(ruleOnThisLayer);
+                        else
+                            bracketHierarchy.Add(deepestBracketInside, new List<string> { ruleOnThisLayer });
+
+                        return bracketHierarchy;
+                    default:
+                        ruleOnThisLayer += character;
+                        break;
+                }
+            }
+            
+            if (bracketHierarchy.ContainsKey(deepestBracketInside))
+                bracketHierarchy[deepestBracketInside].Add(ruleOnThisLayer);
+            else
+                bracketHierarchy.Add(deepestBracketInside, new List<string> { ruleOnThisLayer });
+
+            return bracketHierarchy;
+        }
+
+        private string CrossOverCompleteBracketHierarchy(Dictionary<int, List<string>> allHierarchicalRules)
+        {
+            string childRule = "%";
+            for (int i = allHierarchicalRules.Count - 1; i >= 0; --i)
+            {
+                List<string> rulePossibilities = allHierarchicalRules[i];
+                
+                int wildcardIndex = childRule.IndexOf("%");
+                while (wildcardIndex != -1)
+                {
+                    int randomRuleIndex = _randomGenerator.Next(0, rulePossibilities.Count);
+                    string randomRule = rulePossibilities[randomRuleIndex];
+
+                    if (wildcardIndex != childRule.Length - 1)
+                        childRule = childRule.Substring(0, wildcardIndex) + randomRule + childRule.Substring(wildcardIndex + 1, childRule.Length - (wildcardIndex + 1));
+                    else
+                        childRule = childRule.Substring(0, wildcardIndex) + randomRule;
+
+                    wildcardIndex = childRule.IndexOf("%", wildcardIndex + randomRule.Length);
+                }
+            }
+
+            return childRule;
+        }
+
         public RuleSet CrossOver(RuleSet leftParentRuleSet, RuleSet rightParentRuleSet)
         {
             Dictionary<string, List<LSystemRule>> rules = new Dictionary<string, List<LSystemRule>>();

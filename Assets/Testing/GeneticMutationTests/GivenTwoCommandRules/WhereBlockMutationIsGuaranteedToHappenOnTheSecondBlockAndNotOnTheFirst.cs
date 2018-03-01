@@ -21,7 +21,7 @@ namespace Assets.Testing.GeneticMutationTests.GivenTwoCommandRules
                 .Returns(() =>
                 {
                     ++_calls;
-                    return _calls == 8 || _calls == 10 ? -1 : 0; // Forces an always successful mutation on second run
+                    return _calls == 14 || _calls == 22 ? -1 : 0; // Forces an always successful mutation on second run
                 });
 
             randomMock.Setup(x => x.Next(It.IsAny<int>(), It.IsAny<int>()))

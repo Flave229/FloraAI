@@ -20,7 +20,7 @@ namespace Assets.Testing.GeneticMutationTests.GivenACommandRule
                 .Returns(() =>
                 {
                     ++_calls;
-                    return _calls == 2 ? -1 : 0;
+                    return _calls == 3 || _calls == 4 ? -1 : 0;
                 }); // Forces an always successful mutation on first run
 
             randomMock.Setup(x => x.Next(It.IsAny<int>(), It.IsAny<int>()))
@@ -47,8 +47,9 @@ namespace Assets.Testing.GeneticMutationTests.GivenACommandRule
             string fRule = mutatedRuleSet.Rules["F"][0].Rule;
 
             Debug.Log("Entire Rule: " + fRule);
-            Assert.That(fRule.Substring(0, 2), Is.EqualTo("+F"));
+            Assert.That(fRule.Substring(0, 3), Is.EqualTo("+F["));
             Assert.That(fRule.Substring(2, fRule.Length - 2), Is.Not.EqualTo("[+F+F]"));
+            Assert.That(fRule.Substring(fRule.Length - 3, 3), Is.EqualTo("+F]"));
         }
     }
 }
