@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657755, g: 0.4964127, b: 0.57481825, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657993, g: 0.4964143, b: 0.5748183, a: 1}
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
@@ -254,7 +254,7 @@ Prefab:
     - target: {fileID: 114816208724713728, guid: 1e11cffe420e09747a0e2dc64015659e,
         type: 2}
       propertyPath: MaximumGeneticIterations
-      value: 50
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 114816208724713728, guid: 1e11cffe420e09747a0e2dc64015659e,
         type: 2}
@@ -270,6 +270,11 @@ Prefab:
         type: 2}
       propertyPath: SummerAltitude
       value: 60
+      objectReference: {fileID: 0}
+    - target: {fileID: 114816208724713728, guid: 1e11cffe420e09747a0e2dc64015659e,
+        type: 2}
+      propertyPath: Azimuth
+      value: 240
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 1e11cffe420e09747a0e2dc64015659e, type: 2}
@@ -333,13 +338,13 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 322178184}
-  m_LocalRotation: {x: 0.42261827, y: 0, z: 0, w: 0.9063079}
+  m_LocalRotation: {x: -0.2113091, y: 0.78488564, z: -0.36599812, w: -0.45315394}
   m_LocalPosition: {x: 0, y: 3, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 50, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 50, y: 240, z: 0}
 --- !u!114 &322178187
 MonoBehaviour:
   m_ObjectHideFlags: 0

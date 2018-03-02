@@ -27,8 +27,8 @@ namespace Assets.Scripts
         private void Awake()
         {
             _iterations = 0;
-            Mock<GeometryRenderSystem> renderSystem = new Mock<GeometryRenderSystem>();
-            TurtlePen fakeTurtlePen = new TurtlePen(renderSystem.Object)
+            IRenderSystem renderSystem = new NullRenderSystem();
+            TurtlePen fakeTurtlePen = new TurtlePen(renderSystem)
             {
                 ForwardStep = 0.1f,
                 RotationStep = 22.5f,
@@ -116,8 +116,7 @@ namespace Assets.Scripts
 
         private void Update()
         {
-
-            for (int i = _iterations; i < MaximumGeneticIterations; ++i)
+            for (; _iterations < MaximumGeneticIterations; ++_iterations)
             {
                 foreach (var plant in _plants)
                 {
@@ -131,11 +130,20 @@ namespace Assets.Scripts
 
                 _plants = _genetics.GenerateChildPopulation(_plants);
             }
-
-            _iterations = MaximumGeneticIterations;
+            
             // Need to get fittest plant
             if (_iterations == MaximumGeneticIterations)
             {
+                foreach (var plant in _plants)
+                {
+                    for (int j = 0; j < MaximumGrowthIterations; ++j)
+                    {
+                        plant.Update();
+                    }
+
+                    plant.Generate();
+                }
+
                 ++_iterations;
                 KeyValuePair<Plant, float> fittestPlant = _genetics.GetFittestPlant(_plants);
                 Plant plantToDraw = new Plant(fittestPlant.Key.LindenMayerSystem, _realTurtlePen,
