@@ -35,7 +35,7 @@ namespace Assets.Scripts.Genetic_Algorithm
                 fitnessPerParent.Add(plant.LindenMayerSystem, fitness);
             }
 
-            List<List<ILSystem>> parentPairs = _selection.SelectParentPairs(fitnessPerParent, 20);
+            List<List<ILSystem>> parentPairs = _selection.SelectParentPairs(fitnessPerParent, 50);
 
             List<Plant> childPlants = new List<Plant>();
             foreach (List<ILSystem> parentPair in parentPairs)

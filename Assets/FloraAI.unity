@@ -254,7 +254,7 @@ Prefab:
     - target: {fileID: 114816208724713728, guid: 1e11cffe420e09747a0e2dc64015659e,
         type: 2}
       propertyPath: MaximumGeneticIterations
-      value: 1000
+      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 114816208724713728, guid: 1e11cffe420e09747a0e2dc64015659e,
         type: 2}

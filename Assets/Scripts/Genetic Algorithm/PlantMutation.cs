@@ -15,7 +15,7 @@ namespace Assets.Scripts.Genetic_Algorithm
         {
             _randomGenerator = randomGenerator;
             _mutationChance = mutationChance;
-            _mutableCharacters = new List<string> {"F", "L"};
+            _mutableCharacters = new List<string> {"F", "L", "S", "A" };
             _mutableSymbols = new List<string> { "", "+", "-", "&", "^", "\\", "/"};
         }
 
@@ -131,6 +131,8 @@ namespace Assets.Scripts.Genetic_Algorithm
                         continue;
                     case 'F':
                     case 'L':
+                    case 'A':
+                    case 'S':
                         newRule += MutateCharacter(character.ToString());
                         break;
                     default:

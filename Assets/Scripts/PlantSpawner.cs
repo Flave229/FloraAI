@@ -116,11 +116,9 @@ namespace Assets.Scripts
 
         private void Update()
         {
-            _cooldown -= Time.deltaTime;
-            if (_iterations < MaximumGeneticIterations)
+
+            for (int i = _iterations; i < MaximumGeneticIterations; ++i)
             {
-                ++_iterations;
-                
                 foreach (var plant in _plants)
                 {
                     for (int j = 0; j < MaximumGrowthIterations; ++j)
@@ -131,26 +129,63 @@ namespace Assets.Scripts
                     plant.Generate();
                 }
 
-                // Need to get fittest plant
-                if (_cooldown <= 0.0f)
-                {
-                    _cooldown = 5.0f;
-                    KeyValuePair<Plant, float> fittestPlant = _genetics.GetFittestPlant(_plants);
-                    Plant plantToDraw = new Plant(fittestPlant.Key.LindenMayerSystem, _realTurtlePen,
-                        new PersistentPlantGeometryStorage(),
-                        new Vector3(transform.position.x + 1, transform.position.y + 0.775f, transform.position.z + 1));
-                    plantToDraw.Generate();
-
-                    foreach (var rule in fittestPlant.Key.LindenMayerSystem.GetRuleSet().Rules)
-                    {
-                        Debug.Log("Rule " + rule.Key + ": " + rule.Value[0].Rule);
-                    }
-                    Debug.Log("Total Command: " + fittestPlant.Key.LindenMayerSystem.GetCommandString());
-                    Debug.Log("Fitness: " + fittestPlant.Value);
-                }
-
                 _plants = _genetics.GenerateChildPopulation(_plants);
             }
+
+            _iterations = MaximumGeneticIterations;
+            // Need to get fittest plant
+            if (_iterations == MaximumGeneticIterations)
+            {
+                ++_iterations;
+                KeyValuePair<Plant, float> fittestPlant = _genetics.GetFittestPlant(_plants);
+                Plant plantToDraw = new Plant(fittestPlant.Key.LindenMayerSystem, _realTurtlePen,
+                    new PersistentPlantGeometryStorage(),
+                    new Vector3(transform.position.x + 1, transform.position.y + 0.775f, transform.position.z + 1));
+                plantToDraw.Generate();
+
+                foreach (var rule in fittestPlant.Key.LindenMayerSystem.GetRuleSet().Rules)
+                {
+                    Debug.Log("Rule " + rule.Key + ": " + rule.Value[0].Rule);
+                }
+                Debug.Log("Total Command: " + fittestPlant.Key.LindenMayerSystem.GetCommandString());
+                Debug.Log("Fitness: " + fittestPlant.Value);
+            }
+
+            //_cooldown -= Time.deltaTime;
+            //if (_iterations < MaximumGeneticIterations)
+            //{
+            //    ++_iterations;
+
+            //    foreach (var plant in _plants)
+            //    {
+            //        for (int j = 0; j < MaximumGrowthIterations; ++j)
+            //        {
+            //            plant.Update();
+            //        }
+
+            //        plant.Generate();
+            //    }
+
+            //    // Need to get fittest plant
+            //    if (_cooldown <= 0.0f)
+            //    {
+            //        _cooldown = 5.0f;
+            //        KeyValuePair<Plant, float> fittestPlant = _genetics.GetFittestPlant(_plants);
+            //        Plant plantToDraw = new Plant(fittestPlant.Key.LindenMayerSystem, _realTurtlePen,
+            //            new PersistentPlantGeometryStorage(),
+            //            new Vector3(transform.position.x + 1, transform.position.y + 0.775f, transform.position.z + 1));
+            //        plantToDraw.Generate();
+
+            //        //foreach (var rule in fittestPlant.Key.LindenMayerSystem.GetRuleSet().Rules)
+            //        //{
+            //        //    Debug.Log("Rule " + rule.Key + ": " + rule.Value[0].Rule);
+            //        //}
+            //        //Debug.Log("Total Command: " + fittestPlant.Key.LindenMayerSystem.GetCommandString());
+            //        //Debug.Log("Fitness: " + fittestPlant.Value);
+            //    }
+
+            //    _plants = _genetics.GenerateChildPopulation(_plants);
+            //}
         }
     }
 }
