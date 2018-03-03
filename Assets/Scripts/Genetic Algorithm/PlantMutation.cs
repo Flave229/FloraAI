@@ -218,7 +218,7 @@ namespace Assets.Scripts.Genetic_Algorithm
 
                 int randomBlockToExtract = _randomGenerator.Next(0, startAndEndIndexesOfBrackets.Count);
                 KeyValuePair<int, int> indexesToExtract = startAndEndIndexesOfBrackets[randomBlockToExtract];
-                return rule.Substring(0, indexesToExtract.Key) + rule.Substring(indexesToExtract.Value, rule.Length - indexesToExtract.Value);
+                return rule.Substring(0, indexesToExtract.Key) + rule.Substring(indexesToExtract.Value, rule.Length - indexesToExtract.Value - indexesToExtract.Key + 1);
             }
 
             return rule;

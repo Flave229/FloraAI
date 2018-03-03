@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace Assets.Testing.GeneticMutationTests.GivenACommandRule
 {
-    class WhenBlockInjectionDoesNotHappen
+    class WhenBlockInjectionAndExtractionDoesNotHappen
     {
         [Test]
         public void ThenTheRuleDoesNotChange()
