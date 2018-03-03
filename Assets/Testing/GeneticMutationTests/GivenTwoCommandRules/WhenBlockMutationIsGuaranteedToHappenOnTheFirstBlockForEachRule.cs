@@ -7,14 +7,24 @@ using UnityEngine;
 
 namespace Assets.Testing.GeneticMutationTests.GivenTwoCommandRules
 {
-    class WhereBlockMutationDoesNotHappen
+    class WhenBlockMutationIsGuaranteedToHappenOnTheFirstBlockForEachRule
     {
+        private static int _calls;
+
         [Test]
-        public void ThenTheRuleDoesNotChange()
+        public void ThenTheFirstBlockIsMutated()
         {
+            var actualRandom = new System.Random();
             var randomMock = new Mock<System.Random>();
             randomMock.Setup(x => x.NextDouble())
-                .Returns(0);
+                .Returns(() =>
+                {
+                    ++_calls;
+                    return _calls == 7 || _calls == 15 ? -1 : 0;
+                }); // Forces an always successful mutation on first run
+
+            randomMock.Setup(x => x.Next(It.IsAny<int>(), It.IsAny<int>()))
+                .Returns((int lowerBound, int upperBound) => actualRandom.Next(lowerBound, upperBound));
 
             PlantMutation mutation = new PlantMutation(randomMock.Object, 0);
             
@@ -47,10 +57,17 @@ namespace Assets.Testing.GeneticMutationTests.GivenTwoCommandRules
             string fRule = mutatedRuleSet.Rules["F"][0].Rule;
             string aRule = mutatedRuleSet.Rules["A"][0].Rule;
 
-            Debug.Log("After Mutation F Rule: " + fRule);
-            Debug.Log("After Mutation A Rule: " + aRule);
-            Assert.That(fRule, Is.EqualTo("+F[+F+F]"));
-            Assert.That(aRule, Is.EqualTo("+A[+A+A]"));
+            Debug.Log("Entire F Rule: " + fRule);
+            Debug.Log("Entire A Rule: " + aRule);
+            Debug.Log("Mutated F Block: " + fRule.Substring(2, fRule.Length - 2));
+            Debug.Log("Mutated A Block: " + aRule.Substring(2, aRule.Length - 2));
+            Assert.That(fRule.Substring(0, 2), Is.EqualTo("+F"));
+            Assert.That(fRule.Substring(2, fRule.Length - 2).Length, Is.AtLeast(3));
+            Assert.That(fRule.Substring(2, fRule.Length - 2), Is.Not.EqualTo("[+F+F]"));
+
+            Assert.That(aRule.Substring(0, 2), Is.EqualTo("+A"));
+            Assert.That(aRule.Substring(2, aRule.Length - 2).Length, Is.AtLeast(3));
+            Assert.That(aRule.Substring(2, aRule.Length - 2), Is.Not.EqualTo("[+A+A]"));
         }
     }
 }

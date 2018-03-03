@@ -1,13 +1,13 @@
-﻿using Assets.Scripts.Genetic_Algorithm;
+﻿using System.Collections.Generic;
+using Assets.Scripts.Genetic_Algorithm;
 using Assets.Scripts.LSystems;
-using NUnit.Framework;
-using System.Collections.Generic;
 using Moq;
+using NUnit.Framework;
 using UnityEngine;
 
-namespace Assets.Testing.GeneticMutationTests.GivenACommandRule
+namespace Assets.Testing.GeneticMutationTests.GivenTwoCommandRules
 {
-    class WhereBlockMutationDoesNotHappen
+    class WhenBlockMutationDoesNotHappen
     {
         [Test]
         public void ThenTheRuleDoesNotChange()
@@ -28,16 +28,29 @@ namespace Assets.Testing.GeneticMutationTests.GivenACommandRule
                             Rule = "+F[+F+F]"
                         }
                     }
+                },
+                { "A", new List<LSystemRule>
+                    {
+                        new LSystemRule
+                        {
+                            Probability = 1,
+                            Rule = "+A[+A+A]"
+                        }
+                    }
                 }
             });
 
-            Debug.Log("Original Rule: " + ruleSet.Rules["F"][0].Rule);
+            Debug.Log("Original F Rule: " + ruleSet.Rules["F"][0].Rule);
+            Debug.Log("Original A Rule: " + ruleSet.Rules["A"][0].Rule);
 
             RuleSet mutatedRuleSet = mutation.Mutate(ruleSet);
             string fRule = mutatedRuleSet.Rules["F"][0].Rule;
+            string aRule = mutatedRuleSet.Rules["A"][0].Rule;
 
-            Debug.Log("After Mutation Rule: " + fRule);
+            Debug.Log("After Mutation F Rule: " + fRule);
+            Debug.Log("After Mutation A Rule: " + aRule);
             Assert.That(fRule, Is.EqualTo("+F[+F+F]"));
+            Assert.That(aRule, Is.EqualTo("+A[+A+A]"));
         }
     }
 }

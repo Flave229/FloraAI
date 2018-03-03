@@ -1,20 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using Assets.Scripts.Genetic_Algorithm;
 using Assets.Scripts.LSystems;
+using Moq;
 using NUnit.Framework;
 using UnityEngine;
 
 namespace Assets.Testing.GeneticMutationTests.GivenACommandRule
 {
-    class WhereTheCommandStringContainsNoBrackets
+    class WhenBlockInjectionDoesNotHappen
     {
         [Test]
-        public void ThenNoMutationOccurs()
+        public void ThenTheRuleDoesNotChange()
         {
-            PlantMutation mutation = new PlantMutation(new System.Random(), 0);
+            var randomMock = new Mock<System.Random>();
+            randomMock.Setup(x => x.NextDouble())
+                .Returns(0);
+
+            PlantMutation mutation = new PlantMutation(randomMock.Object, 0);
 
             RuleSet ruleSet = new RuleSet(new Dictionary<string, List<LSystemRule>>
             {
@@ -23,7 +25,7 @@ namespace Assets.Testing.GeneticMutationTests.GivenACommandRule
                         new LSystemRule
                         {
                             Probability = 1,
-                            Rule = "+F"
+                            Rule = "+F[+F+F]"
                         }
                     }
                 }
@@ -35,7 +37,7 @@ namespace Assets.Testing.GeneticMutationTests.GivenACommandRule
             string fRule = mutatedRuleSet.Rules["F"][0].Rule;
 
             Debug.Log("After Mutation Rule: " + fRule);
-            Assert.That(fRule, Is.EqualTo("+F"));
+            Assert.That(fRule, Is.EqualTo("+F[+F+F]"));
         }
     }
 }

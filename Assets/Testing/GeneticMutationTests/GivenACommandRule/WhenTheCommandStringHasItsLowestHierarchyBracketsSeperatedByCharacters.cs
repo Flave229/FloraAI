@@ -7,10 +7,10 @@ using UnityEngine;
 
 namespace Assets.Testing.GeneticMutationTests.GivenACommandRule
 {
-    class WhereSymbolMutationDoesNotHappen
+    class WhenTheCommandStringHasItsLowestHierarchyBracketsSeperatedByCharacters
     {
         [Test]
-        public void ThenTheRuleDoesNotChange()
+        public void ThenTheCharactersBetweenTheBracketsAreReturned()
         {
             var randomMock = new Mock<System.Random>();
             randomMock.Setup(x => x.NextDouble())
@@ -25,7 +25,7 @@ namespace Assets.Testing.GeneticMutationTests.GivenACommandRule
                         new LSystemRule
                         {
                             Probability = 1,
-                            Rule = "+F[+F+F]"
+                            Rule = "+F[+F+F]FFFFF[+F+F+F]"
                         }
                     }
                 }
@@ -37,7 +37,7 @@ namespace Assets.Testing.GeneticMutationTests.GivenACommandRule
             string fRule = mutatedRuleSet.Rules["F"][0].Rule;
 
             Debug.Log("After Mutation Rule: " + fRule);
-            Assert.That(fRule, Is.EqualTo("+F[+F+F]"));
+            Assert.That(fRule, Is.EqualTo("+F[+F+F]FFFFF[+F+F+F]"));
         }
     }
 }

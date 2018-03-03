@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace Assets.Testing.GeneticMutationTests.GivenACommandRule
 {
-    class WhereBlockMutationIsGuaranteedToHappenOnTheFirstBlock
+    class WhenBlockMutationIsGuaranteedToHappenOnTheFirstBlock
     {
         private static int _calls;
 

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Assets.Scripts.Genetic_Algorithm;
 using Assets.Scripts.LSystems;
 using NUnit.Framework;
@@ -6,7 +7,7 @@ using UnityEngine;
 
 namespace Assets.Testing.GeneticCrossoverTests.GivenTwoDifferentRuleSets
 {
-    class WhereOnlyTheLeftHandParentContainsARuleThatTheRightDoesnt
+    class WhenOnlyTheRightHandParentContainsARuleThatTheLeftDoesnt
     {
         [Test]
         public void ThenTheChildContainsTheMissingRule()
@@ -22,16 +23,7 @@ namespace Assets.Testing.GeneticCrossoverTests.GivenTwoDifferentRuleSets
                             Rule = "+F[+F+F]"
                         }
                     }
-                },
-                { "A", new List<LSystemRule>
-                    {
-                        new LSystemRule
-                        {
-                            Probability = 1,
-                            Rule = "+A[+A+A]"
-                        }
-                    }
-                },
+                }
             });
 
             RuleSet rightParentRuleSets = new RuleSet(new Dictionary<string, List<LSystemRule>>
@@ -44,7 +36,16 @@ namespace Assets.Testing.GeneticCrossoverTests.GivenTwoDifferentRuleSets
                             Rule = "-F[-F-F]"
                         }
                     }
-                }
+                },
+                { "A", new List<LSystemRule>
+                    {
+                        new LSystemRule
+                        {
+                            Probability = 1,
+                            Rule = "-A[-A-A]"
+                        }
+                    }
+                },
             });
 
             RuleSet result = crossOver.CrossOverV2(leftParentRuleSets, rightParentRuleSets);

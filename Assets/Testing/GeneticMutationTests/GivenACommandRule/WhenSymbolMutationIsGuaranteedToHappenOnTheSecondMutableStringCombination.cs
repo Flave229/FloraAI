@@ -7,12 +7,12 @@ using UnityEngine;
 
 namespace Assets.Testing.GeneticMutationTests.GivenACommandRule
 {
-    class WhereSymbolMutationIsGuaranteedToHappenOnTheFirstMutableStringCombination
+    class WhenSymbolMutationIsGuaranteedToHappenOnTheSecondMutableStringCombination
     {
         private static int _calls;
 
         [Test]
-        public void ThenTheFirstSymbolIsMutated()
+        public void ThenTheSecondSymbolIsMutated()
         {
             var actualRandom = new System.Random();
             var randomMock = new Mock<System.Random>();
@@ -20,7 +20,7 @@ namespace Assets.Testing.GeneticMutationTests.GivenACommandRule
                 .Returns(() =>
                 {
                     ++_calls;
-                    return _calls == 1 ? -1 : 0;
+                    return _calls == 3 || _calls == 4 ? -1 : 0;
                 }); // Forces an always successful mutation on first run
 
             randomMock.Setup(x => x.Next(It.IsAny<int>(), It.IsAny<int>()))
@@ -40,15 +40,16 @@ namespace Assets.Testing.GeneticMutationTests.GivenACommandRule
                     }
                 }
             });
-
+            
             Debug.Log("Original Rule: " + ruleSet.Rules["F"][0].Rule);
 
             RuleSet mutatedRuleSet = mutation.Mutate(ruleSet);
             string fRule = mutatedRuleSet.Rules["F"][0].Rule;
 
             Debug.Log("Entire Rule: " + fRule);
-            Assert.That(fRule.Substring(0, 2), Is.Not.EqualTo("+F"));
-            Assert.That(fRule.Substring(fRule.Length - 6, 6), Is.EqualTo("[+F+F]"));
+            Assert.That(fRule.Substring(0, 3), Is.EqualTo("+F["));
+            Assert.That(fRule.Substring(2, fRule.Length - 2), Is.Not.EqualTo("[+F+F]"));
+            Assert.That(fRule.Substring(fRule.Length - 3, 3), Is.EqualTo("+F]"));
         }
     }
 }

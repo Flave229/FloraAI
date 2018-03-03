@@ -7,21 +7,22 @@ using UnityEngine;
 
 namespace Assets.Testing.GeneticMutationTests.GivenACommandRule
 {
-    class WhereSymbolMutationIsGuaranteedToHappenOnTheSecondMutableStringCombination
+    class WhenBlockMutationIsGuaranteedToHappenOnTheSecondBlockAndNotOnTheFirst
     {
         private static int _calls;
 
         [Test]
-        public void ThenTheSecondSymbolIsMutated()
+        public void ThenTheSecondBlockIsMutatedAndTheFirstBlockRemainsTheSame()
         {
             var actualRandom = new System.Random();
             var randomMock = new Mock<System.Random>();
+            _calls = 0;
             randomMock.Setup(x => x.NextDouble())
                 .Returns(() =>
                 {
                     ++_calls;
-                    return _calls == 3 || _calls == 4 ? -1 : 0;
-                }); // Forces an always successful mutation on first run
+                    return _calls == 14 ? -1 : 0; // Forces an always successful mutation on second run
+                });
 
             randomMock.Setup(x => x.Next(It.IsAny<int>(), It.IsAny<int>()))
                 .Returns((int lowerBound, int upperBound) => actualRandom.Next(lowerBound, upperBound));
@@ -35,21 +36,23 @@ namespace Assets.Testing.GeneticMutationTests.GivenACommandRule
                         new LSystemRule
                         {
                             Probability = 1,
-                            Rule = "+F[+F+F]"
+                            Rule = "+F[+F+F][+F+F+F]"
                         }
                     }
                 }
             });
-            
+
             Debug.Log("Original Rule: " + ruleSet.Rules["F"][0].Rule);
 
             RuleSet mutatedRuleSet = mutation.Mutate(ruleSet);
             string fRule = mutatedRuleSet.Rules["F"][0].Rule;
 
             Debug.Log("Entire Rule: " + fRule);
-            Assert.That(fRule.Substring(0, 3), Is.EqualTo("+F["));
-            Assert.That(fRule.Substring(2, fRule.Length - 2), Is.Not.EqualTo("[+F+F]"));
-            Assert.That(fRule.Substring(fRule.Length - 3, 3), Is.EqualTo("+F]"));
+            Debug.Log("Mutated Block: " + fRule.Substring(8, fRule.Length - 8));
+            Assert.That(fRule.Substring(0, 2), Is.EqualTo("+F"));
+            Assert.That(fRule.Substring(2, 6), Is.EqualTo("[+F+F]"));
+            Assert.That(fRule.Substring(8, fRule.Length - 8).Length, Is.AtLeast(3));
+            Assert.That(fRule.Substring(8, fRule.Length - 8), Is.Not.EqualTo("[+F+F+F]"));
         }
     }
 }

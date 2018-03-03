@@ -27,6 +27,7 @@ namespace Assets.Scripts.Genetic_Algorithm
                 {
                     lSystemRule.Rule = SymbolMutation(lSystemRule.Rule);
                     lSystemRule.Rule = BlockMutation(lSystemRule.Rule);
+                    lSystemRule.Rule = BlockInjectionAndExtraction(lSystemRule.Rule);
                 }
             }
             return ruleSet;
@@ -166,6 +167,61 @@ namespace Assets.Scripts.Genetic_Algorithm
             
             int randomCharacter = _randomGenerator.Next(0, _mutableCharacters.Count);
             return _mutableCharacters[randomCharacter];
+        }
+
+        private string BlockInjectionAndExtraction(string rule)
+        {
+            double randomChance = _randomGenerator.NextDouble();
+            if (randomChance >= _mutationChance)
+                return rule;
+
+            int randomNumber = _randomGenerator.Next(0, 2);
+
+            if (randomNumber == 0) // injection
+            {
+                int randomRuleIndex = _randomGenerator.Next(0, rule.Length);
+                rule = rule.Insert(randomRuleIndex, BuildNewGeneticBlock());
+            }
+            else // extraction
+            {
+                List<KeyValuePair<int, int>> startAndEndIndexesOfBrackets = new List<KeyValuePair<int, int>>();
+
+                int characterIndex = 0;
+                int endBracketIndex = -1;
+
+                if (rule.IndexOf('[') == -1)
+                    return rule;
+                while (characterIndex != -1)
+                {
+                    int oldIndex = characterIndex;
+                    characterIndex = rule.IndexOf('[', characterIndex);
+                    if (characterIndex == -1)
+                    {
+                        characterIndex = oldIndex;
+                        break;
+                    }
+                    endBracketIndex = rule.IndexOf(']', characterIndex);
+                    int nextStartBracket = rule.IndexOf('[', characterIndex + 1);
+                    while (nextStartBracket < endBracketIndex && nextStartBracket != -1)
+                    {
+                        characterIndex = nextStartBracket;
+                        endBracketIndex = rule.IndexOf(']', characterIndex);
+                        nextStartBracket = rule.IndexOf('[', characterIndex + 1);
+                    }
+
+                    startAndEndIndexesOfBrackets.Add(new KeyValuePair<int, int>(characterIndex, endBracketIndex));
+
+                    characterIndex = endBracketIndex + 1;
+                    if (characterIndex >= rule.Length)
+                        break;
+                }
+
+                int randomBlockToExtract = _randomGenerator.Next(0, startAndEndIndexesOfBrackets.Count);
+                KeyValuePair<int, int> indexesToExtract = startAndEndIndexesOfBrackets[randomBlockToExtract];
+                return rule.Substring(0, indexesToExtract.Key) + rule.Substring(indexesToExtract.Value, rule.Length - indexesToExtract.Value);
+            }
+
+            return rule;
         }
     }
 }

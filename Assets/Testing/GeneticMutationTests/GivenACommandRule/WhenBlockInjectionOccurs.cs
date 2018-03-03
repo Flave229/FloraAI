@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Assets.Scripts.Genetic_Algorithm;
 using Assets.Scripts.LSystems;
 using Moq;
@@ -7,15 +8,31 @@ using UnityEngine;
 
 namespace Assets.Testing.GeneticMutationTests.GivenACommandRule
 {
-    class WhereTheCommandStringHasItsLowestHierarchyBracketsSeperatedByCharacters
+    class WhenBlockInjectionOccurs
     {
+        private static int _nextDoubleCalls;
+        private static int _nextCalls;
+
         [Test]
-        public void ThenTheCharactersBetweenTheBracketsAreReturned()
+        public void ThenOneExtraBracketAppearsInTheRule()
         {
+            var actualRandom = new System.Random();
             var randomMock = new Mock<System.Random>();
             randomMock.Setup(x => x.NextDouble())
-                .Returns(0);
+                .Returns(() =>
+                {
+                    ++_nextDoubleCalls;
+                    return _nextDoubleCalls == 8 ? -1 : 0;
+                });
 
+            randomMock.Setup(x => x.Next(It.IsAny<int>(), It.IsAny<int>()))
+                .Returns((int lowerBound, int upperBound) =>
+                {
+                    ++_nextCalls;
+                    if (_nextCalls == 1)
+                        return 0;
+                    return actualRandom.Next(lowerBound, upperBound);
+                });
             PlantMutation mutation = new PlantMutation(randomMock.Object, 0);
 
             RuleSet ruleSet = new RuleSet(new Dictionary<string, List<LSystemRule>>
@@ -25,7 +42,7 @@ namespace Assets.Testing.GeneticMutationTests.GivenACommandRule
                         new LSystemRule
                         {
                             Probability = 1,
-                            Rule = "+F[+F+F]FFFFF[+F+F+F]"
+                            Rule = "+F[+F+F]"
                         }
                     }
                 }
@@ -37,7 +54,8 @@ namespace Assets.Testing.GeneticMutationTests.GivenACommandRule
             string fRule = mutatedRuleSet.Rules["F"][0].Rule;
 
             Debug.Log("After Mutation Rule: " + fRule);
-            Assert.That(fRule, Is.EqualTo("+F[+F+F]FFFFF[+F+F+F]"));
+            Assert.That(fRule.Count(x => x == '['), Is.EqualTo(2));
+            Assert.That(fRule.Count(x => x == ']'), Is.EqualTo(2));
         }
     }
 }
