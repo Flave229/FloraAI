@@ -1,4 +1,6 @@
-﻿namespace Assets.Scripts.LSystems
+﻿using System.Text;
+
+namespace Assets.Scripts.LSystems
 {
     public interface ILSystem
     {
@@ -20,12 +22,12 @@
 
         public void Iterate()
         {
-            var newString = "";
+            StringBuilder stringBuilder = new StringBuilder();
 
             for (int i = 0, length = _currentString.Length; i < length; ++i)
-                newString += _rules.GetRule(_currentString[i].ToString());
+                stringBuilder.Append(_rules.GetRule(_currentString[i].ToString()));
 
-            _currentString = newString;
+            _currentString = stringBuilder.ToString();
         }
 
         public string GetCommandString()

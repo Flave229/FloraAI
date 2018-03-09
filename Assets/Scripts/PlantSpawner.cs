@@ -23,6 +23,7 @@ namespace Assets.Scripts
         public double WinterAltitude;
         public double SummerAltitude;
         public double Azimuth;
+        private float _delayIteration;
 
         private void Awake()
         {
@@ -116,24 +117,17 @@ namespace Assets.Scripts
 
         private void Update()
         {
-            for (; _iterations < MaximumGeneticIterations; ++_iterations)
+            if (_delayIteration > 0)
             {
-                foreach (var plant in _plants)
-                {
-                    for (int j = 0; j < MaximumGrowthIterations; ++j)
-                    {
-                        plant.Update();
-                    }
-
-                    plant.Generate();
-                }
-
-                _plants = _genetics.GenerateChildPopulation(_plants);
+                _delayIteration -= Time.deltaTime;
+                return;
             }
-            
-            // Need to get fittest plant
-            if (_iterations == MaximumGeneticIterations)
+            if (_iterations >= MaximumGeneticIterations)
+                return;
+
+            if (_iterations % 5 == 0 && _iterations != 0)
             {
+                _delayIteration = 10;
                 foreach (var plant in _plants)
                 {
                     for (int j = 0; j < MaximumGrowthIterations; ++j)
@@ -157,6 +151,22 @@ namespace Assets.Scripts
                 }
                 Debug.Log("Total Command: " + fittestPlant.Key.LindenMayerSystem.GetCommandString());
                 Debug.Log("Fitness: " + fittestPlant.Value);
+                _plants = _genetics.GenerateChildPopulation(_plants);
+            }
+            else
+            {
+                foreach (var plant in _plants)
+                {
+                    for (int j = 0; j < MaximumGrowthIterations; ++j)
+                    {
+                        plant.Update();
+                    }
+
+                    plant.Generate();
+                }
+
+                ++_iterations;
+                _plants = _genetics.GenerateChildPopulation(_plants);
             }
 
             //_cooldown -= Time.deltaTime;

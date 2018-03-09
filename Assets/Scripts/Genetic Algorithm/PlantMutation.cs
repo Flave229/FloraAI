@@ -172,7 +172,7 @@ namespace Assets.Scripts.Genetic_Algorithm
         private string BlockInjectionAndExtraction(string rule)
         {
             double randomChance = _randomGenerator.NextDouble();
-            if (randomChance >= _mutationChance)
+            if (randomChance >= _mutationChance / 4)
                 return rule;
 
             int randomNumber = _randomGenerator.Next(0, 2);
@@ -181,7 +181,7 @@ namespace Assets.Scripts.Genetic_Algorithm
             {
                 int randomRuleIndex = _randomGenerator.Next(0, rule.Length);
                 rule = rule.Insert(randomRuleIndex, BuildNewGeneticBlock());
-            }
+            } 
             else // extraction
             {
                 List<KeyValuePair<int, int>> startAndEndIndexesOfBrackets = new List<KeyValuePair<int, int>>();
@@ -218,8 +218,9 @@ namespace Assets.Scripts.Genetic_Algorithm
 
                 int randomBlockToExtract = _randomGenerator.Next(0, startAndEndIndexesOfBrackets.Count);
                 KeyValuePair<int, int> indexesToExtract = startAndEndIndexesOfBrackets[randomBlockToExtract];
-                return rule.Substring(0, indexesToExtract.Key) + rule.Substring(indexesToExtract.Value, rule.Length - indexesToExtract.Value - indexesToExtract.Key + 1);
+                rule = rule.Remove(indexesToExtract.Key, indexesToExtract.Value - indexesToExtract.Key + 1);
             }
+
 
             return rule;
         }
