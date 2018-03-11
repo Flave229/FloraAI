@@ -17,6 +17,7 @@ namespace Assets.Scripts.Genetic_Algorithm
         {
             float fitness = EvaluateUpwardsPhototrophicFitness(plant);
             fitness += EvaluateDynamicPhototrophicFitness(plant);
+            fitness += EvaluateGeometryEquilibriumFitness(plant);
             return fitness;
         }
 
@@ -50,6 +51,14 @@ namespace Assets.Scripts.Genetic_Algorithm
             }
 
             return fitness;
+        }
+
+        public float EvaluateGeometryEquilibriumFitness(Plant plant)
+        {
+            int leafCount = plant.GeometryStorage.Leaves.Count;
+            int branchCount = plant.GeometryStorage.Branches.Count;
+
+            return (float)(leafCount - branchCount) / 10;
         }
     }
 }

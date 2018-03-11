@@ -66,7 +66,7 @@ namespace Assets.Scripts.TurtleGeometry
                 switch (command)
                 {
                     case 'F':
-                        MoveForward();
+                        MoveForward(geometryStorage);
                         break;
                     case 'O':
                         DrawLeaf(geometryStorage);
@@ -111,11 +111,13 @@ namespace Assets.Scripts.TurtleGeometry
             _currentBranchDiameter *= (float)(randomNumber / 100);
         }
 
-        private void MoveForward()
+        private void MoveForward(PersistentPlantGeometryStorage geometryStorage)
         {
             var lastPosition = _currentPosition;
             _currentPosition += ForwardStep * GetDirection();
             _renderSystem.DrawCylinder(lastPosition, _currentPosition, _currentBranchDiameter);
+            geometryStorage.StoreBranch(lastPosition + (_currentPosition - lastPosition) / 2);
+            
         }
 
         private void DrawLeaf(PersistentPlantGeometryStorage geometryStorage)
