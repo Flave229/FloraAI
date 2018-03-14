@@ -6,18 +6,21 @@ namespace Assets.Scripts.Genetic_Algorithm
 {
     class PlantFitness
     {
-        private readonly SunInformation _sunInformation;
+        private readonly ILeafFitness _leafFitness;
+        private float _unitBranchDiameter;
 
-        public PlantFitness(SunInformation sunInformation)
+        public PlantFitness(ILeafFitness leafFitness)
         {
-            _sunInformation = sunInformation;
+            _leafFitness = leafFitness;
+            _unitBranchDiameter = Mathf.PI * Mathf.Pow(0.01f, 2);
         }
 
         public float EvaluateFitness(Plant plant)
         {
-            float fitness = EvaluateUpwardsPhototrophicFitness(plant);
-            fitness += EvaluateDynamicPhototrophicFitness(plant);
-            fitness += EvaluateGeometryEquilibriumFitness(plant);
+            float fitness = EvaluateUpwardsPhototrophicFitness(plant) / 20;
+            //fitness += EvaluateDynamicPhototrophicFitness(plant);
+            fitness += EvaluatePhloemTransportationFitness(plant);
+            //float fitness = EvaluatePhloemTransportationFitness(plant);
             return fitness;
         }
 
@@ -41,24 +44,52 @@ namespace Assets.Scripts.Genetic_Algorithm
 
             foreach (var leaf in leaves)
             {
-                //Vector3 summerToSun = Quaternion.Euler(0, (float) _sunInformation.Azimuth, (float)_sunInformation.SummerAltitude) * new Vector3(1, 0, 0);
-                //Vector3 winterToSun = Quaternion.Euler(0, (float) _sunInformation.Azimuth, (float)_sunInformation.WinterAltitude) * new Vector3(1, 0, 0);
-                Vector3 summerToSun = Quaternion.Euler((float)_sunInformation.SummerAltitude, (float)_sunInformation.Azimuth, 0) * new Vector3(0, 1, 0);
-                Vector3 winterToSun = Quaternion.Euler((float)_sunInformation.WinterAltitude, (float)_sunInformation.Azimuth, 0) * new Vector3(0, 1, 0);
-
-                fitness += Mathf.Max(Vector3.Dot(Vector3.Normalize(leaf.Normal), summerToSun), 0);
-                fitness += Mathf.Max(Vector3.Dot(Vector3.Normalize(leaf.Normal), winterToSun), 0);
+                fitness += _leafFitness.EvaluatePhotosyntheticRate(leaf) * 2;
             }
 
             return fitness;
         }
 
-        public float EvaluateGeometryEquilibriumFitness(Plant plant)
+        public float EvaluatePhloemTransportationFitness(Plant plant)
         {
-            int leafCount = plant.GeometryStorage.Leaves.Count;
-            int branchCount = plant.GeometryStorage.Branches.Count;
+            Branch rootBranch = plant.GeometryStorage.GetRootBranch();
+            if (rootBranch == null)
+                return 0;
 
-            return (float)(leafCount - branchCount) / 10;
+            float totalEnergy = 0;
+
+            foreach (var childBranch in rootBranch.ChildBranches)
+            {
+                totalEnergy += TransportEnergyToParent(childBranch);
+            }
+            
+            return totalEnergy;
+        }
+
+        private float TransportEnergyToParent(Branch branch)
+        {
+            float totalEnergy = 0;
+            
+            foreach (var childBranch in branch.ChildBranches)
+            {
+                totalEnergy += TransportEnergyToParent(childBranch);
+            }
+
+            foreach (var childLeaf in branch.ChildLeaves)
+            {
+                totalEnergy += _leafFitness.EvaluatePhotosyntheticRate(childLeaf);
+            }
+
+            // Making the assumption that a branch with radius 0.01 is able to support 1 leaf at 100% photosynthetic rate
+            // π(r^2)h where r = 0.01 and h = 1 : 0.000314
+            float branchVolume = Mathf.PI * Mathf.Pow(branch.Diameter, 2); // Yes, using the diameter. No, I don't know why
+            if (totalEnergy * _unitBranchDiameter > branchVolume)
+                totalEnergy = branchVolume / _unitBranchDiameter;
+
+            // Subtract the energy the branch needs to survive
+            totalEnergy -= branchVolume;
+
+            return totalEnergy;
         }
     }
 }

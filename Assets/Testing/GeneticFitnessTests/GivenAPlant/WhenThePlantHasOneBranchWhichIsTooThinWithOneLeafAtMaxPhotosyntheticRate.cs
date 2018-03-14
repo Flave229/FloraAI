@@ -1,4 +1,5 @@
-﻿using Assets.Scripts;
+﻿using System;
+using Assets.Scripts;
 using Assets.Scripts.Data;
 using Assets.Scripts.Genetic_Algorithm;
 using Assets.Scripts.LSystems;
@@ -8,24 +9,23 @@ using Moq;
 using NUnit.Framework;
 using UnityEngine;
 
-namespace Assets.Testing.GeneticFitnessTests.GivenTheSunIsDirectlyAbove
+namespace Assets.Testing.GeneticFitnessTests.GivenAPlant
 {
-    class WhenThePlantHasOneLeafThatIsPointingOppositeTheToSunVector
+    class WhenThePlantHasOneBranchWhichIsTooThinWithOneLeafAtMaxPhotosyntheticRate
     {
         [Test]
-        public void ThenTheDynamicPhototrophicFitnessIsZero()
+        public void ThenTheFitnessObservesANintyNinePercentEnergyLoss()
         {
-            PlantFitness plantFitness = new PlantFitness(new LeafFitness(new SunInformation
-            {
-                SummerAltitude = 90,
-                WinterAltitude = 90,
-                Azimuth = 0
-            }));
+            Mock<ILeafFitness> leafFitnessMock = new Mock<ILeafFitness>();
+            leafFitnessMock.Setup(x => x.EvaluatePhotosyntheticRate(It.IsAny<Leaf>()))
+                .Returns(1);
+            PlantFitness plantFitness = new PlantFitness(leafFitnessMock.Object);
 
             TurtlePen turtlePen = new TurtlePen(new GeometryRenderSystem())
             {
                 ForwardStep = 1,
                 RotationStep = 90.0f,
+                BranchDiameter = 0.001f
             };
 
             Mock<ILSystem> lSystem1Mock = new Mock<ILSystem>();
@@ -33,10 +33,11 @@ namespace Assets.Testing.GeneticFitnessTests.GivenTheSunIsDirectlyAbove
             PersistentPlantGeometryStorage geometryStorage1 = new PersistentPlantGeometryStorage();
             Plant plant1 = new Plant(lSystem1Mock.Object, turtlePen, geometryStorage1, Vector3.zero);
             plant1.Generate();
-            float plantFitnessValue = plantFitness.EvaluateDynamicPhototrophicFitness(plant1);
+            
+            float plantFitnessValue = plantFitness.EvaluatePhloemTransportationFitness(plant1);
 
             Debug.Log("Plant 1 Fitness: " + plantFitnessValue);
-            Assert.That(plantFitnessValue, Is.EqualTo(0));
+            Assert.That(Math.Abs(plantFitnessValue - (0.01 - 0.00000314f)), Is.LessThan(0.0001f));
         }
     }
 }

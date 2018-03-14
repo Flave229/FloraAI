@@ -16,12 +16,12 @@ namespace Assets.Testing.GeneticFitnessTests.GivenTheSunIsDirectlyAbove
         [Test]
         public void ThenTheDynamicPhototrophicFitnessIsTheSame()
         {
-            PlantFitness plantFitness = new PlantFitness(new SunInformation
+            PlantFitness plantFitness = new PlantFitness(new LeafFitness(new SunInformation
             {
                 SummerAltitude = 90,
                 WinterAltitude = 90,
                 Azimuth = 0
-            });
+            }));
 
             Mock<GeometryRenderSystem> geometryRenderMock = new Mock<GeometryRenderSystem>();
             TurtlePen turtlePen = new TurtlePen(geometryRenderMock.Object)

@@ -54,7 +54,7 @@ namespace Assets.Scripts.TurtleGeometry
         public void Draw(PersistentPlantGeometryStorage geometryStorage, Vector3 startingPosition, string commandString)
         {
             SetupQuaternions();
-
+            geometryStorage.StartPlant();
             _renderSystem.ClearObjects();
             _currentPosition = startingPosition;
             _currentRotation = Quaternion.identity;
@@ -96,13 +96,15 @@ namespace Assets.Scripts.TurtleGeometry
                         IncreaseGreenValue();
                         break;
                     case '[':
-                        PushTransformation();
+                        PushTransformation(geometryStorage);
                         break;
                     case ']':
-                        PopTransformation();
+                        PopTransformation(geometryStorage);
                         break;
                 }
             }
+
+            _renderSystem.FinalisePlant();
         }
 
         private void DecreaseBranchDiameter()
@@ -116,8 +118,7 @@ namespace Assets.Scripts.TurtleGeometry
             var lastPosition = _currentPosition;
             _currentPosition += ForwardStep * GetDirection();
             _renderSystem.DrawCylinder(lastPosition, _currentPosition, _currentBranchDiameter);
-            geometryStorage.StoreBranch(lastPosition + (_currentPosition - lastPosition) / 2);
-            
+            geometryStorage.ExtendBranch(_currentBranchDiameter);
         }
 
         private void DrawLeaf(PersistentPlantGeometryStorage geometryStorage)
@@ -174,20 +175,23 @@ namespace Assets.Scripts.TurtleGeometry
             _currentColor.g = _currentColor.g + 0.05f;
         }
 
-        private void PushTransformation()
+        private void PushTransformation(PersistentPlantGeometryStorage geometryStorage)
         {
             _positionStack.Push(_currentPosition);
             _rotationStack.Push(_currentRotation);
             _branchDiameterStack.Push(_currentBranchDiameter);
             _colorStack.Push(_currentColor);
+            geometryStorage.StartNewBranch();
+            
         }
 
-        private void PopTransformation()
+        private void PopTransformation(PersistentPlantGeometryStorage geometryStorage)
         {
             _currentPosition = _positionStack.Pop();
             _currentRotation = _rotationStack.Pop();
             _currentBranchDiameter = _branchDiameterStack.Pop();
             _currentColor = _colorStack.Pop();
+            geometryStorage.ReturnToLastBranch();
         }
     }
 }

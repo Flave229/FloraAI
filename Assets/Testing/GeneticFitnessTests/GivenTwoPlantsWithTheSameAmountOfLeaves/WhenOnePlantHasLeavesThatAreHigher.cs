@@ -15,7 +15,7 @@ namespace Assets.Testing.GeneticFitnessTests.GivenTwoPlantsWithTheSameAmountOfLe
         [Test]
         public void ThenThePlantWithHigherLeavesHasAHigherUpwardsPhototropismFitnessValue()
         {
-            PlantFitness plantFitness = new PlantFitness(new SunInformation());
+            PlantFitness plantFitness = new PlantFitness(new LeafFitness(new SunInformation()));
 
             Mock<GeometryRenderSystem> geometryRenderMock = new Mock<GeometryRenderSystem>();
             TurtlePen turtlePen = new TurtlePen(geometryRenderMock.Object)

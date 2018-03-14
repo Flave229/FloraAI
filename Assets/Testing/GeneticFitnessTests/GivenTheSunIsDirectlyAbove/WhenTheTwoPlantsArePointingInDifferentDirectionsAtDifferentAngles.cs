@@ -15,12 +15,12 @@ namespace Assets.Testing.GeneticFitnessTests.GivenTheSunIsDirectlyAbove
         [Test]
         public void ThenTheDynamicPhototrophicFitnessIsHigherForTheLeafPointingDirectlyAtTheSun()
         {
-            PlantFitness plantFitness = new PlantFitness(new SunInformation
+            PlantFitness plantFitness = new PlantFitness(new LeafFitness(new SunInformation
             {
                 SummerAltitude = 90,
                 WinterAltitude = 90,
                 Azimuth = 0
-            });
+            }));
             
             Vector3 rightVector = new Vector3(0, 1, 0);
             TurtlePen turtlePen = new TurtlePen(new GeometryRenderSystem())

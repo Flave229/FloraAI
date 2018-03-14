@@ -18,7 +18,7 @@ namespace Assets.Testing.GeneticFitnessTests.GivenAPlant
         [SetUp]
         public void SetUp()
         {
-            _plantFitness = new PlantFitness(new SunInformation());
+            _plantFitness = new PlantFitness(new LeafFitness(new SunInformation()));
 
             Mock<GeometryRenderSystem> geometryRenderMock = new Mock<GeometryRenderSystem>();
             TurtlePen turtlePen = new TurtlePen(geometryRenderMock.Object)

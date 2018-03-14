@@ -22,7 +22,7 @@ namespace Assets.Scripts.Genetic_Algorithm
             _crossOver = new PlantCrossOver(randomGenerator);
             _mutation = new PlantMutation(randomGenerator, mutationChance);
             _selection = new PlantSelection(randomGenerator);
-            _fitness = new PlantFitness(sunInformation);
+            _fitness = new PlantFitness(new LeafFitness(sunInformation));
         }
 
         public List<Plant> GenerateChildPopulation(List<Plant> parents)

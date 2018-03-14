@@ -23,5 +23,10 @@ namespace Assets.Scripts.Render
         {
             return;
         }
+
+        public void FinalisePlant()
+        {
+            return;
+        }
     }
 }

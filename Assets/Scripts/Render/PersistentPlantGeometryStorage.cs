@@ -7,26 +7,67 @@ namespace Assets.Scripts.Render
     public class PersistentPlantGeometryStorage
     {
         public readonly List<Leaf> Leaves;
-        public readonly List<Vector3> Branches;
+
+        private Branch _currentParentBranch;
+        private Branch _currentBranch;
+        private Stack<Branch> _previousBranches;
+        private Branch _rootBranch;
 
         public PersistentPlantGeometryStorage()
         {
             Leaves = new List<Leaf>();
-            Branches = new List<Vector3>();
+            _previousBranches = new Stack<Branch>();
+        }
+
+        public void StartPlant()
+        {
+            _currentParentBranch = null;
+            _currentBranch = new Branch();
+            _rootBranch = _currentBranch;
         }
 
         public void StoreLeaf(Vector3 position, Vector3 rightVector)
         {
-            Leaves.Add(new Leaf
+            var leaf = new Leaf
             {
                 Position = position,
                 Normal = rightVector
-            });
+            };
+            if (_currentBranch != null)
+                _currentBranch.ChildLeaves.Add(leaf);
+            else
+                _currentParentBranch.ChildLeaves.Add(leaf);
+            Leaves.Add(leaf);
         }
 
-        public void StoreBranch(Vector3 position)
+        public void ExtendBranch(float diameter)
         {
-            Branches.Add(position);
+            _currentParentBranch = _currentBranch;
+            _currentBranch = new Branch
+            {
+                ParentBranch = _currentParentBranch,
+                Diameter = diameter
+            };
+            if (_currentParentBranch != null)
+                _currentParentBranch.ChildBranches.Add(_currentBranch);
+        }
+
+        public void StartNewBranch()
+        {
+            _previousBranches.Push(_currentBranch);
+            //if (_currentBranch == null)
+            //    return;
+        }           
+
+        public void ReturnToLastBranch()
+        {
+            _currentBranch = _previousBranches.Pop();
+            _currentParentBranch = _currentBranch.ParentBranch;
+        }
+
+        public Branch GetRootBranch()
+        {
+            return _rootBranch;
         }
     }
 }
