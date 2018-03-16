@@ -38,7 +38,7 @@ namespace Assets.Scripts.Genetic_Algorithm
 
         public ILSystem RouletteWheelChoice(Dictionary<ILSystem, float> plantsAndFitness)
         {
-            float fitnessMagnitude = plantsAndFitness.Sum(x => x.Value);
+            float fitnessMagnitude = plantsAndFitness.Sum(x => x.Value > 0 ? x.Value : 0);
             float randomNumber = (float)_randomGenerator.NextDouble();
 
             if (fitnessMagnitude <= 0.0001f)
@@ -48,7 +48,8 @@ namespace Assets.Scripts.Genetic_Algorithm
 
             foreach (var plantFitness in plantsAndFitness)
             {
-                float normalisedValue = plantFitness.Value / fitnessMagnitude;
+                float plantFitnessValue = plantFitness.Value > 0 ? plantFitness.Value : 0;
+                float normalisedValue = plantFitnessValue / fitnessMagnitude;
                 if (fitnessSum + normalisedValue >= randomNumber)
                     return plantFitness.Key;
 

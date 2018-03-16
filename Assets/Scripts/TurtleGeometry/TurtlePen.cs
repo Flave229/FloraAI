@@ -25,6 +25,8 @@ namespace Assets.Scripts.TurtleGeometry
         private Quaternion _decreaseRollQuaternion;
         private Quaternion _increasePitchQuaternion;
         private Quaternion _decreasePitchQuaternion;
+        private Vector3 _lastMovementDirection;
+        private int _forwardStepMultiplication;
 
         public float ForwardStep { get; set; }
         public float RotationStep { get; set; }
@@ -60,6 +62,8 @@ namespace Assets.Scripts.TurtleGeometry
             _currentRotation = Quaternion.identity;
             _currentBranchDiameter = BranchDiameter;
             _currentColor = new Color(0.0f, 0.1f, 0.0f);
+            _lastMovementDirection = Vector3.zero;
+            _forwardStepMultiplication = 1;
 
             foreach (var command in commandString)
             {
@@ -115,10 +119,20 @@ namespace Assets.Scripts.TurtleGeometry
 
         private void MoveForward(PersistentPlantGeometryStorage geometryStorage)
         {
+            Vector3 currentDirection = GetDirection();
+            if (currentDirection == _lastMovementDirection)
+            {
+                ++_forwardStepMultiplication;
+                return;
+            }
+
             var lastPosition = _currentPosition;
-            _currentPosition += ForwardStep * GetDirection();
+            _currentPosition += (ForwardStep * _forwardStepMultiplication) * currentDirection;
             _renderSystem.DrawCylinder(lastPosition, _currentPosition, _currentBranchDiameter);
             geometryStorage.ExtendBranch(_currentBranchDiameter);
+            
+            _lastMovementDirection = currentDirection;
+            _forwardStepMultiplication = 1;
         }
 
         private void DrawLeaf(PersistentPlantGeometryStorage geometryStorage)

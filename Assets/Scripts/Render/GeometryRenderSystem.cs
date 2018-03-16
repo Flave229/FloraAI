@@ -27,15 +27,28 @@ namespace Assets.Scripts.Render
 
         public void DrawCylinder(Vector3 sourcePosition, Vector3 targetPosition, float diameter)
         {
-            var cylinderObject = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-            var capsuleCollider = cylinderObject.GetComponent<CapsuleCollider>();
-            Object.Destroy(capsuleCollider);
+            PrimitiveType primitiveType;
             float height = Vector3.Distance(sourcePosition, targetPosition);
-            cylinderObject.transform.position = Vector3.Lerp(sourcePosition, targetPosition, 0.5f);
-            cylinderObject.transform.up = targetPosition - sourcePosition;
-            cylinderObject.transform.localScale = new Vector3(diameter, height / 2, diameter);
+            if (diameter > 0.02f)
+            {
+                primitiveType = PrimitiveType.Cylinder;
+                height /= 2;
+            }
+            else
+            {
+                primitiveType = PrimitiveType.Cube;
+            }
 
-            _cylinders.Add(cylinderObject);
+
+            GameObject primitive = GameObject.CreatePrimitive(primitiveType);
+
+            var capsuleCollider = primitive.GetComponent<CapsuleCollider>();
+            Object.Destroy(capsuleCollider);
+            primitive.transform.position = Vector3.Lerp(sourcePosition, targetPosition, 0.5f);
+            primitive.transform.up = targetPosition - sourcePosition;
+            primitive.transform.localScale = new Vector3(diameter, height, diameter);
+
+            _cylinders.Add(primitive);
 
             if (_cylinders.Count > 2000)
             {
@@ -89,6 +102,7 @@ namespace Assets.Scripts.Render
             _leaves[0].GetComponent<Renderer>().material.color = Color.green;
             OptimiseMeshes(ref _cylinders);
             _cylinders[0].GetComponent<Renderer>().material.color = new Color(0.4f, 0.2f, 0);
+            UnityEngine.Profiling.Profiler.EndSample();
         }
 
         private void OptimiseMeshes(ref List<GameObject> gameObjects)

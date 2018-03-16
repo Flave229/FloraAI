@@ -15,12 +15,16 @@ namespace Assets.Scripts.Genetic_Algorithm
             _unitBranchDiameter = Mathf.PI * Mathf.Pow(0.01f, 2);
         }
 
+
         public float EvaluateFitness(Plant plant)
         {
-            float fitness = EvaluateUpwardsPhototrophicFitness(plant) / 20;
-            //fitness += EvaluateDynamicPhototrophicFitness(plant);
-            fitness += EvaluatePhloemTransportationFitness(plant);
+            float fitness = EvaluateUpwardsPhototrophicFitness(plant);
+            //Debug.Log("UpwardsPhototrophicFitness: " + fitness);
+            fitness += EvaluateDynamicPhototrophicFitness(plant);
+            //float phloemTransportFitness = EvaluatePhloemTransportationFitness(plant);
+            //fitness += phloemTransportFitness;
             //float fitness = EvaluatePhloemTransportationFitness(plant);
+            //Debug.Log("PhloemTransportationFitness: " + fitness);
             return fitness;
         }
 
@@ -34,7 +38,7 @@ namespace Assets.Scripts.Genetic_Algorithm
                 fitness += leaf.Position.y;
             }
 
-            return fitness * 3;
+            return fitness;
         }
 
         public float EvaluateDynamicPhototrophicFitness(Plant plant)
@@ -86,8 +90,10 @@ namespace Assets.Scripts.Genetic_Algorithm
             if (totalEnergy * _unitBranchDiameter > branchVolume)
                 totalEnergy = branchVolume / _unitBranchDiameter;
 
+            //Debug.Log("Fitness After Leaf Transport: " + totalEnergy);
             // Subtract the energy the branch needs to survive
-            totalEnergy -= branchVolume;
+            totalEnergy -= branchVolume * 20;
+            //Debug.Log("Fitness After Branch Cost Deduction: " + totalEnergy);
 
             return totalEnergy;
         }
