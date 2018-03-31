@@ -1,7 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Assets.Scripts.LSystems;
+using UnityEngine;
+using Random = System.Random;
 
 namespace Assets.Scripts.Genetic_Algorithm
 {
@@ -20,14 +21,18 @@ namespace Assets.Scripts.Genetic_Algorithm
 
             foreach (var leftParentRule in leftParentRuleSet.Rules)
             {
+                string originalRule = leftParentRule.Value[0].Rule;
+
                 if (rightParentRuleSet.Rules.ContainsKey(leftParentRule.Key) == false)
                 {
                     rules.Add(leftParentRule.Key, new List<LSystemRule>(leftParentRule.Value));
                     continue;
                 }
 
-                Dictionary<int, List<string>> allHierarchicalRules = SeperateBracketHierarchy(leftParentRule.Value[0].Rule); // Only accepts one possibility
-                Dictionary<int, List<string>> hierarchicalBracketedRightRules = SeperateBracketHierarchy(rightParentRuleSet.Rules[leftParentRule.Key][0].Rule); // Only accepts one possibility
+                string leftRuleString = leftParentRule.Value[0].Rule;
+                string rightRuleString = rightParentRuleSet.Rules[leftParentRule.Key][0].Rule;
+                Dictionary<int, List<string>> allHierarchicalRules = SeperateBracketHierarchy(leftRuleString); // Only accepts one possibility
+                Dictionary<int, List<string>> hierarchicalBracketedRightRules = SeperateBracketHierarchy(rightRuleString); // Only accepts one possibility
 
                 foreach (var rightRule in hierarchicalBracketedRightRules)
                 {
@@ -47,6 +52,10 @@ namespace Assets.Scripts.Genetic_Algorithm
                         Rule = crossOverRule
                     }
                 });
+
+
+                if (leftParentRule.Key == "L" && crossOverRule.Length > 0 && originalRule == "['''^^O]" && crossOverRule != "['''^^O]")
+                    Debug.Log("Did the bracket go walkies? CrossOver Debug Check. Original Rule: " + originalRule + ". New Rule: " + crossOverRule);
             }
 
             Dictionary<string, List<LSystemRule>> rulesNotIncludedOnLeftSide = rightParentRuleSet.Rules
@@ -82,9 +91,9 @@ namespace Assets.Scripts.Genetic_Algorithm
                     case '[':
                         ++stringIndex;
                         ruleOnThisLayer += "[%]";
-                        int bracketsBelowMe = bracketsDeep + 1;
-                        Dictionary<int, List<string>> lowerLevelBracketHierarchy = SeperateBracketHierarchy(rule, ref stringIndex, ref bracketsBelowMe);
-
+                        int bracketsInside = 0;
+                        Dictionary<int, List<string>> lowerLevelBracketHierarchy = SeperateBracketHierarchy(rule, ref stringIndex, ref bracketsInside);
+                        
                         foreach (var subRule in lowerLevelBracketHierarchy)
                         {
                             if (bracketHierarchy.ContainsKey(subRule.Key))
@@ -93,8 +102,8 @@ namespace Assets.Scripts.Genetic_Algorithm
                                 bracketHierarchy.Add(subRule.Key, subRule.Value);
                         }
 
-                        if (bracketsBelowMe > deepestBracketInside)
-                            deepestBracketInside = bracketsBelowMe;
+                        if (bracketsInside > deepestBracketInside)
+                            deepestBracketInside = bracketsInside;
 
                         break;
                     case ']':
@@ -103,6 +112,7 @@ namespace Assets.Scripts.Genetic_Algorithm
                         else
                             bracketHierarchy.Add(deepestBracketInside, new List<string> { ruleOnThisLayer });
 
+                        bracketsDeep = deepestBracketInside + 1;
                         return bracketHierarchy;
                     default:
                         ruleOnThisLayer += character;

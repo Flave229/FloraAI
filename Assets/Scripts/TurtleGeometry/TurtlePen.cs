@@ -129,7 +129,7 @@ namespace Assets.Scripts.TurtleGeometry
             var lastPosition = _currentPosition;
             _currentPosition += (ForwardStep * _forwardStepMultiplication) * currentDirection;
             _renderSystem.DrawCylinder(lastPosition, _currentPosition, _currentBranchDiameter);
-            geometryStorage.ExtendBranch(_currentBranchDiameter);
+            geometryStorage.ExtendBranch(lastPosition, _currentPosition, _currentBranchDiameter);
             
             _lastMovementDirection = currentDirection;
             _forwardStepMultiplication = 1;
@@ -137,7 +137,7 @@ namespace Assets.Scripts.TurtleGeometry
 
         private void DrawLeaf(PersistentPlantGeometryStorage geometryStorage)
         {
-            Vector3 leafPosition = _currentPosition + ((ForwardStep) * GetDirection());
+            Vector3 leafPosition = _currentPosition + (ForwardStep * _forwardStepMultiplication * GetDirection());
             Vector3 rightVector = Vector3.zero;
             _renderSystem.DrawQuad(leafPosition, GetDirection(), _currentColor, ref rightVector);
             geometryStorage.StoreLeaf(leafPosition, rightVector);
@@ -196,7 +196,6 @@ namespace Assets.Scripts.TurtleGeometry
             _branchDiameterStack.Push(_currentBranchDiameter);
             _colorStack.Push(_currentColor);
             geometryStorage.StartNewBranch();
-            
         }
 
         private void PopTransformation(PersistentPlantGeometryStorage geometryStorage)

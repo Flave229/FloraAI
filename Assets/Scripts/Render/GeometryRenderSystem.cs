@@ -96,17 +96,23 @@ namespace Assets.Scripts.Render
             }
         }
 
+
         public void FinalisePlant()
         {
             OptimiseMeshes(ref _leaves);
-            _leaves[0].GetComponent<Renderer>().material.color = Color.green;
+            if (_leaves.Count > 0)
+                _leaves[0].GetComponent<Renderer>().material.color = Color.green;
             OptimiseMeshes(ref _cylinders);
-            _cylinders[0].GetComponent<Renderer>().material.color = new Color(0.4f, 0.2f, 0);
+            if (_cylinders.Count > 0)
+                _cylinders[0].GetComponent<Renderer>().material.color = new Color(0.4f, 0.2f, 0);
             UnityEngine.Profiling.Profiler.EndSample();
         }
 
         private void OptimiseMeshes(ref List<GameObject> gameObjects)
         {
+            if (gameObjects.Count <= 0)
+                return;
+
             if (gameObjects[0].name != "masterObject")
                 gameObjects.Insert(0, CreateMasterGameObject());
 

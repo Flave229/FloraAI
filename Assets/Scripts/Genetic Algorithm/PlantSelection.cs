@@ -36,6 +36,7 @@ namespace Assets.Scripts.Genetic_Algorithm
             };
         }
 
+
         public ILSystem RouletteWheelChoice(Dictionary<ILSystem, float> plantsAndFitness)
         {
             float fitnessMagnitude = plantsAndFitness.Sum(x => x.Value > 0 ? x.Value : 0);

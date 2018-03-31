@@ -8,11 +8,13 @@ namespace Assets.Scripts.Genetic_Algorithm
     {
         private readonly ILeafFitness _leafFitness;
         private float _unitBranchDiameter;
+        private float _minimumBranchVolume;
 
         public PlantFitness(ILeafFitness leafFitness)
         {
             _leafFitness = leafFitness;
             _unitBranchDiameter = Mathf.PI * Mathf.Pow(0.01f, 2);
+            _minimumBranchVolume = Mathf.PI * Mathf.Pow(0.001f, 2);
         }
 
 
@@ -27,6 +29,7 @@ namespace Assets.Scripts.Genetic_Algorithm
             //Debug.Log("PhloemTransportationFitness: " + fitness);
             return fitness;
         }
+
 
         public float EvaluateUpwardsPhototrophicFitness(Plant plant)
         {
@@ -72,6 +75,11 @@ namespace Assets.Scripts.Genetic_Algorithm
 
         private float TransportEnergyToParent(Branch branch)
         {
+            float branchVolume = Mathf.PI * Mathf.Pow(branch.Diameter, 2);
+
+            if (branchVolume < _minimumBranchVolume)
+                return -(branchVolume * branch.Length);
+
             float totalEnergy = 0;
             
             foreach (var childBranch in branch.ChildBranches)
@@ -86,13 +94,12 @@ namespace Assets.Scripts.Genetic_Algorithm
 
             // Making the assumption that a branch with radius 0.01 is able to support 1 leaf at 100% photosynthetic rate
             // π(r^2)h where r = 0.01 and h = 1 : 0.000314
-            float branchVolume = Mathf.PI * Mathf.Pow(branch.Diameter, 2); // Yes, using the diameter. No, I don't know why
             if (totalEnergy * _unitBranchDiameter > branchVolume)
                 totalEnergy = branchVolume / _unitBranchDiameter;
 
             //Debug.Log("Fitness After Leaf Transport: " + totalEnergy);
             // Subtract the energy the branch needs to survive
-            totalEnergy -= branchVolume * 20;
+            totalEnergy -= branchVolume * branch.Length;
             //Debug.Log("Fitness After Branch Cost Deduction: " + totalEnergy);
 
             return totalEnergy;

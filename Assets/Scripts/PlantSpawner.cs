@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Assets.Scripts.Common;
 using Assets.Scripts.Data;
 using Assets.Scripts.Genetic_Algorithm;
@@ -68,7 +69,7 @@ namespace Assets.Scripts
                         {
                             Probability = 1,
                             Rule = "[&FL!A]/////'[&FL!A]///////'[&FL!A]"
-                        } 
+                        }
                     }
                 },
                 {
@@ -104,13 +105,22 @@ namespace Assets.Scripts
             };
             RuleSet ruleSet = new RuleSet(rules);
             ILSystem lindenMayerSystem = new LSystem(ruleSet, "A");
-            Plant plant = new Plant(lindenMayerSystem, fakeTurtlePen, new PersistentPlantGeometryStorage(), new Vector3(transform.position.x + 1, transform.position.y + 0.775f, transform.position.z + 1));
+            Plant plant1 = new Plant(lindenMayerSystem, fakeTurtlePen, new PersistentPlantGeometryStorage(), new Vector3(transform.position.x + 1, transform.position.y + 0.775f, transform.position.z + 1));
             ILSystem lindenMayerSystem2 = new LSystem(ruleSet, "A");
             Plant plant2 = new Plant(lindenMayerSystem2, fakeTurtlePen, new PersistentPlantGeometryStorage(), new Vector3(transform.position.x + 1, transform.position.y + 0.775f, transform.position.z + 1));
+            _plants = _genetics.GenerateChildPopulation(new List<Plant> {plant1, plant2});
 
-            _plants = _genetics.GenerateChildPopulation(new List<Plant> { plant, plant2 });
+            //LSystemGenerator lindenMayerSystemGenerator = new LSystemGenerator(new System.Random());
+            //List<Plant> initialPopulation = new List<Plant>();
+            //for (int i = 0; i < 50; ++i)
+            //{
+            //    ILSystem randomLSystem = lindenMayerSystemGenerator.GenerateRandomLSystem();
+            //    initialPopulation.Add(new Plant(randomLSystem, fakeTurtlePen, new PersistentPlantGeometryStorage(), new Vector3(transform.position.x + 1, transform.position.y + 0.775f, transform.position.z + 1)));
+            //}
+
+            //_plants = _genetics.GenerateChildPopulation(initialPopulation);
         }
-
+        
         private void Start()
         {
         }

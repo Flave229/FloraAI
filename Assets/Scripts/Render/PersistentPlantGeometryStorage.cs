@@ -40,13 +40,14 @@ namespace Assets.Scripts.Render
             Leaves.Add(leaf);
         }
 
-        public void ExtendBranch(float diameter)
+        public void ExtendBranch(Vector3 sourcePosition, Vector3 targetPosition, float diameter)
         {
             _currentParentBranch = _currentBranch;
             _currentBranch = new Branch
             {
                 ParentBranch = _currentParentBranch,
-                Diameter = diameter
+                Diameter = diameter,
+                Length = Vector3.Distance(sourcePosition, targetPosition)
             };
             if (_currentParentBranch != null)
                 _currentParentBranch.ChildBranches.Add(_currentBranch);

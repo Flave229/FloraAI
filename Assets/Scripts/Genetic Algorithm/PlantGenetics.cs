@@ -5,6 +5,7 @@ using Assets.Scripts.Render;
 using Assets.Scripts.TurtleGeometry;
 using UnityEngine;
 using Random = System.Random;
+using System.Linq;
 
 namespace Assets.Scripts.Genetic_Algorithm
 {
@@ -27,6 +28,7 @@ namespace Assets.Scripts.Genetic_Algorithm
 
         public List<Plant> GenerateChildPopulation(List<Plant> parents)
         {
+            int debugParentLRuleBracketCount = parents.Where(x => x.LindenMayerSystem.GetRuleSet().Rules["L"][0].Rule.Length > 0 && x.LindenMayerSystem.GetRuleSet().Rules["L"][0].Rule[0] == '[').Count();
             Dictionary<ILSystem, float> fitnessPerParent = new Dictionary<ILSystem, float>();
 
             foreach (Plant plant in parents)
@@ -45,6 +47,11 @@ namespace Assets.Scripts.Genetic_Algorithm
                 childRuleSet = _mutation.Mutate(childRuleSet);
                 childPlants.Add(new Plant(new LSystem(childRuleSet, "A"), _turtlePen, new PersistentPlantGeometryStorage(), Vector3.zero));
             }
+
+            int debugChildLRuleBracketCount = childPlants.Where(x => x.LindenMayerSystem.GetRuleSet().Rules["L"][0].Rule.Length > 0 && x.LindenMayerSystem.GetRuleSet().Rules["L"][0].Rule[0] == '[').Count();
+
+            if (debugParentLRuleBracketCount != debugChildLRuleBracketCount)
+                Debug.Log("Not sure what this proves");
 
             return childPlants;
         }

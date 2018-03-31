@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using Assets.Scripts.LSystems;
+using UnityEngine;
+using Random = System.Random;
 
 namespace Assets.Scripts.Genetic_Algorithm
 {
@@ -16,8 +18,9 @@ namespace Assets.Scripts.Genetic_Algorithm
             _randomGenerator = randomGenerator;
             _mutationChance = mutationChance;
             _mutableCharacters = new List<string> {"F", "L", "S", "A" };
-            _mutableSymbols = new List<string> { "", "+", "-", "&", "^", "\\", "/", "!"};
+            _mutableSymbols = new List<string> { "", "+", "-", "&", "^", "\\", "/" , "!"};
         }
+
 
         public RuleSet Mutate(RuleSet ruleSet)
         {
@@ -25,9 +28,14 @@ namespace Assets.Scripts.Genetic_Algorithm
             {
                 foreach (var lSystemRule in rule.Value)
                 {
+                    string originalRule = lSystemRule.Rule;
+
                     lSystemRule.Rule = SymbolMutation(lSystemRule.Rule);
                     lSystemRule.Rule = BlockMutation(lSystemRule.Rule);
                     lSystemRule.Rule = BlockInjectionAndExtraction(lSystemRule.Rule);
+                    
+                    if (lSystemRule.Rule.Length > 0 && originalRule == "['''^^O]" && lSystemRule.Rule != "['''^^O]")
+                        Debug.Log("Did the bracket go walkies? Original Rule: " + originalRule + ". New Rule: " + lSystemRule.Rule);
                 }
             }
             return ruleSet;
@@ -86,6 +94,7 @@ namespace Assets.Scripts.Genetic_Algorithm
                     break;
             }
             newRuleString += ruleString.Substring(characterIndex);
+
             return newRuleString;
         }
 
@@ -108,39 +117,48 @@ namespace Assets.Scripts.Genetic_Algorithm
         private string SymbolMutation(string rule)
         {
             string newRule = "";
-            for (int i = 0; i < rule.Length; ++i)
+            try
             {
-                char character = rule[i];
-
-                switch (character)
+                for (int i = 0; i < rule.Length; ++i)
                 {
-                    case '+':
-                    case '-':
-                    case '&':
-                    case '^':
-                    case '\\':
-                    case '/':
-                    case '!':
-                        if (rule[i + 1] != 'F')
-                        {
-                            newRule += MutateSymbol(character.ToString(), false);
-                            continue;
-                        }
+                    char character = rule[i];
 
-                        ++i;
-                        newRule += MutateSymbol(character.ToString(), true);
-                        newRule += MutateCharacter("F");
-                        continue;
-                    case 'F':
-                    case 'L':
-                    case 'A':
-                    case 'S':
-                        newRule += MutateCharacter(character.ToString());
-                        break;
-                    default:
-                        newRule += rule[i];
-                        break;
+                    switch (character)
+                    {
+                        case '+':
+                        case '-':
+                        case '&':
+                        case '^':
+                        case '\\':
+                        case '/':
+                        case '!':
+                            if (i + 1 < rule.Length && rule[i + 1] != 'F')
+                            {
+                                newRule += MutateSymbol(character.ToString(), false);
+                                continue;
+                            }
+
+                            ++i;
+                            newRule += MutateSymbol(character.ToString(), true);
+                            newRule += MutateCharacter("F");
+                            continue;
+                        case 'F':
+                        case 'L':
+                        case 'A':
+                        case 'S':
+                            newRule += MutateCharacter(character.ToString());
+                            break;
+                        default:
+                            newRule += rule[i];
+                            break;
+                    }
                 }
+            }
+            catch (Exception e)
+            {
+                Debug.Log("Old rule: " + rule);
+                Debug.Log("New rule: " + newRule);
+                throw;
             }
             return newRule;
         }
@@ -221,7 +239,6 @@ namespace Assets.Scripts.Genetic_Algorithm
                 KeyValuePair<int, int> indexesToExtract = startAndEndIndexesOfBrackets[randomBlockToExtract];
                 rule = rule.Remove(indexesToExtract.Key, indexesToExtract.Value - indexesToExtract.Key + 1);
             }
-
 
             return rule;
         }
