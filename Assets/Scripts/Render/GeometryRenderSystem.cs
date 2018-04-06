@@ -29,15 +29,15 @@ namespace Assets.Scripts.Render
         {
             PrimitiveType primitiveType;
             float height = Vector3.Distance(sourcePosition, targetPosition);
-            if (diameter > 0.02f)
-            {
-                primitiveType = PrimitiveType.Cylinder;
-                height /= 2;
-            }
-            else
-            {
+            //if (diameter > 0.02f)
+            //{
+            //    primitiveType = PrimitiveType.Cylinder;
+            //    height /= 2;
+            //}
+            //else
+            //{
                 primitiveType = PrimitiveType.Cube;
-            }
+            //}
 
 
             GameObject primitive = GameObject.CreatePrimitive(primitiveType);
@@ -50,7 +50,7 @@ namespace Assets.Scripts.Render
 
             _cylinders.Add(primitive);
 
-            if (_cylinders.Count > 2000)
+            if (_cylinders.Count > 1000)
             {
                 Debug.Log("Premature Branch Optimisation");
                 OptimiseMeshes(ref _cylinders);

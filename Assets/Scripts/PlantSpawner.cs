@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using Assets.Scripts.Common;
 using Assets.Scripts.Data;
 using Assets.Scripts.Genetic_Algorithm;
@@ -21,6 +22,7 @@ namespace Assets.Scripts
 
         public int MaximumGrowthIterations;
         public int MaximumGeneticIterations;
+        public int DrawEveryXIterations;
         public double WinterAltitude;
         public double SummerAltitude;
         public double Azimuth;
@@ -37,7 +39,7 @@ namespace Assets.Scripts
                 BranchDiameter = 0.06f,
                 BranchReductionRate = new MinMax<float>
                 {
-                    Min = 0.4f,
+                    Min = 0.8f,
                     Max = 0.8f
                 }
                 //RotationStep = 2.0f
@@ -49,7 +51,7 @@ namespace Assets.Scripts
                 BranchDiameter = 0.06f,
                 BranchReductionRate = new MinMax<float>
                 {
-                    Min = 0.4f,
+                    Min = 0.8f,
                     Max = 0.8f
                 }
                 //RotationStep = 2.0f
@@ -108,7 +110,7 @@ namespace Assets.Scripts
             Plant plant1 = new Plant(lindenMayerSystem, fakeTurtlePen, new PersistentPlantGeometryStorage(), new Vector3(transform.position.x + 1, transform.position.y + 0.775f, transform.position.z + 1));
             ILSystem lindenMayerSystem2 = new LSystem(ruleSet, "A");
             Plant plant2 = new Plant(lindenMayerSystem2, fakeTurtlePen, new PersistentPlantGeometryStorage(), new Vector3(transform.position.x + 1, transform.position.y + 0.775f, transform.position.z + 1));
-            _plants = _genetics.GenerateChildPopulation(new List<Plant> {plant1, plant2});
+            _plants = _genetics.GenerateChildPopulation(new List<Plant> { plant1, plant2 });
 
             //LSystemGenerator lindenMayerSystemGenerator = new LSystemGenerator(new System.Random());
             //List<Plant> initialPopulation = new List<Plant>();
@@ -134,50 +136,44 @@ namespace Assets.Scripts
             }
             if (_iterations >= MaximumGeneticIterations)
                 return;
-
-            if (_iterations % 5 == 0 && _iterations != 0)
+            
+            foreach (var plant in _plants)
             {
-                _delayIteration = 10;
-                foreach (var plant in _plants)
+                for (int j = 0; j < MaximumGrowthIterations; ++j)
                 {
-                    for (int j = 0; j < MaximumGrowthIterations; ++j)
-                    {
-                        plant.Update();
-                    }
-
-                    plant.Generate();
+                    plant.Update();
                 }
+                plant.Generate();
+            }
 
-                ++_iterations;
-                KeyValuePair<Plant, float> fittestPlant = _genetics.GetFittestPlant(_plants);
-                Plant plantToDraw = new Plant(fittestPlant.Key.LindenMayerSystem, _realTurtlePen,
+            if (_iterations % (DrawEveryXIterations - 1) == 0 && _iterations != 0)
+            {
+                _delayIteration = 4;
+
+                Plant fittestPlant = _genetics.GetFittestPlant(_plants);
+                Plant plantToDraw = new Plant(fittestPlant.LindenMayerSystem, _realTurtlePen,
                     new PersistentPlantGeometryStorage(),
                     new Vector3(transform.position.x + 1, transform.position.y + 0.775f, transform.position.z + 1));
+                Debug.Log("Attempting to draw plant with total geometry count of " + (fittestPlant.Fitness.LeafCount + fittestPlant.Fitness.BranchCount));
                 plantToDraw.Generate();
 
-                foreach (var rule in fittestPlant.Key.LindenMayerSystem.GetRuleSet().Rules)
+                foreach (var rule in fittestPlant.LindenMayerSystem.GetRuleSet().Rules)
                 {
                     Debug.Log("Rule " + rule.Key + ": " + rule.Value[0].Rule);
                 }
-                Debug.Log("Total Command: " + fittestPlant.Key.LindenMayerSystem.GetCommandString());
-                Debug.Log("Fitness: " + fittestPlant.Value);
-                _plants = _genetics.GenerateChildPopulation(_plants);
+                Debug.Log("Total Command: " + fittestPlant.LindenMayerSystem.GetCommandString());
+                Debug.Log("Total Leaf Energy: " + fittestPlant.Fitness.LeafEnergy);
+                Debug.Log("Total Branch Cost: " + fittestPlant.Fitness.BranchCost);
+                Debug.Log("Total Branch Amount: " + fittestPlant.Fitness.BranchCount);
+                Debug.Log("Total Leaf Amount: " + fittestPlant.Fitness.LeafCount);
+                Debug.Log("Total Energy Loss: " + fittestPlant.Fitness.EnergyLoss);
+                Debug.Log("Total branches that were too thin: " + fittestPlant.Fitness.BranchesTooThin);
+                Debug.Log("Total Fitness: " + fittestPlant.Fitness.TotalFitness());
             }
-            else
-            {
-                foreach (var plant in _plants)
-                {
-                    for (int j = 0; j < MaximumGrowthIterations; ++j)
-                    {
-                        plant.Update();
-                    }
 
-                    plant.Generate();
-                }
-
-                ++_iterations;
-                _plants = _genetics.GenerateChildPopulation(_plants);
-            }
+            Debug.Log("Iteration " + _iterations);
+            ++_iterations;
+            _plants = _genetics.GenerateChildPopulation(_plants);
 
             //_cooldown -= Time.deltaTime;
             //if (_iterations < MaximumGeneticIterations)

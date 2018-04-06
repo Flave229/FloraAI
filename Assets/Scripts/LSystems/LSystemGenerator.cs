@@ -59,7 +59,7 @@ namespace Assets.Scripts.LSystems
             // Random amount of character between 2 and 20
             // Brackets count as 1 character
             string randomRule = "";
-            int amountOfCharacters = _randomGenerator.Next(2, 21);
+            int amountOfCharacters = _randomGenerator.Next(2, 8);
             int totalBracketCount = amountOfCharacters / 5;
             int bracketCount = 0;
             int characterCount = 0;

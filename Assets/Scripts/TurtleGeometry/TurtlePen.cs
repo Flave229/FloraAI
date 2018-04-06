@@ -200,6 +200,18 @@ namespace Assets.Scripts.TurtleGeometry
 
         private void PopTransformation(PersistentPlantGeometryStorage geometryStorage)
         {
+            if (_forwardStepMultiplication > 1)
+            {
+                Vector3 currentDirection = GetDirection();
+                var lastPosition = _currentPosition;
+                _currentPosition += (ForwardStep * _forwardStepMultiplication) * currentDirection;
+                _renderSystem.DrawCylinder(lastPosition, _currentPosition, _currentBranchDiameter);
+                geometryStorage.ExtendBranch(lastPosition, _currentPosition, _currentBranchDiameter);
+
+                _lastMovementDirection = currentDirection;
+                _forwardStepMultiplication = 1;
+            }
+
             _currentPosition = _positionStack.Pop();
             _currentRotation = _rotationStack.Pop();
             _currentBranchDiameter = _branchDiameterStack.Pop();

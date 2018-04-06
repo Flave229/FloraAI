@@ -28,14 +28,9 @@ namespace Assets.Scripts.Genetic_Algorithm
             {
                 foreach (var lSystemRule in rule.Value)
                 {
-                    string originalRule = lSystemRule.Rule;
-
                     lSystemRule.Rule = SymbolMutation(lSystemRule.Rule);
                     lSystemRule.Rule = BlockMutation(lSystemRule.Rule);
                     lSystemRule.Rule = BlockInjectionAndExtraction(lSystemRule.Rule);
-                    
-                    if (lSystemRule.Rule.Length > 0 && originalRule == "['''^^O]" && lSystemRule.Rule != "['''^^O]")
-                        Debug.Log("Did the bracket go walkies? Original Rule: " + originalRule + ". New Rule: " + lSystemRule.Rule);
                 }
             }
             return ruleSet;

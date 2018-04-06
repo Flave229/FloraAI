@@ -8,29 +8,28 @@ namespace Assets.Scripts.Genetic_Algorithm
     {
         private readonly ILeafFitness _leafFitness;
         private float _unitBranchDiameter;
-        private float _minimumBranchVolume;
+        private float _minimumBranchDiameter;
 
         public PlantFitness(ILeafFitness leafFitness)
         {
             _leafFitness = leafFitness;
             _unitBranchDiameter = Mathf.PI * Mathf.Pow(0.01f, 2);
-            _minimumBranchVolume = Mathf.PI * Mathf.Pow(0.001f, 2);
+            _minimumBranchDiameter = 0.001f;
         }
-
 
         public float EvaluateFitness(Plant plant)
         {
-            float fitness = EvaluateUpwardsPhototrophicFitness(plant);
+            //float fitness = EvaluateUpwardsPhototrophicFitness(plant);
             //Debug.Log("UpwardsPhototrophicFitness: " + fitness);
-            fitness += EvaluateDynamicPhototrophicFitness(plant);
+            //fitness += EvaluateDynamicPhototrophicFitness(plant);
+            //return fitness;
             //float phloemTransportFitness = EvaluatePhloemTransportationFitness(plant);
             //fitness += phloemTransportFitness;
-            //float fitness = EvaluatePhloemTransportationFitness(plant);
+            plant.Fitness = EvaluatePhloemTransportationFitness(plant);
             //Debug.Log("PhloemTransportationFitness: " + fitness);
-            return fitness;
+            return plant.Fitness.TotalFitness();
         }
-
-
+        
         public float EvaluateUpwardsPhototrophicFitness(Plant plant)
         {
             List<Leaf> leaves = plant.GeometryStorage.Leaves;
@@ -57,52 +56,81 @@ namespace Assets.Scripts.Genetic_Algorithm
             return fitness;
         }
 
-        public float EvaluatePhloemTransportationFitness(Plant plant)
+        public Fitness EvaluatePhloemTransportationFitness(Plant plant)
         {
+            Fitness fitness = new Fitness();
             Branch rootBranch = plant.GeometryStorage.GetRootBranch();
+
             if (rootBranch == null)
-                return 0;
-
-            float totalEnergy = 0;
-
+                return fitness;
+            
             foreach (var childBranch in rootBranch.ChildBranches)
             {
-                totalEnergy += TransportEnergyToParent(childBranch);
+                TransportEnergyToParent(childBranch, ref fitness);
             }
-            
-            return totalEnergy;
+
+            foreach (var childLeaf in rootBranch.ChildLeaves)
+            {
+                fitness.LeafCount++;
+                fitness.EnergyLoss += Mathf.Max(_leafFitness.EvaluatePhotosyntheticRate(childLeaf), 0);
+            }
+
+            return fitness;
         }
 
-        private float TransportEnergyToParent(Branch branch)
+        private void TransportEnergyToParent(Branch branch, ref Fitness fitness)
         {
             float branchVolume = Mathf.PI * Mathf.Pow(branch.Diameter, 2);
+            fitness.BranchCost += branchVolume * branch.Length;
+            ++fitness.BranchCount;
 
-            if (branchVolume < _minimumBranchVolume)
-                return -(branchVolume * branch.Length);
+            if (branch.Diameter < _minimumBranchDiameter)
+            {
+                ++fitness.BranchesTooThin;
 
-            float totalEnergy = 0;
-            
+                foreach (var childBranch in branch.ChildBranches)
+                    TransportEnergyToParent(childBranch, ref fitness);
+
+                foreach (var childLeaf in branch.ChildLeaves)
+                {
+                    fitness.LeafCount++;
+                    fitness.EnergyLoss += Mathf.Max(_leafFitness.EvaluatePhotosyntheticRate(childLeaf), 0);
+                }
+
+                return;
+            }
+
             foreach (var childBranch in branch.ChildBranches)
             {
-                totalEnergy += TransportEnergyToParent(childBranch);
+                Fitness fitnessForChildBranch = new Fitness();
+                TransportEnergyToParent(childBranch, ref fitnessForChildBranch);
+                fitness.LeafEnergy += fitnessForChildBranch.LeafEnergy;
+                fitness.BranchCost += fitnessForChildBranch.BranchCost;
+                fitness.BranchCount += fitnessForChildBranch.BranchCount;
+                fitness.LeafCount += fitnessForChildBranch.LeafCount;
+                fitness.BranchesTooThin += fitnessForChildBranch.BranchesTooThin;
+                fitness.EnergyLoss += fitnessForChildBranch.EnergyLoss;
             }
 
             foreach (var childLeaf in branch.ChildLeaves)
             {
-                totalEnergy += _leafFitness.EvaluatePhotosyntheticRate(childLeaf);
+                //float branchToLeafRelation = 1 - Mathf.InverseLerp(0.02f, 0.06f, branch.Diameter);
+                ++fitness.LeafCount;
+                fitness.LeafEnergy += /*branchToLeafRelation **/ _leafFitness.EvaluatePhotosyntheticRate(childLeaf);
             }
 
             // Making the assumption that a branch with radius 0.01 is able to support 1 leaf at 100% photosynthetic rate
             // π(r^2)h where r = 0.01 and h = 1 : 0.000314
-            if (totalEnergy * _unitBranchDiameter > branchVolume)
-                totalEnergy = branchVolume / _unitBranchDiameter;
+            if (fitness.LeafEnergy * _unitBranchDiameter > branchVolume)
+            {
+                float previousEnergy = fitness.LeafEnergy;
+                fitness.LeafEnergy = branchVolume / _unitBranchDiameter;
+                fitness.EnergyLoss += Mathf.Max(previousEnergy - fitness.LeafEnergy, 0);
+            }
 
             //Debug.Log("Fitness After Leaf Transport: " + totalEnergy);
             // Subtract the energy the branch needs to survive
-            totalEnergy -= branchVolume * branch.Length;
             //Debug.Log("Fitness After Branch Cost Deduction: " + totalEnergy);
-
-            return totalEnergy;
         }
     }
 }

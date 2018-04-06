@@ -21,8 +21,6 @@ namespace Assets.Scripts.Genetic_Algorithm
 
             foreach (var leftParentRule in leftParentRuleSet.Rules)
             {
-                string originalRule = leftParentRule.Value[0].Rule;
-
                 if (rightParentRuleSet.Rules.ContainsKey(leftParentRule.Key) == false)
                 {
                     rules.Add(leftParentRule.Key, new List<LSystemRule>(leftParentRule.Value));
@@ -43,6 +41,7 @@ namespace Assets.Scripts.Genetic_Algorithm
                 }
 
                 string crossOverRule = CrossOverCompleteBracketHierarchy(allHierarchicalRules);
+                crossOverRule = RemoveGeneticRedundancies(crossOverRule);
 
                 rules.Add(leftParentRule.Key, new List<LSystemRule>
                 {
@@ -52,10 +51,6 @@ namespace Assets.Scripts.Genetic_Algorithm
                         Rule = crossOverRule
                     }
                 });
-
-
-                if (leftParentRule.Key == "L" && crossOverRule.Length > 0 && originalRule == "['''^^O]" && crossOverRule != "['''^^O]")
-                    Debug.Log("Did the bracket go walkies? CrossOver Debug Check. Original Rule: " + originalRule + ". New Rule: " + crossOverRule);
             }
 
             Dictionary<string, List<LSystemRule>> rulesNotIncludedOnLeftSide = rightParentRuleSet.Rules
@@ -68,6 +63,66 @@ namespace Assets.Scripts.Genetic_Algorithm
             }
 
             return new RuleSet(rules);
+        }
+
+        public string RemoveGeneticRedundancies(string rule)
+        {
+            for (int i = 0; i < rule.Length - 1; ++i)
+            {
+                switch (rule[i])
+                {
+                    case '[':
+                        if (rule[i + 1] == ']')
+                        {
+                            rule = rule.Remove(i, 2);
+                            --i;
+                        }
+                        break;
+                    case '+':
+                        if (rule[i + 1] == '-')
+                        {
+                            rule = rule.Remove(i, 2);
+                            --i;
+                        }
+                        break;
+                    case '-':
+                        if (rule[i + 1] == '+')
+                        {
+                            rule = rule.Remove(i, 2);
+                            --i;
+                        }
+                        break;
+                    case '&':
+                        if (rule[i + 1] == '^')
+                        {
+                            rule = rule.Remove(i, 2);
+                            --i;
+                        }
+                        break;
+                    case '^':
+                        if (rule[i + 1] == '&')
+                        {
+                            rule = rule.Remove(i, 2);
+                            --i;
+                        }
+                        break;
+                    case '\\':
+                        if (rule[i + 1] == '/')
+                        {
+                            rule = rule.Remove(i, 2);
+                            --i;
+                        }
+                        break;
+                    case '/':
+                        if (rule[i + 1] == '\\')
+                        {
+                            rule = rule.Remove(i, 2);
+                            --i;
+                        }
+                        break;
+                }
+            }
+            return rule;
         }
 
         private Dictionary<int, List<string>> SeperateBracketHierarchy(string rule)

@@ -1,4 +1,5 @@
-﻿using Assets.Scripts.LSystems;
+﻿using Assets.Scripts.Data;
+using Assets.Scripts.LSystems;
 using Assets.Scripts.Render;
 using Assets.Scripts.TurtleGeometry;
 using UnityEngine;
@@ -7,10 +8,12 @@ namespace Assets.Scripts
 {
     public class Plant
     {
-        public readonly ILSystem LindenMayerSystem;
         private readonly TurtlePen _turtlePen;
+
+        public readonly ILSystem LindenMayerSystem;
         public readonly Vector3 Position;
         public PersistentPlantGeometryStorage GeometryStorage;
+        public Fitness Fitness;
 
         public Plant(ILSystem lindenMayerSystem, TurtlePen turtlePen, PersistentPlantGeometryStorage geometryStorage, Vector3 position)
         {

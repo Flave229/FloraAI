@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using Assets.Scripts.LSystems;
 
 namespace Assets.Scripts.Genetic_Algorithm
@@ -21,6 +22,19 @@ namespace Assets.Scripts.Genetic_Algorithm
             {
                 parentPairs.Add(ChooseParents(plantsAndFitness));
             }
+            //var threads = new List<Thread>();
+            //for (int i = 0; i < iterations; ++i)
+            //{
+            //    threads.Add(new Thread(x =>
+            //    {
+            //        parentPairs.Add(ChooseParents(plantsAndFitness));
+            //    }));
+            //    threads[threads.Count - 1].Start();
+            //}
+            //foreach (var thread in threads)
+            //{
+            //    thread.Join();
+            //}
             return parentPairs;
         }
 
@@ -39,7 +53,8 @@ namespace Assets.Scripts.Genetic_Algorithm
 
         public ILSystem RouletteWheelChoice(Dictionary<ILSystem, float> plantsAndFitness)
         {
-            float fitnessMagnitude = plantsAndFitness.Sum(x => x.Value > 0 ? x.Value : 0);
+            float lowestFitness = plantsAndFitness.Min(x => x.Value);
+            float fitnessMagnitude = plantsAndFitness.Sum(x => x.Value - lowestFitness);
             float randomNumber = (float)_randomGenerator.NextDouble();
 
             if (fitnessMagnitude <= 0.0001f)
@@ -49,7 +64,7 @@ namespace Assets.Scripts.Genetic_Algorithm
 
             foreach (var plantFitness in plantsAndFitness)
             {
-                float plantFitnessValue = plantFitness.Value > 0 ? plantFitness.Value : 0;
+                float plantFitnessValue = plantFitness.Value - lowestFitness;
                 float normalisedValue = plantFitnessValue / fitnessMagnitude;
                 if (fitnessSum + normalisedValue >= randomNumber)
                     return plantFitness.Key;
@@ -57,7 +72,7 @@ namespace Assets.Scripts.Genetic_Algorithm
                 fitnessSum += normalisedValue;
             }
 
-            throw new Exception("No Parent could be found. This should not happen");
+            throw new Exception("No Parent could be found. This should not happen. The end fitness sum was " + fitnessSum + ". The chosen random number was " + randomNumber + ". The magnitude of all fitness values was " + fitnessMagnitude);
         }
     }
 }

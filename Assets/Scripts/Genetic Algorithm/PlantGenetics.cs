@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using Assets.Scripts.Data;
 using Assets.Scripts.LSystems;
 using Assets.Scripts.Render;
@@ -6,6 +7,7 @@ using Assets.Scripts.TurtleGeometry;
 using UnityEngine;
 using Random = System.Random;
 using System.Linq;
+using System.Threading;
 
 namespace Assets.Scripts.Genetic_Algorithm
 {
@@ -28,35 +30,60 @@ namespace Assets.Scripts.Genetic_Algorithm
 
         public List<Plant> GenerateChildPopulation(List<Plant> parents)
         {
-            int debugParentLRuleBracketCount = parents.Where(x => x.LindenMayerSystem.GetRuleSet().Rules["L"][0].Rule.Length > 0 && x.LindenMayerSystem.GetRuleSet().Rules["L"][0].Rule[0] == '[').Count();
+            Stopwatch timer = new Stopwatch();
+            timer.Start();
             Dictionary<ILSystem, float> fitnessPerParent = new Dictionary<ILSystem, float>();
 
+            var threads = new List<Thread>();
             foreach (Plant plant in parents)
             {
-                float fitness = _fitness.EvaluateFitness(plant);
-                fitnessPerParent.Add(plant.LindenMayerSystem, fitness);
+                //threads.Add(new Thread(x =>
+                //{
+                    //Plant currentPlant = (Plant) x;
+                    float fitness = _fitness.EvaluateFitness(plant);
+                    fitnessPerParent.Add(plant.LindenMayerSystem, fitness);
+                //}));
+                //threads[threads.Count - 1].Start(plant);
             }
+            //foreach (var thread in threads)
+            //{
+            //    thread.Join();
+            //}
+            UnityEngine.Debug.Log("Evaluating Fitness for all Parents took " + timer.ElapsedMilliseconds + " milliseconds");
+            timer.Reset();
+            timer.Start();
 
             List<List<ILSystem>> parentPairs = _selection.SelectParentPairs(fitnessPerParent, 50);
+            UnityEngine.Debug.Log("Selecting Parents took " + timer.ElapsedMilliseconds + " milliseconds");
+            timer.Reset();
+            timer.Start();
+
 
             List<Plant> childPlants = new List<Plant>();
-            foreach (List<ILSystem> parentPair in parentPairs)
+            //threads.Clear();
+            for (int i = 0; i < parentPairs.Count; ++i)
             {
-                //RuleSet childRuleSet = _crossOver.CrossOver(parentPair[0].GetRuleSet(), parentPair[1].GetRuleSet());
-                RuleSet childRuleSet = _crossOver.CrossOverV2(parentPair[0].GetRuleSet(), parentPair[1].GetRuleSet());
-                childRuleSet = _mutation.Mutate(childRuleSet);
-                childPlants.Add(new Plant(new LSystem(childRuleSet, "A"), _turtlePen, new PersistentPlantGeometryStorage(), Vector3.zero));
+                //threads.Add(new Thread(x =>
+                //{
+                    //List<ILSystem> currentParentPair = (List<ILSystem>) x;
+                    //RuleSet childRuleSet = _crossOver.CrossOver(parentPair[0].GetRuleSet(), parentPair[1].GetRuleSet());
+                    RuleSet childRuleSet = _crossOver.CrossOverV2(parentPairs[i][0].GetRuleSet(), parentPairs[i][1].GetRuleSet());
+                    childRuleSet = _mutation.Mutate(childRuleSet);
+                    childPlants.Add(new Plant(new LSystem(childRuleSet, "A"), _turtlePen, new PersistentPlantGeometryStorage(), Vector3.zero));
+                //}));
+                //threads[threads.Count - 1].Start(parentPairs[i]);
             }
-
-            int debugChildLRuleBracketCount = childPlants.Where(x => x.LindenMayerSystem.GetRuleSet().Rules["L"][0].Rule.Length > 0 && x.LindenMayerSystem.GetRuleSet().Rules["L"][0].Rule[0] == '[').Count();
-
-            if (debugParentLRuleBracketCount != debugChildLRuleBracketCount)
-                Debug.Log("Not sure what this proves");
+            //foreach (var thread in threads)
+            //{
+            //    thread.Join();
+            //}
+            UnityEngine.Debug.Log("Child Crossover and Mutation took " + timer.ElapsedMilliseconds + " milliseconds");
+            timer.Reset();
 
             return childPlants;
         }
 
-        public KeyValuePair<Plant, float> GetFittestPlant(List<Plant> parents)
+        public Plant GetFittestPlant(List<Plant> parents)
         {
             Plant fittestPlant = parents[0];
             float maxFitnessValue = 0;
@@ -71,7 +98,7 @@ namespace Assets.Scripts.Genetic_Algorithm
                 }
             }
 
-            return new KeyValuePair<Plant, float>(fittestPlant, maxFitnessValue);
+            return fittestPlant;
         }
     }
 }

@@ -36,9 +36,9 @@ namespace Assets.Testing.GeneticFitnessTests.GivenAPlant
             PersistentPlantGeometryStorage geometryStorage1 = new PersistentPlantGeometryStorage();
             Plant plant1 = new Plant(lSystem1Mock.Object, turtlePen, geometryStorage1, Vector3.zero);
             plant1.Generate();
-
-
-            float plantFitnessValue = plantFitness.EvaluatePhloemTransportationFitness(plant1);
+            
+            Fitness plantFitnessObject = plantFitness.EvaluatePhloemTransportationFitness(plant1);
+            float plantFitnessValue = plantFitnessObject.LeafEnergy - plantFitnessObject.BranchCost;
 
             Debug.Log("Plant 1 Fitness: " + plantFitnessValue);
             Assert.That(Math.Abs(plantFitnessValue - (1 - 0.000314f)), Is.LessThan(0.0001f));
