@@ -1,4 +1,6 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
+using UnityEngine;
 
 namespace Assets.Scripts.LSystems
 {
@@ -22,12 +24,23 @@ namespace Assets.Scripts.LSystems
 
         public void Iterate()
         {
-            StringBuilder stringBuilder = new StringBuilder();
+            try
+            {
+                StringBuilder stringBuilder = new StringBuilder();
 
-            for (int i = 0, length = _currentString.Length; i < length; ++i)
-                stringBuilder.Append(_rules.GetRule(_currentString[i].ToString()));
+                for (int i = 0, length = _currentString.Length; i < length; ++i)
+                    stringBuilder.Append(_rules.GetRule(_currentString[i].ToString()));
 
-            _currentString = stringBuilder.ToString();
+                _currentString = stringBuilder.ToString();
+            }
+            catch (Exception e)
+            {
+                foreach (var rule in _rules.Rules)
+                {
+                    Debug.Log(rule.Value + ": " + rule.Value[0].Rule);
+                }
+                throw e;
+            }
         }
 
         public string GetCommandString()

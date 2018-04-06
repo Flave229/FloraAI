@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Assets.Scripts.Common;
 using Assets.Scripts.Genetic_Algorithm;
 using Assets.Scripts.LSystems;
 using NUnit.Framework;
@@ -27,31 +28,31 @@ namespace Assets.Testing.GeneticSelectionTests.GivenManySelections
             });
 
             var firstLSystem = new LSystem(firstRuleSet, "F");
-            Dictionary<ILSystem, float> plantsAndFitness = new Dictionary<ILSystem, float>
+            List<Tuple<ILSystem, float>> plantsAndFitness = new List<Tuple<ILSystem, float>>
             {
-                { firstLSystem, 1 },
-                { new LSystem(firstRuleSet, "A"), 0 },
-                { new LSystem(firstRuleSet, "B"), 0 },
-                { new LSystem(firstRuleSet, "C"), 0 },
-                { new LSystem(firstRuleSet, "D"), 0 },
-                { new LSystem(firstRuleSet, "E"), 0 },
-                { new LSystem(firstRuleSet, "F"), 0 },
-                { new LSystem(firstRuleSet, "G"), 0 },
-                { new LSystem(firstRuleSet, "H"), 0 },
-                { new LSystem(firstRuleSet, "I"), 0 },
-                { new LSystem(firstRuleSet, "J"), 0 },
-                { new LSystem(firstRuleSet, "K"), 0 },
-                { new LSystem(firstRuleSet, "L"), 0 },
-                { new LSystem(firstRuleSet, "M"), 0 },
-                { new LSystem(firstRuleSet, "N"), 0 },
-                { new LSystem(firstRuleSet, "O"), 0 },
-                { new LSystem(firstRuleSet, "P"), 0 },
-                { new LSystem(firstRuleSet, "Q"), 0 },
-                { new LSystem(firstRuleSet, "R"), 0 },
-                { new LSystem(firstRuleSet, "S"), 0 },
-                { new LSystem(firstRuleSet, "T"), 0 },
-                { new LSystem(firstRuleSet, "U"), 0 },
-                { new LSystem(firstRuleSet, "V"), 0 }
+                new Tuple<ILSystem, float>(firstLSystem, 1),
+                new Tuple<ILSystem, float>(new LSystem(firstRuleSet, "A"), 0),
+                new Tuple<ILSystem, float>(new LSystem(firstRuleSet, "B"), 0),
+                new Tuple<ILSystem, float>(new LSystem(firstRuleSet, "C"), 0),
+                new Tuple<ILSystem, float>(new LSystem(firstRuleSet, "D"), 0),
+                new Tuple<ILSystem, float>(new LSystem(firstRuleSet, "E"), 0),
+                new Tuple<ILSystem, float>(new LSystem(firstRuleSet, "F"), 0),
+                new Tuple<ILSystem, float>(new LSystem(firstRuleSet, "G"), 0),
+                new Tuple<ILSystem, float>(new LSystem(firstRuleSet, "H"), 0),
+                new Tuple<ILSystem, float>(new LSystem(firstRuleSet, "I"), 0),
+                new Tuple<ILSystem, float>(new LSystem(firstRuleSet, "J"), 0),
+                new Tuple<ILSystem, float>(new LSystem(firstRuleSet, "K"), 0),
+                new Tuple<ILSystem, float>(new LSystem(firstRuleSet, "L"), 0),
+                new Tuple<ILSystem, float>(new LSystem(firstRuleSet, "M"), 0),
+                new Tuple<ILSystem, float>(new LSystem(firstRuleSet, "N"), 0),
+                new Tuple<ILSystem, float>(new LSystem(firstRuleSet, "O"), 0),
+                new Tuple<ILSystem, float>(new LSystem(firstRuleSet, "P"), 0),
+                new Tuple<ILSystem, float>(new LSystem(firstRuleSet, "Q"), 0),
+                new Tuple<ILSystem, float>(new LSystem(firstRuleSet, "R"), 0),
+                new Tuple<ILSystem, float>(new LSystem(firstRuleSet, "S"), 0),
+                new Tuple<ILSystem, float>(new LSystem(firstRuleSet, "T"), 0),
+                new Tuple<ILSystem, float>(new LSystem(firstRuleSet, "U"), 0),
+                new Tuple<ILSystem, float>(new LSystem(firstRuleSet, "V"), 0)
             };
 
             List<List<ILSystem>> chosenParents = selection.SelectParentPairs(plantsAndFitness, 5);

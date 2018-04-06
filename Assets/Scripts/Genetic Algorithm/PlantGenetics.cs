@@ -8,6 +8,7 @@ using UnityEngine;
 using Random = System.Random;
 using System.Linq;
 using System.Threading;
+using Assets.Scripts.Common;
 
 namespace Assets.Scripts.Genetic_Algorithm
 {
@@ -32,32 +33,35 @@ namespace Assets.Scripts.Genetic_Algorithm
         {
             Stopwatch timer = new Stopwatch();
             timer.Start();
-            Dictionary<ILSystem, float> fitnessPerParent = new Dictionary<ILSystem, float>();
+            //Dictionary<ILSystem, float> fitnessPerParent = new Dictionary<ILSystem, float>(parents.Count);
+            Tuple<ILSystem, float>[] fitnessPerParent = new Tuple<ILSystem, float>[parents.Count];
 
             var threads = new List<Thread>();
-            foreach (Plant plant in parents)
+            for (int i = 0; i < parents.Count; ++i)
             {
-                //threads.Add(new Thread(x =>
-                //{
-                    //Plant currentPlant = (Plant) x;
-                    float fitness = _fitness.EvaluateFitness(plant);
-                    fitnessPerParent.Add(plant.LindenMayerSystem, fitness);
-                //}));
-                //threads[threads.Count - 1].Start(plant);
+                threads.Add(new Thread(x =>
+                {
+                    object[] threadInput = (object[]) x;
+                    int index = (int)threadInput[0];
+                    Tuple<ILSystem, float>[] tupleList = (Tuple<ILSystem, float>[]) threadInput[1];
+                    Plant parentPlant = (Plant)threadInput[2];
+                    float fitness = _fitness.EvaluateFitness(parentPlant);
+                    tupleList[index] = new Tuple<ILSystem, float>(parentPlant.LindenMayerSystem, fitness);
+                }));
+                threads[threads.Count - 1].Start(new object[] { i, fitnessPerParent, parents[i] });
             }
-            //foreach (var thread in threads)
-            //{
-            //    thread.Join();
-            //}
+            foreach (var thread in threads)
+            {
+                thread.Join();
+            }
             UnityEngine.Debug.Log("Evaluating Fitness for all Parents took " + timer.ElapsedMilliseconds + " milliseconds");
             timer.Reset();
             timer.Start();
 
-            List<List<ILSystem>> parentPairs = _selection.SelectParentPairs(fitnessPerParent, 50);
+            List<List<ILSystem>> parentPairs = _selection.SelectParentPairs(fitnessPerParent.ToList(), 50);
             UnityEngine.Debug.Log("Selecting Parents took " + timer.ElapsedMilliseconds + " milliseconds");
             timer.Reset();
             timer.Start();
-
 
             List<Plant> childPlants = new List<Plant>();
             //threads.Clear();
@@ -68,6 +72,7 @@ namespace Assets.Scripts.Genetic_Algorithm
                     //List<ILSystem> currentParentPair = (List<ILSystem>) x;
                     //RuleSet childRuleSet = _crossOver.CrossOver(parentPair[0].GetRuleSet(), parentPair[1].GetRuleSet());
                     RuleSet childRuleSet = _crossOver.CrossOverV2(parentPairs[i][0].GetRuleSet(), parentPairs[i][1].GetRuleSet());
+                    //RuleSet childRuleSet = _crossOver.CrossOverV2(currentParentPair[0].GetRuleSet(), currentParentPair[1].GetRuleSet());
                     childRuleSet = _mutation.Mutate(childRuleSet);
                     childPlants.Add(new Plant(new LSystem(childRuleSet, "A"), _turtlePen, new PersistentPlantGeometryStorage(), Vector3.zero));
                 //}));
@@ -75,7 +80,7 @@ namespace Assets.Scripts.Genetic_Algorithm
             }
             //foreach (var thread in threads)
             //{
-            //    thread.Join();
+             //   thread.Join();
             //}
             UnityEngine.Debug.Log("Child Crossover and Mutation took " + timer.ElapsedMilliseconds + " milliseconds");
             timer.Reset();

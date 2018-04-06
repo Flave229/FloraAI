@@ -154,8 +154,6 @@ namespace Assets.Scripts
                 Plant plantToDraw = new Plant(fittestPlant.LindenMayerSystem, _realTurtlePen,
                     new PersistentPlantGeometryStorage(),
                     new Vector3(transform.position.x + 1, transform.position.y + 0.775f, transform.position.z + 1));
-                Debug.Log("Attempting to draw plant with total geometry count of " + (fittestPlant.Fitness.LeafCount + fittestPlant.Fitness.BranchCount));
-                plantToDraw.Generate();
 
                 foreach (var rule in fittestPlant.LindenMayerSystem.GetRuleSet().Rules)
                 {
@@ -169,6 +167,9 @@ namespace Assets.Scripts
                 Debug.Log("Total Energy Loss: " + fittestPlant.Fitness.EnergyLoss);
                 Debug.Log("Total branches that were too thin: " + fittestPlant.Fitness.BranchesTooThin);
                 Debug.Log("Total Fitness: " + fittestPlant.Fitness.TotalFitness());
+
+                Debug.Log("Attempting to draw plant with total geometry count of " + (fittestPlant.Fitness.LeafCount + fittestPlant.Fitness.BranchCount));
+                plantToDraw.Generate();
             }
 
             Debug.Log("Iteration " + _iterations);

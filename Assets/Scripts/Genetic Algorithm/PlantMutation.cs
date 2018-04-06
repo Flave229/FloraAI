@@ -151,6 +151,7 @@ namespace Assets.Scripts.Genetic_Algorithm
             }
             catch (Exception e)
             {
+                Debug.LogError("Exception Occured In Plant Sumbol Mutation: " + e);
                 Debug.Log("Old rule: " + rule);
                 Debug.Log("New rule: " + newRule);
                 throw;

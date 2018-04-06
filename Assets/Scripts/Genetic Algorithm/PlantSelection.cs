@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using Assets.Scripts.Common;
 using Assets.Scripts.LSystems;
 
 namespace Assets.Scripts.Genetic_Algorithm
@@ -15,7 +16,7 @@ namespace Assets.Scripts.Genetic_Algorithm
             _randomGenerator = randomGenerator;
         }
         
-        public List<List<ILSystem>> SelectParentPairs(Dictionary<ILSystem, float> plantsAndFitness, int iterations)
+        public List<List<ILSystem>> SelectParentPairs(List<Tuple<ILSystem, float>> plantsAndFitness, int iterations)
         {
             List<List<ILSystem>> parentPairs = new List<List<ILSystem>>();
             for (int i = 0; i < iterations; ++i)
@@ -38,10 +39,10 @@ namespace Assets.Scripts.Genetic_Algorithm
             return parentPairs;
         }
 
-        public List<ILSystem> ChooseParents(Dictionary<ILSystem, float> plantsAndFitness)
+        public List<ILSystem> ChooseParents(List<Tuple<ILSystem, float>> plantsAndFitness)
         {
             ILSystem firstParent = RouletteWheelChoice(plantsAndFitness);
-            ILSystem secondParent = RouletteWheelChoice(plantsAndFitness.Where(x => x.Key != firstParent).ToDictionary(x => x.Key, y => y.Value));
+            ILSystem secondParent = RouletteWheelChoice(plantsAndFitness.Where(x => x.First != firstParent).ToList());
 
             return new List<ILSystem>
             {
@@ -51,23 +52,23 @@ namespace Assets.Scripts.Genetic_Algorithm
         }
 
 
-        public ILSystem RouletteWheelChoice(Dictionary<ILSystem, float> plantsAndFitness)
+        public ILSystem RouletteWheelChoice(List<Tuple<ILSystem, float>> plantsAndFitness)
         {
-            float lowestFitness = plantsAndFitness.Min(x => x.Value);
-            float fitnessMagnitude = plantsAndFitness.Sum(x => x.Value - lowestFitness);
+            //float lowestFitness = plantsAndFitness.Min(x => x.Second);
+            float fitnessMagnitude = plantsAndFitness.Sum(x => x.Second /*- lowestFitness*/);
             float randomNumber = (float)_randomGenerator.NextDouble();
 
             if (fitnessMagnitude <= 0.0001f)
-                return plantsAndFitness.ElementAt((int)(randomNumber * plantsAndFitness.Count)).Key;
+                return plantsAndFitness.ElementAt((int)(randomNumber * plantsAndFitness.Count)).First;
             
             float fitnessSum = 0;
 
             foreach (var plantFitness in plantsAndFitness)
             {
-                float plantFitnessValue = plantFitness.Value - lowestFitness;
+                float plantFitnessValue = plantFitness.Second /*- lowestFitness*/;
                 float normalisedValue = plantFitnessValue / fitnessMagnitude;
                 if (fitnessSum + normalisedValue >= randomNumber)
-                    return plantFitness.Key;
+                    return plantFitness.First;
 
                 fitnessSum += normalisedValue;
             }
