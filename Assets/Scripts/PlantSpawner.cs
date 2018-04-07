@@ -62,65 +62,65 @@ namespace Assets.Scripts
                 Azimuth = Azimuth,
                 SummerAltitude = SummerAltitude
             }, 0.01f);
-            Dictionary<string, List<LSystemRule>> rules = new Dictionary<string, List<LSystemRule>>
-            {
-                {
-                    "A",  new List<LSystemRule>
-                    {
-                        new LSystemRule
-                        {
-                            Probability = 1,
-                            Rule = "[&FL!A]/////'[&FL!A]///////'[&FL!A]"
-                        }
-                    }
-                },
-                {
-                    "F",  new List<LSystemRule>
-                    {
-                        new LSystemRule
-                        {
-                            Probability = 1,
-                            Rule = "S/////F"
-                        }
-                    }
-                },
-                {
-                    "S",  new List<LSystemRule>
-                    {
-                        new LSystemRule
-                        {
-                            Probability = 1,
-                            Rule = "FL"
-                        }
-                    }
-                },
-                {
-                    "L",  new List<LSystemRule>
-                    {
-                        new LSystemRule
-                        {
-                            Probability = 1,
-                            Rule = "['''^^O]"
-                        }
-                    }
-                }
-            };
-            RuleSet ruleSet = new RuleSet(rules);
-            ILSystem lindenMayerSystem = new LSystem(ruleSet, "A");
-            Plant plant1 = new Plant(lindenMayerSystem, fakeTurtlePen, new PersistentPlantGeometryStorage(), new Vector3(transform.position.x + 1, transform.position.y + 0.775f, transform.position.z + 1));
-            ILSystem lindenMayerSystem2 = new LSystem(ruleSet, "A");
-            Plant plant2 = new Plant(lindenMayerSystem2, fakeTurtlePen, new PersistentPlantGeometryStorage(), new Vector3(transform.position.x + 1, transform.position.y + 0.775f, transform.position.z + 1));
-            _plants = _genetics.GenerateChildPopulation(new List<Plant> { plant1, plant2 });
-
-            //LSystemGenerator lindenMayerSystemGenerator = new LSystemGenerator(new System.Random());
-            //List<Plant> initialPopulation = new List<Plant>();
-            //for (int i = 0; i < 50; ++i)
+            //Dictionary<string, List<LSystemRule>> rules = new Dictionary<string, List<LSystemRule>>
             //{
-            //    ILSystem randomLSystem = lindenMayerSystemGenerator.GenerateRandomLSystem();
-            //    initialPopulation.Add(new Plant(randomLSystem, fakeTurtlePen, new PersistentPlantGeometryStorage(), new Vector3(transform.position.x + 1, transform.position.y + 0.775f, transform.position.z + 1)));
-            //}
+            //    {
+            //        "A",  new List<LSystemRule>
+            //        {
+            //            new LSystemRule
+            //            {
+            //                Probability = 1,
+            //                Rule = "[&FL!A]/////'[&FL!A]///////'[&FL!A]"
+            //            }
+            //        }
+            //    },
+            //    {
+            //        "F",  new List<LSystemRule>
+            //        {
+            //            new LSystemRule
+            //            {
+            //                Probability = 1,
+            //                Rule = "S/////F"
+            //            }
+            //        }
+            //    },
+            //    {
+            //        "S",  new List<LSystemRule>
+            //        {
+            //            new LSystemRule
+            //            {
+            //                Probability = 1,
+            //                Rule = "FL"
+            //            }
+            //        }
+            //    },
+            //    {
+            //        "L",  new List<LSystemRule>
+            //        {
+            //            new LSystemRule
+            //            {
+            //                Probability = 1,
+            //                Rule = "['''^^O]"
+            //            }
+            //        }
+            //    }
+            //};
+            //RuleSet ruleSet = new RuleSet(rules);
+            //ILSystem lindenMayerSystem = new LSystem(ruleSet, "A");
+            //Plant plant1 = new Plant(lindenMayerSystem, fakeTurtlePen, new PersistentPlantGeometryStorage(), new Vector3(transform.position.x + 1, transform.position.y + 0.775f, transform.position.z + 1));
+            //ILSystem lindenMayerSystem2 = new LSystem(ruleSet, "A");
+            //Plant plant2 = new Plant(lindenMayerSystem2, fakeTurtlePen, new PersistentPlantGeometryStorage(), new Vector3(transform.position.x + 1, transform.position.y + 0.775f, transform.position.z + 1));
+            //_plants = _genetics.GenerateChildPopulation(new List<Plant> { plant1, plant2 });
 
-            //_plants = _genetics.GenerateChildPopulation(initialPopulation);
+            LSystemGenerator lindenMayerSystemGenerator = new LSystemGenerator(new System.Random());
+            List<Plant> initialPopulation = new List<Plant>();
+            for (int i = 0; i < 50; ++i)
+            {
+                ILSystem randomLSystem = lindenMayerSystemGenerator.GenerateRandomLSystem();
+                initialPopulation.Add(new Plant(randomLSystem, fakeTurtlePen, new PersistentPlantGeometryStorage(), new Vector3(transform.position.x + 1, transform.position.y + 0.775f, transform.position.z + 1)));
+            }
+
+            _plants = _genetics.GenerateChildPopulation(initialPopulation);
         }
         
         private void Start()
@@ -160,15 +160,15 @@ namespace Assets.Scripts
                     Debug.Log("Rule " + rule.Key + ": " + rule.Value[0].Rule);
                 }
                 Debug.Log("Total Command: " + fittestPlant.LindenMayerSystem.GetCommandString());
-                Debug.Log("Total Leaf Energy: " + fittestPlant.Fitness.LeafEnergy);
-                Debug.Log("Total Branch Cost: " + fittestPlant.Fitness.BranchCost);
-                Debug.Log("Total Branch Amount: " + fittestPlant.Fitness.BranchCount);
-                Debug.Log("Total Leaf Amount: " + fittestPlant.Fitness.LeafCount);
-                Debug.Log("Total Energy Loss: " + fittestPlant.Fitness.EnergyLoss);
-                Debug.Log("Total branches that were too thin: " + fittestPlant.Fitness.BranchesTooThin);
-                Debug.Log("Total Fitness: " + fittestPlant.Fitness.TotalFitness());
+                //Debug.Log("Total Leaf Energy: " + fittestPlant.Fitness.LeafEnergy);
+                //Debug.Log("Total Branch Cost: " + fittestPlant.Fitness.BranchCost);
+                //Debug.Log("Total Branch Amount: " + fittestPlant.Fitness.BranchCount);
+                //Debug.Log("Total Leaf Amount: " + fittestPlant.Fitness.LeafCount);
+                //Debug.Log("Total Energy Loss: " + fittestPlant.Fitness.EnergyLoss);
+                //Debug.Log("Total branches that were too thin: " + fittestPlant.Fitness.BranchesTooThin);
+                //Debug.Log("Total Fitness: " + fittestPlant.Fitness.TotalFitness());
 
-                Debug.Log("Attempting to draw plant with total geometry count of " + (fittestPlant.Fitness.LeafCount + fittestPlant.Fitness.BranchCount));
+                //Debug.Log("Attempting to draw plant with total geometry count of " + (fittestPlant.Fitness.LeafCount + fittestPlant.Fitness.BranchCount));
                 plantToDraw.Generate();
             }
 

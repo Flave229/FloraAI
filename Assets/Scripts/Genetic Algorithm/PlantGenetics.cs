@@ -15,6 +15,7 @@ namespace Assets.Scripts.Genetic_Algorithm
     public class PlantGenetics
     {
         private readonly TurtlePen _turtlePen;
+        private readonly float _mutationChance;
         private readonly PlantCrossOver _crossOver;
         private readonly PlantMutation _mutation;
         private readonly PlantSelection _selection;
@@ -23,6 +24,7 @@ namespace Assets.Scripts.Genetic_Algorithm
         public PlantGenetics(Random randomGenerator, TurtlePen turtlePen, SunInformation sunInformation, float mutationChance)
         {
             _turtlePen = turtlePen;
+            _mutationChance = mutationChance;
             _crossOver = new PlantCrossOver(randomGenerator);
             _mutation = new PlantMutation(randomGenerator, mutationChance);
             _selection = new PlantSelection(randomGenerator);
@@ -55,6 +57,8 @@ namespace Assets.Scripts.Genetic_Algorithm
                 thread.Join();
             }
             UnityEngine.Debug.Log("Evaluating Fitness for all Parents took " + timer.ElapsedMilliseconds + " milliseconds");
+            UnityEngine.Debug.Log("Fittest Plant had fitness of: " + fitnessPerParent.Max(x => x.Second));
+            UnityEngine.Debug.Log("Shittest Plant had fitness of: " + fitnessPerParent.Min(x => x.Second));
             timer.Reset();
             timer.Start();
 
@@ -63,29 +67,35 @@ namespace Assets.Scripts.Genetic_Algorithm
             timer.Reset();
             timer.Start();
 
-            List<Plant> childPlants = new List<Plant>();
-            //threads.Clear();
+            Plant[] childPlants = new Plant[parentPairs.Count];
+            threads.Clear();
             for (int i = 0; i < parentPairs.Count; ++i)
             {
-                //threads.Add(new Thread(x =>
-                //{
-                    //List<ILSystem> currentParentPair = (List<ILSystem>) x;
+                threads.Add(new Thread(x =>
+                {
+                    object[] threadInput = (object[])x;
+                    int index = (int)threadInput[0];
+                    Plant[] childPlantList = (Plant[]) threadInput[1];
+                    List<ILSystem> currentParentPair = (List<ILSystem>) threadInput[2];
                     //RuleSet childRuleSet = _crossOver.CrossOver(parentPair[0].GetRuleSet(), parentPair[1].GetRuleSet());
-                    RuleSet childRuleSet = _crossOver.CrossOverV2(parentPairs[i][0].GetRuleSet(), parentPairs[i][1].GetRuleSet());
-                    //RuleSet childRuleSet = _crossOver.CrossOverV2(currentParentPair[0].GetRuleSet(), currentParentPair[1].GetRuleSet());
-                    childRuleSet = _mutation.Mutate(childRuleSet);
-                    childPlants.Add(new Plant(new LSystem(childRuleSet, "A"), _turtlePen, new PersistentPlantGeometryStorage(), Vector3.zero));
-                //}));
-                //threads[threads.Count - 1].Start(parentPairs[i]);
+                    //RuleSet childRuleSet = _crossOver.CrossOverV2(parentPairs[i][0].GetRuleSet(), parentPairs[i][1].GetRuleSet());
+                    PlantCrossOver crossOver = new PlantCrossOver(new Random());
+                    PlantMutation mutation = new PlantMutation(new Random(), _mutationChance);
+                    //RuleSet childRuleSet = crossOver.CrossOver(currentParentPair[0].GetRuleSet(), currentParentPair[1].GetRuleSet());
+                    RuleSet childRuleSet = crossOver.CrossOverV2(currentParentPair[0].GetRuleSet(), currentParentPair[1].GetRuleSet());
+                    childRuleSet = mutation.Mutate(childRuleSet);
+                    childPlantList[index] = new Plant(new LSystem(childRuleSet, "A"), _turtlePen, new PersistentPlantGeometryStorage(), Vector3.zero);
+                }));
+                threads[threads.Count - 1].Start(new object[] { i, childPlants, parentPairs[i] });
             }
-            //foreach (var thread in threads)
-            //{
-             //   thread.Join();
-            //}
+            foreach (var thread in threads)
+            {
+                thread.Join();
+            }
             UnityEngine.Debug.Log("Child Crossover and Mutation took " + timer.ElapsedMilliseconds + " milliseconds");
             timer.Reset();
 
-            return childPlants;
+            return childPlants.ToList();
         }
 
         public Plant GetFittestPlant(List<Plant> parents)

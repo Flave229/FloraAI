@@ -17,10 +17,7 @@ namespace Assets.Scripts.Data
 
         public float TotalFitness()
         {
-            float fitness = LeafEnergy - (BranchCost * 5) - ((float)(BranchCount + LeafCount) / 500) - EnergyLoss;
-
-            if (fitness > 0) // Trying to give positive fitness values much higher value
-                return Mathf.Pow(fitness, 2);
+            float fitness = LeafEnergy - (BranchCost * 5) /*- ((float)(BranchCount + LeafCount) / 500)*/ - EnergyLoss;
 
             return fitness;
         }

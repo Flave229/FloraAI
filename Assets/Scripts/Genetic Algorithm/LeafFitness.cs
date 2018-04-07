@@ -63,7 +63,7 @@ namespace Assets.Scripts.Genetic_Algorithm
             //return Mathf.Min((((summerDot + winterDot) * logarithmicHeightModifier) / 2), 1);
             //return ((summerDot + winterDot) / 2) * Mathf.Pow(leaf.Position.y + 1, 2) + leaf.Position.y;
             //return ((summerDot + winterDot) / 2) + Mathf.Pow(leaf.Position.y + 1, 2);
-            return ((summerDot + winterDot) / 2) * Mathf.Log(leaf.Position.y + 1, 11);
+            return ((summerDot + winterDot) / 2) + Mathf.Min(leaf.Position.y / 2, 5); //(1 + Mathf.Log(leaf.Position.y + 1, 11));
         }
     }
 }

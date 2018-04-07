@@ -54,18 +54,18 @@ namespace Assets.Scripts.Genetic_Algorithm
 
         public ILSystem RouletteWheelChoice(List<Tuple<ILSystem, float>> plantsAndFitness)
         {
-            //float lowestFitness = plantsAndFitness.Min(x => x.Second);
-            float fitnessMagnitude = plantsAndFitness.Sum(x => x.Second /*- lowestFitness*/);
+            float lowestFitness = plantsAndFitness.Min(x => x.Second);
+            float fitnessMagnitude = plantsAndFitness.Sum(x => x.Second - lowestFitness);
             float randomNumber = (float)_randomGenerator.NextDouble();
 
-            if (fitnessMagnitude <= 0.0001f)
+            if (fitnessMagnitude <= 0)
                 return plantsAndFitness.ElementAt((int)(randomNumber * plantsAndFitness.Count)).First;
             
             float fitnessSum = 0;
 
             foreach (var plantFitness in plantsAndFitness)
             {
-                float plantFitnessValue = plantFitness.Second /*- lowestFitness*/;
+                float plantFitnessValue = plantFitness.Second - lowestFitness;
                 float normalisedValue = plantFitnessValue / fitnessMagnitude;
                 if (fitnessSum + normalisedValue >= randomNumber)
                     return plantFitness.First;

@@ -7,27 +7,27 @@ namespace Assets.Scripts.Genetic_Algorithm
     class PlantFitness
     {
         private readonly ILeafFitness _leafFitness;
-        private float _unitBranchDiameter;
+        private float _unitBranchVolume;
         private float _minimumBranchDiameter;
 
         public PlantFitness(ILeafFitness leafFitness)
         {
             _leafFitness = leafFitness;
-            _unitBranchDiameter = Mathf.PI * Mathf.Pow(0.01f, 2);
+            _unitBranchVolume = Mathf.PI * Mathf.Pow(0.01f, 2);
             _minimumBranchDiameter = 0.001f;
         }
 
         public float EvaluateFitness(Plant plant)
         {
-            //float fitness = EvaluateUpwardsPhototrophicFitness(plant);
+            //float fitness = EvaluateUpwardsPhototrophicFitness(plant) * 5;
             //Debug.Log("UpwardsPhototrophicFitness: " + fitness);
             //fitness += EvaluateDynamicPhototrophicFitness(plant);
             //return fitness;
             //float phloemTransportFitness = EvaluatePhloemTransportationFitness(plant);
             //fitness += phloemTransportFitness;
-            plant.Fitness = EvaluatePhloemTransportationFitness(plant);
+            //plant.Fitness = EvaluatePhloemTransportationFitness(plant);
             //Debug.Log("PhloemTransportationFitness: " + fitness);
-            return plant.Fitness.TotalFitness();
+            //return plant.Fitness.TotalFitness();
         }
         
         public float EvaluateUpwardsPhototrophicFitness(Plant plant)
@@ -114,17 +114,17 @@ namespace Assets.Scripts.Genetic_Algorithm
 
             foreach (var childLeaf in branch.ChildLeaves)
             {
-                //float branchToLeafRelation = 1 - Mathf.InverseLerp(0.02f, 0.06f, branch.Diameter);
+                float branchToLeafRelation = 1 - Mathf.InverseLerp(0.01f, 0.06f, branch.Diameter);
                 ++fitness.LeafCount;
-                fitness.LeafEnergy += /*branchToLeafRelation **/ _leafFitness.EvaluatePhotosyntheticRate(childLeaf);
+                fitness.LeafEnergy += branchToLeafRelation * _leafFitness.EvaluatePhotosyntheticRate(childLeaf);
             }
 
             // Making the assumption that a branch with radius 0.01 is able to support 1 leaf at 100% photosynthetic rate
             // π(r^2)h where r = 0.01 and h = 1 : 0.000314
-            if (fitness.LeafEnergy * _unitBranchDiameter > branchVolume)
+            if (fitness.LeafEnergy * _unitBranchVolume > branchVolume)
             {
                 float previousEnergy = fitness.LeafEnergy;
-                fitness.LeafEnergy = branchVolume / _unitBranchDiameter;
+                fitness.LeafEnergy = branchVolume / _unitBranchVolume;
                 fitness.EnergyLoss += Mathf.Max(previousEnergy - fitness.LeafEnergy, 0);
             }
 
