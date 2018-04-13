@@ -50,11 +50,11 @@ namespace Assets.Scripts.Render
 
             _cylinders.Add(primitive);
 
-            if (_cylinders.Count > 1000)
-            {
-                Debug.Log("Premature Branch Optimisation");
-                OptimiseMeshes(ref _cylinders);
-            }
+            //if (_cylinders.Count > 1000)
+            //{
+            //    Debug.Log("Premature Branch Optimisation");
+            //    OptimiseMeshes(ref _cylinders);
+            //}
         }
 
         public void ClearObjects()
@@ -89,11 +89,11 @@ namespace Assets.Scripts.Render
 
             _leaves.Add(quad);
 
-            if (_leaves.Count > 2000)
-            {
-                Debug.Log("Premature Leaf Optimisation");
-                OptimiseMeshes(ref _leaves);
-            }
+            //if (_leaves.Count > 2000)
+            //{
+            //    Debug.Log("Premature Leaf Optimisation");
+            //    OptimiseMeshes(ref _leaves);
+            //}
         }
 
 

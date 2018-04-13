@@ -63,7 +63,10 @@ namespace Assets.Scripts.Genetic_Algorithm
             //return Mathf.Min((((summerDot + winterDot) * logarithmicHeightModifier) / 2), 1);
             //return ((summerDot + winterDot) / 2) * Mathf.Pow(leaf.Position.y + 1, 2) + leaf.Position.y;
             //return ((summerDot + winterDot) / 2) + Mathf.Pow(leaf.Position.y + 1, 2);
-            return ((summerDot + winterDot) / 2) + Mathf.Min(leaf.Position.y / 2, 5); //(1 + Mathf.Log(leaf.Position.y + 1, 11));
+            if (leaf.Position.y < 0)
+                return -8; // I do not want leaves going into the ground to perform well at all
+
+            return ((summerDot + winterDot)) /* +Mathf.Pow(Mathf.Min(leaf.Position.y, 4), 2);*/ + (Mathf.Log(leaf.Position.y + 1, 11));
         }
     }
 }

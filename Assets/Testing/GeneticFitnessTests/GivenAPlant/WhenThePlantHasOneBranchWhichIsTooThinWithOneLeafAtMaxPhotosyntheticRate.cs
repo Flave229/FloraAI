@@ -14,7 +14,7 @@ namespace Assets.Testing.GeneticFitnessTests.GivenAPlant
     class WhenThePlantHasOneBranchWhichIsTooThinWithOneLeafAtMaxPhotosyntheticRate
     {
         [Test]
-        public void ThenTheFitnessObservesANintyNinePercentEnergyLoss()
+        public void ThenTheFitnessObservesASignificantEnergyLoss()
         {
             Mock<ILeafFitness> leafFitnessMock = new Mock<ILeafFitness>();
             leafFitnessMock.Setup(x => x.EvaluatePhotosyntheticRate(It.IsAny<Leaf>()))
@@ -25,7 +25,7 @@ namespace Assets.Testing.GeneticFitnessTests.GivenAPlant
             {
                 ForwardStep = 1,
                 RotationStep = 90.0f,
-                BranchDiameter = 0.001f
+                BranchDiameter = 0.01f
             };
 
             Mock<ILSystem> lSystem1Mock = new Mock<ILSystem>();
@@ -38,7 +38,8 @@ namespace Assets.Testing.GeneticFitnessTests.GivenAPlant
             float plantFitnessValue = plantFitnessObject.LeafEnergy - plantFitnessObject.BranchCost;
 
             Debug.Log("Plant 1 Fitness: " + plantFitnessValue);
-            Assert.That(Math.Abs(plantFitnessValue - (0.01 - 0.00000314f)), Is.LessThan(0.0001f));
+            Assert.That(Math.Abs(plantFitnessObject.LeafEnergy), Is.LessThan(0.5));
+            Assert.That(Math.Abs(plantFitnessObject.EnergyLoss), Is.GreaterThan(0.5));
         }
     }
 }

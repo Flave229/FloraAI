@@ -56,14 +56,10 @@ namespace Assets.Scripts.Genetic_Algorithm
             {
                 thread.Join();
             }
-            UnityEngine.Debug.Log("Evaluating Fitness for all Parents took " + timer.ElapsedMilliseconds + " milliseconds");
-            UnityEngine.Debug.Log("Fittest Plant had fitness of: " + fitnessPerParent.Max(x => x.Second));
-            UnityEngine.Debug.Log("Shittest Plant had fitness of: " + fitnessPerParent.Min(x => x.Second));
             timer.Reset();
             timer.Start();
 
             List<List<ILSystem>> parentPairs = _selection.SelectParentPairs(fitnessPerParent.ToList(), 50);
-            UnityEngine.Debug.Log("Selecting Parents took " + timer.ElapsedMilliseconds + " milliseconds");
             timer.Reset();
             timer.Start();
 
@@ -92,7 +88,6 @@ namespace Assets.Scripts.Genetic_Algorithm
             {
                 thread.Join();
             }
-            UnityEngine.Debug.Log("Child Crossover and Mutation took " + timer.ElapsedMilliseconds + " milliseconds");
             timer.Reset();
 
             return childPlants.ToList();

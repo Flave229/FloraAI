@@ -94,7 +94,7 @@ namespace Assets.Scripts.TurtleGeometry
                         RollLeft();
                         break;
                     case '!':
-                        DecreaseBranchDiameter();
+                        DecreaseBranchDiameter(geometryStorage);
                         break;
                     case '\'':
                         IncreaseGreenValue();
@@ -111,10 +111,21 @@ namespace Assets.Scripts.TurtleGeometry
             _renderSystem.FinalisePlant();
         }
 
-        private void DecreaseBranchDiameter()
+        private void DecreaseBranchDiameter(PersistentPlantGeometryStorage geometryStorage)
         {
+            Vector3 currentDirection = GetDirection();
+            var lastPosition = _currentPosition;
+            _currentPosition += (ForwardStep * (_forwardStepMultiplication - 1)) * currentDirection;
+            _renderSystem.DrawCylinder(lastPosition, _currentPosition, _currentBranchDiameter);
+            geometryStorage.ExtendBranch(lastPosition, _currentPosition, _currentBranchDiameter);
+
+            _lastMovementDirection = currentDirection;
+            _forwardStepMultiplication = 1;
+
             double randomNumber = _randomGenerator.Next((int) (BranchReductionRate.Min * 100), (int) (BranchReductionRate.Max * 100));
             _currentBranchDiameter *= (float)(randomNumber / 100);
+
+            geometryStorage.StartNewBranch(_currentBranchDiameter);
         }
 
         private void MoveForward(PersistentPlantGeometryStorage geometryStorage)
@@ -191,11 +202,23 @@ namespace Assets.Scripts.TurtleGeometry
 
         private void PushTransformation(PersistentPlantGeometryStorage geometryStorage)
         {
+            if (_forwardStepMultiplication > 1)
+            {
+                Vector3 currentDirection = GetDirection();
+                var lastPosition = _currentPosition;
+                _currentPosition += (ForwardStep * (_forwardStepMultiplication - 1)) * currentDirection;
+                _renderSystem.DrawCylinder(lastPosition, _currentPosition, _currentBranchDiameter);
+                geometryStorage.ExtendBranch(lastPosition, _currentPosition, _currentBranchDiameter);
+
+                _lastMovementDirection = currentDirection;
+                _forwardStepMultiplication = 1;
+            }
+
             _positionStack.Push(_currentPosition);
             _rotationStack.Push(_currentRotation);
             _branchDiameterStack.Push(_currentBranchDiameter);
             _colorStack.Push(_currentColor);
-            geometryStorage.StartNewBranch();
+            geometryStorage.Push(_currentBranchDiameter);
         }
 
         private void PopTransformation(PersistentPlantGeometryStorage geometryStorage)
@@ -216,7 +239,7 @@ namespace Assets.Scripts.TurtleGeometry
             _currentRotation = _rotationStack.Pop();
             _currentBranchDiameter = _branchDiameterStack.Pop();
             _currentColor = _colorStack.Pop();
-            geometryStorage.ReturnToLastBranch();
+            geometryStorage.Pop();
         }
     }
 }

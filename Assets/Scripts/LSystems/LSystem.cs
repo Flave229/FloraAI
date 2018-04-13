@@ -9,6 +9,7 @@ namespace Assets.Scripts.LSystems
         void Iterate();
         string GetCommandString();
         RuleSet GetRuleSet();
+        void ClearCommandString();
     }
 
     public class LSystem : ILSystem
@@ -51,6 +52,11 @@ namespace Assets.Scripts.LSystems
         public RuleSet GetRuleSet()
         {
             return _rules;
+        }
+
+        public void ClearCommandString()
+        {
+            _currentString = "";
         }
     }
 }

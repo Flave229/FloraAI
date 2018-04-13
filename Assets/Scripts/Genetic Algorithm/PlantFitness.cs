@@ -13,21 +13,21 @@ namespace Assets.Scripts.Genetic_Algorithm
         public PlantFitness(ILeafFitness leafFitness)
         {
             _leafFitness = leafFitness;
-            _unitBranchVolume = Mathf.PI * Mathf.Pow(0.01f, 2);
-            _minimumBranchDiameter = 0.001f;
+            _unitBranchVolume = Mathf.PI * Mathf.Pow(0.02f, 2);
+            _minimumBranchDiameter = 0.005f;
         }
 
         public float EvaluateFitness(Plant plant)
         {
-            //float fitness = EvaluateUpwardsPhototrophicFitness(plant) * 5;
+            //float fitness = EvaluateUpwardsPhototrophicFitness(plant) * 2;
             //Debug.Log("UpwardsPhototrophicFitness: " + fitness);
             //fitness += EvaluateDynamicPhototrophicFitness(plant);
             //return fitness;
             //float phloemTransportFitness = EvaluatePhloemTransportationFitness(plant);
             //fitness += phloemTransportFitness;
-            //plant.Fitness = EvaluatePhloemTransportationFitness(plant);
+            plant.Fitness = EvaluatePhloemTransportationFitness(plant);
             //Debug.Log("PhloemTransportationFitness: " + fitness);
-            //return plant.Fitness.TotalFitness();
+            return plant.Fitness.TotalFitness();
         }
         
         public float EvaluateUpwardsPhototrophicFitness(Plant plant)
@@ -37,7 +37,7 @@ namespace Assets.Scripts.Genetic_Algorithm
 
             foreach (var leaf in leaves)
             {
-                fitness += leaf.Position.y;
+                fitness += Mathf.Min(leaf.Position.y, 5);
             }
 
             return fitness;
@@ -64,16 +64,10 @@ namespace Assets.Scripts.Genetic_Algorithm
             if (rootBranch == null)
                 return fitness;
             
-            foreach (var childBranch in rootBranch.ChildBranches)
-            {
-                TransportEnergyToParent(childBranch, ref fitness);
-            }
+            TransportEnergyToParent(rootBranch, ref fitness);
 
-            foreach (var childLeaf in rootBranch.ChildLeaves)
-            {
-                fitness.LeafCount++;
-                fitness.EnergyLoss += Mathf.Max(_leafFitness.EvaluatePhotosyntheticRate(childLeaf), 0);
-            }
+            //Clean up to save memory
+            plant.GeometryStorage.Delete();
 
             return fitness;
         }
@@ -114,7 +108,7 @@ namespace Assets.Scripts.Genetic_Algorithm
 
             foreach (var childLeaf in branch.ChildLeaves)
             {
-                float branchToLeafRelation = 1 - Mathf.InverseLerp(0.01f, 0.06f, branch.Diameter);
+                float branchToLeafRelation = 1 - Mathf.InverseLerp(0.02f, 0.06f, branch.Diameter);
                 ++fitness.LeafCount;
                 fitness.LeafEnergy += branchToLeafRelation * _leafFitness.EvaluatePhotosyntheticRate(childLeaf);
             }

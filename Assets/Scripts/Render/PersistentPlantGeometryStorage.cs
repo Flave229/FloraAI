@@ -42,33 +42,64 @@ namespace Assets.Scripts.Render
 
         public void ExtendBranch(Vector3 sourcePosition, Vector3 targetPosition, float diameter)
         {
+            _currentBranch.Length += Vector3.Distance(sourcePosition, targetPosition);
+            _currentBranch.Diameter = diameter;
+            //_currentParentBranch = _currentBranch;
+            //_currentBranch = new Branch
+            //{
+            //    ParentBranch = _currentParentBranch,
+            //    Diameter = diameter,
+            //    Length = Vector3.Distance(sourcePosition, targetPosition)
+            //};
+            //if (_currentParentBranch != null)
+            //    _currentParentBranch.ChildBranches.Add(_currentBranch);
+        }
+
+        public void StartNewBranch(float diameter)
+        {
+            //_previousBranches.Push(_currentBranch);
             _currentParentBranch = _currentBranch;
             _currentBranch = new Branch
             {
-                ParentBranch = _currentParentBranch,
+                Length = 0,
                 Diameter = diameter,
-                Length = Vector3.Distance(sourcePosition, targetPosition)
+                ParentBranch = _currentParentBranch
             };
-            if (_currentParentBranch != null)
-                _currentParentBranch.ChildBranches.Add(_currentBranch);
-        }
-
-        public void StartNewBranch()
-        {
-            _previousBranches.Push(_currentBranch);
+            _currentParentBranch.ChildBranches.Add(_currentBranch);
             //if (_currentBranch == null)
             //    return;
         }           
 
         public void ReturnToLastBranch()
         {
+            _currentBranch = _currentParentBranch;
+            _currentParentBranch = _currentBranch.ParentBranch;
+        }
+
+        public void Pop()
+        {
             _currentBranch = _previousBranches.Pop();
             _currentParentBranch = _currentBranch.ParentBranch;
+        }
+
+        public void Push(float diameter)
+        {
+            _previousBranches.Push(_currentBranch);
+            StartNewBranch(diameter);
         }
 
         public Branch GetRootBranch()
         {
             return _rootBranch;
+        }
+
+        public void Delete()
+        {
+            Leaves.Clear();
+            _previousBranches.Clear();
+            _currentParentBranch = null;
+            _currentBranch = null;
+            _rootBranch = null;
         }
     }
 }

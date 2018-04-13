@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Assets.Scripts.Data
 {
@@ -17,7 +13,14 @@ namespace Assets.Scripts.Data
 
         public float TotalFitness()
         {
-            float fitness = LeafEnergy - (BranchCost * 5) /*- ((float)(BranchCount + LeafCount) / 500)*/ - EnergyLoss;
+            // Trying to discourage low geometry plants
+            if (LeafCount + BranchCount < 200)
+                return (LeafCount + BranchCount) - 200;
+
+            if (LeafCount < 20)
+                return LeafCount - 20;
+
+            float fitness = LeafEnergy - (BranchCost * 7) - Mathf.Pow(((float) (BranchCount + LeafCount) / 2000), 2); //EnergyLoss;
 
             return fitness;
         }

@@ -25,7 +25,7 @@ namespace Assets.Testing.GeneticFitnessTests.GivenAPlant
             {
                 ForwardStep = 1,
                 RotationStep = 90.0f,
-                BranchDiameter = 0.01f
+                BranchDiameter = 0.02f
             };
 
             Mock<ILSystem> lSystem1Mock = new Mock<ILSystem>();
@@ -38,7 +38,7 @@ namespace Assets.Testing.GeneticFitnessTests.GivenAPlant
             float plantFitnessValue = plantFitnessObject.LeafEnergy - plantFitnessObject.BranchCost;
 
             Debug.Log("Plant 1 Fitness: " + plantFitnessValue);
-            Assert.That(Math.Abs(plantFitnessValue - (1 - 0.000314f)), Is.LessThan(0.0001f));
+            Assert.That(Math.Abs(plantFitnessObject.LeafEnergy), Is.EqualTo(1));
         }
     }
 }

@@ -26,7 +26,7 @@ namespace Assets.Testing.GeneticFitnessTests.GivenAPlant
             {
                 ForwardStep = 1,
                 RotationStep = 90.0f,
-                BranchDiameter = 0.02f,
+                BranchDiameter = 0.04f,
                 BranchReductionRate = new MinMax<float>
                 {
                     Max = 0.5f,
@@ -44,7 +44,9 @@ namespace Assets.Testing.GeneticFitnessTests.GivenAPlant
             float plantFitnessValue = plantFitnessObject.LeafEnergy - plantFitnessObject.BranchCost;
 
             Debug.Log("Plant 1 Fitness: " + plantFitnessValue);
-            Assert.That(Math.Abs(plantFitnessValue - (1 - 0.00157f)), Is.LessThan(0.0001f));
+            Debug.Log("Plant 1 Branch Cost: " + plantFitnessObject.BranchCost);
+            Debug.Log("Plant 1 Leaf Energy: " + plantFitnessObject.LeafEnergy);
+            Assert.That(Math.Abs(plantFitnessValue), Is.EqualTo(1 - plantFitnessObject.BranchCost));
         }
     }
 }
