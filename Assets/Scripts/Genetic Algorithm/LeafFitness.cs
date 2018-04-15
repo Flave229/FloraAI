@@ -6,6 +6,7 @@ namespace Assets.Scripts.Genetic_Algorithm
     public interface ILeafFitness
     {
         float EvaluatePhotosyntheticRate(Leaf leaf);
+        SunInformation GetSunInformation();
     }
 
 
@@ -63,10 +64,17 @@ namespace Assets.Scripts.Genetic_Algorithm
             //return Mathf.Min((((summerDot + winterDot) * logarithmicHeightModifier) / 2), 1);
             //return ((summerDot + winterDot) / 2) * Mathf.Pow(leaf.Position.y + 1, 2) + leaf.Position.y;
             //return ((summerDot + winterDot) / 2) + Mathf.Pow(leaf.Position.y + 1, 2);
-            if (leaf.Position.y < 0)
-                return -8; // I do not want leaves going into the ground to perform well at all
+            if (leaf.Position.y < 1)
+                return 0; // I do not want leaves going into the ground to perform well at all
 
-            return ((summerDot + winterDot)) /* +Mathf.Pow(Mathf.Min(leaf.Position.y, 4), 2);*/ + (Mathf.Log(leaf.Position.y + 1, 11));
+            //return ((summerDot + winterDot)) + (Mathf.Log(leaf.Position.y + 1, 11));
+            return (((summerDot + winterDot)) + Mathf.Pow(Mathf.Min(leaf.Position.y / 3, 2), 2)) / 6;
+            //return ((summerDot + winterDot)) + (Mathf.Pow((leaf.Position.y - 1) / 5, (float) 1 / 3) + 0.2f);
+        }
+
+        public SunInformation GetSunInformation()
+        {
+            return _sunInformation;
         }
     }
 }

@@ -29,7 +29,7 @@ namespace Assets.Testing.GeneticFitnessTests.GivenAPlant
             Mock<ILSystem> lSystem1Mock = new Mock<ILSystem>();
             lSystem1Mock.Setup(x => x.GetCommandString()).Returns("FF");
             PersistentPlantGeometryStorage geometryStorage1 = new PersistentPlantGeometryStorage();
-            _plant = new Plant(lSystem1Mock.Object, turtlePen, geometryStorage1, Vector3.zero);
+            _plant = new Plant(lSystem1Mock.Object, turtlePen, geometryStorage1, Vector3.zero, Color.black);
             _plant.Generate();
         }
 

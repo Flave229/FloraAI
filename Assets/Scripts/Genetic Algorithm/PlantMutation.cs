@@ -22,7 +22,7 @@ namespace Assets.Scripts.Genetic_Algorithm
         }
 
 
-        public RuleSet Mutate(RuleSet ruleSet)
+        public RuleSet Mutate(RuleSet ruleSet, ref Color leafColour)
         {
             foreach (var rule in ruleSet.Rules)
             {
@@ -32,8 +32,45 @@ namespace Assets.Scripts.Genetic_Algorithm
                     lSystemRule.Rule = BlockMutation(lSystemRule.Rule);
                     lSystemRule.Rule = BlockInjectionAndExtraction(lSystemRule.Rule);
                 }
+
+                if (rule.Key == "L")
+                {
+                    rule.Value[0].Rule = rule.Value[0].Rule.Replace('F', 'O').Replace('L', 'O').Replace('S', 'O')
+                        .Replace('A', 'O');
+                }
+                else if (rule.Value[0].Rule.Contains("O"))
+                {
+                    int randomCharacter = _randomGenerator.Next(0, _mutableCharacters.Count);
+                    rule.Value[0].Rule = rule.Value[0].Rule.Replace("O", _mutableCharacters[randomCharacter]);
+                }
             }
+
+            leafColour = MutateLeafColour(leafColour);
             return ruleSet;
+        }
+
+        private Color MutateLeafColour(Color leafColour)
+        {
+            double randomChance = _randomGenerator.NextDouble();
+            if (randomChance >= _mutationChance)
+                return leafColour;
+
+            int channelToMutate = _randomGenerator.Next(0, 6);
+            float colourChange = (float)_randomGenerator.NextDouble() / 10;
+            if (channelToMutate == 0)
+                leafColour.r += colourChange;
+            else if (channelToMutate == 1)
+                leafColour.r -= colourChange;
+            else if (channelToMutate == 2)
+                leafColour.g += colourChange;
+            else if (channelToMutate == 3)
+                leafColour.g -= colourChange;
+            else if (channelToMutate == 4)
+                leafColour.b += colourChange;
+            else if (channelToMutate == 5)
+                leafColour.b -= colourChange;
+
+            return leafColour;
         }
 
         private string BlockMutation(string ruleString)
@@ -114,6 +151,21 @@ namespace Assets.Scripts.Genetic_Algorithm
             string newRule = "";
             try
             {
+                if (rule.Length > 20)
+                {
+                    // Remove Symbol
+                    int randomIndex = _randomGenerator.Next(0, rule.Length);
+                    while (rule[randomIndex] == '[' || rule[randomIndex] == ']')
+                    {
+                        ++randomIndex;
+                        if (randomIndex >= rule.Length)
+                            randomIndex = 0;
+                    }
+
+                    rule.Remove(randomIndex);
+                    return rule;
+                }
+
                 for (int i = 0; i < rule.Length; ++i)
                 {
                     char character = rule[i];
@@ -138,10 +190,12 @@ namespace Assets.Scripts.Genetic_Algorithm
                             newRule += MutateCharacter("F");
                             continue;
                         case 'F':
-                        case 'L':
                         case 'A':
                         case 'S':
                             newRule += MutateCharacter(character.ToString());
+                            break;
+                        case 'L':
+                            newRule += MutateLeafCharacter(character.ToString());
                             break;
                         default:
                             newRule += rule[i];
@@ -184,6 +238,21 @@ namespace Assets.Scripts.Genetic_Algorithm
             return _mutableCharacters[randomCharacter];
         }
 
+        private string MutateLeafCharacter(string character)
+        {
+            double randomChance = _randomGenerator.NextDouble();
+            if (randomChance >= _mutationChance)
+                return character;
+
+            List<string> mutableCharacters = new List<string>
+            {
+                "O",
+                ""
+            };
+            int randomCharacter = _randomGenerator.Next(0, mutableCharacters.Count);
+            return mutableCharacters[randomCharacter];
+        }
+
         private string BlockInjectionAndExtraction(string rule)
         {
             double randomChance = _randomGenerator.NextDouble();
@@ -191,6 +260,8 @@ namespace Assets.Scripts.Genetic_Algorithm
                 return rule;
 
             int randomNumber = _randomGenerator.Next(0, 2);
+            if (rule.Length > 20)
+                randomNumber = 1;
 
             if (randomNumber == 0) // injection
             {

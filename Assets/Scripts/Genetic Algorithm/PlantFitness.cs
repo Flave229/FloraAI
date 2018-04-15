@@ -9,12 +9,15 @@ namespace Assets.Scripts.Genetic_Algorithm
         private readonly ILeafFitness _leafFitness;
         private float _unitBranchVolume;
         private float _minimumBranchDiameter;
+        private Vector3 _sunEnergyWeightings;
 
         public PlantFitness(ILeafFitness leafFitness)
         {
             _leafFitness = leafFitness;
             _unitBranchVolume = Mathf.PI * Mathf.Pow(0.02f, 2);
             _minimumBranchDiameter = 0.005f;
+            Color sunColour = leafFitness.GetSunInformation().Colour;
+            _sunEnergyWeightings = new Vector3(sunColour.r / (670 / 437.5f), sunColour.g / (532.5f / 437.5f), sunColour.b);
         }
 
         public float EvaluateFitness(Plant plant)
@@ -27,7 +30,8 @@ namespace Assets.Scripts.Genetic_Algorithm
             //fitness += phloemTransportFitness;
             plant.Fitness = EvaluatePhloemTransportationFitness(plant);
             //Debug.Log("PhloemTransportationFitness: " + fitness);
-            return plant.Fitness.TotalFitness();
+            plant.Fitness.LeafColour = plant.LindenMayerSystem.GetLeafColor();
+            return plant.Fitness.TotalFitness(_sunEnergyWeightings);
         }
         
         public float EvaluateUpwardsPhototrophicFitness(Plant plant)
@@ -88,6 +92,7 @@ namespace Assets.Scripts.Genetic_Algorithm
                 foreach (var childLeaf in branch.ChildLeaves)
                 {
                     fitness.LeafCount++;
+                    fitness.CumulativeHeight += childLeaf.Position.y;
                     fitness.EnergyLoss += Mathf.Max(_leafFitness.EvaluatePhotosyntheticRate(childLeaf), 0);
                 }
 
@@ -102,6 +107,7 @@ namespace Assets.Scripts.Genetic_Algorithm
                 fitness.BranchCost += fitnessForChildBranch.BranchCost;
                 fitness.BranchCount += fitnessForChildBranch.BranchCount;
                 fitness.LeafCount += fitnessForChildBranch.LeafCount;
+                fitness.CumulativeHeight += fitnessForChildBranch.CumulativeHeight;
                 fitness.BranchesTooThin += fitnessForChildBranch.BranchesTooThin;
                 fitness.EnergyLoss += fitnessForChildBranch.EnergyLoss;
             }
@@ -110,6 +116,7 @@ namespace Assets.Scripts.Genetic_Algorithm
             {
                 float branchToLeafRelation = 1 - Mathf.InverseLerp(0.02f, 0.06f, branch.Diameter);
                 ++fitness.LeafCount;
+                fitness.CumulativeHeight += childLeaf.Position.y;
                 fitness.LeafEnergy += branchToLeafRelation * _leafFitness.EvaluatePhotosyntheticRate(childLeaf);
             }
 

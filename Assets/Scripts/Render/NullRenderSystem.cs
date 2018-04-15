@@ -24,7 +24,7 @@ namespace Assets.Scripts.Render
             return;
         }
 
-        public void FinalisePlant()
+        public void FinalisePlant(Color leafColour)
         {
             return;
         }

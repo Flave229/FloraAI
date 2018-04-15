@@ -10,12 +10,15 @@ namespace Assets.Scripts.LSystems
         string GetCommandString();
         RuleSet GetRuleSet();
         void ClearCommandString();
+        Color GetLeafColor();
+        void SetLeafColour(Color leafColour);
     }
 
     public class LSystem : ILSystem
     {
         private string _currentString;
         private readonly RuleSet _rules;
+        public Color LeafColour;
 
         public LSystem(RuleSet rules, string axiom)
         {
@@ -36,11 +39,8 @@ namespace Assets.Scripts.LSystems
             }
             catch (Exception e)
             {
-                foreach (var rule in _rules.Rules)
-                {
-                    Debug.Log(rule.Value + ": " + rule.Value[0].Rule);
-                }
-                throw e;
+                Exception newException = new Exception("Error occured in LSystem Iteration", e);
+                throw newException;
             }
         }
 
@@ -57,6 +57,16 @@ namespace Assets.Scripts.LSystems
         public void ClearCommandString()
         {
             _currentString = "";
+        }
+
+        public Color GetLeafColor()
+        {
+            return LeafColour;
+        }
+
+        public void SetLeafColour(Color leafColour)
+        {
+            LeafColour = leafColour;
         }
     }
 }

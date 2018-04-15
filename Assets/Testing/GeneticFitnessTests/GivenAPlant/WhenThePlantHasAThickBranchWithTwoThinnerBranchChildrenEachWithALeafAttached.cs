@@ -37,7 +37,7 @@ namespace Assets.Testing.GeneticFitnessTests.GivenAPlant
             Mock<ILSystem> lSystem1Mock = new Mock<ILSystem>();
             lSystem1Mock.Setup(x => x.GetCommandString()).Returns("F[!F+O][!F+O]");
             PersistentPlantGeometryStorage geometryStorage1 = new PersistentPlantGeometryStorage();
-            Plant plant1 = new Plant(lSystem1Mock.Object, turtlePen, geometryStorage1, Vector3.zero);
+            Plant plant1 = new Plant(lSystem1Mock.Object, turtlePen, geometryStorage1, Vector3.zero, Color.black);
             plant1.Generate();
 
             Fitness plantFitnessObject = plantFitness.EvaluatePhloemTransportationFitness(plant1);

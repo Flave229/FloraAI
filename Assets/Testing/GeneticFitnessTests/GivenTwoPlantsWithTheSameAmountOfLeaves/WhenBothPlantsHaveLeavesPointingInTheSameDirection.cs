@@ -31,14 +31,14 @@ namespace Assets.Testing.GeneticFitnessTests.GivenTwoPlantsWithTheSameAmountOfLe
             Mock<ILSystem> lSystem1Mock = new Mock<ILSystem>();
             lSystem1Mock.Setup(x => x.GetCommandString()).Returns("FFO");
             PersistentPlantGeometryStorage geometryStorage1 = new PersistentPlantGeometryStorage();
-            Plant plant1 = new Plant(lSystem1Mock.Object, turtlePen, geometryStorage1, Vector3.zero);
+            Plant plant1 = new Plant(lSystem1Mock.Object, turtlePen, geometryStorage1, Vector3.zero, Color.black);
             plant1.Generate();
             float plant1Fitness = plantFitness.EvaluateDynamicPhototrophicFitness(plant1);
 
             Mock<ILSystem> lSystem2Mock = new Mock<ILSystem>();
             lSystem2Mock.Setup(x => x.GetCommandString()).Returns("FFO");
             PersistentPlantGeometryStorage geometryStorage2 = new PersistentPlantGeometryStorage();
-            Plant plant2 = new Plant(lSystem2Mock.Object, turtlePen, geometryStorage2, Vector3.zero);
+            Plant plant2 = new Plant(lSystem2Mock.Object, turtlePen, geometryStorage2, Vector3.zero, Color.black);
             plant2.Generate();
             float plant2Fitness = plantFitness.EvaluateDynamicPhototrophicFitness(plant2);
 

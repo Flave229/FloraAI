@@ -50,7 +50,8 @@ namespace Assets.Testing.GeneticMutationTests.GivenACommandRule
 
             Debug.Log("Original Rule: " + ruleSet.Rules["F"][0].Rule);
 
-            RuleSet mutatedRuleSet = mutation.Mutate(ruleSet);
+            Color color = Color.black;
+            RuleSet mutatedRuleSet = mutation.Mutate(ruleSet, ref color);
             string fRule = mutatedRuleSet.Rules["F"][0].Rule;
 
             Debug.Log("After Mutation Rule: " + fRule);

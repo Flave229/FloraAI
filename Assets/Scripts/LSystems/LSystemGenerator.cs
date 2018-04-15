@@ -18,12 +18,8 @@ namespace Assets.Scripts.LSystems
 
         public LSystem GenerateRandomLSystem()
         {
-            List<string> randomAxiomPossibilities = new List<string>(_avaliableRuleKeys);
-            int randomAxiomIndex = _randomGenerator.Next(0, randomAxiomPossibilities.Count);
-            string randomAxiom = randomAxiomPossibilities[randomAxiomIndex];
-
             RuleSet randomRuleSet = GenerateRandomRules();
-            return new LSystem(randomRuleSet, randomAxiom);
+            return new LSystem(randomRuleSet, "A");
         }
 
         private RuleSet GenerateRandomRules()
@@ -36,7 +32,7 @@ namespace Assets.Scripts.LSystems
                 List<string> removableCharacters = new List<string>();
                 if (ruleKey == "L")
                 {
-                    additionalCharacters.Add("O");
+                    additionalCharacters.AddRange(new List<string> { "O", "O", "O" });
                     removableCharacters.AddRange(new List<string> { "S", "A", "F", "L" });
                 }
 

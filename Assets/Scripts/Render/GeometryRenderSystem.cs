@@ -96,12 +96,11 @@ namespace Assets.Scripts.Render
             //}
         }
 
-
-        public void FinalisePlant()
+        public void FinalisePlant(Color leafColour)
         {
             OptimiseMeshes(ref _leaves);
             if (_leaves.Count > 0)
-                _leaves[0].GetComponent<Renderer>().material.color = Color.green;
+                _leaves[0].GetComponent<Renderer>().material.color = leafColour;
             OptimiseMeshes(ref _cylinders);
             if (_cylinders.Count > 0)
                 _cylinders[0].GetComponent<Renderer>().material.color = new Color(0.4f, 0.2f, 0);

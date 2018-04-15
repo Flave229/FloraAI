@@ -95,11 +95,11 @@ namespace Assets.Scripts.Render
 
         public void Delete()
         {
-            Leaves.Clear();
-            _previousBranches.Clear();
-            _currentParentBranch = null;
-            _currentBranch = null;
-            _rootBranch = null;
+            //Leaves.Clear();
+            //_previousBranches.Clear();
+            //_currentParentBranch = null;
+            //_currentBranch = null;
+            //_rootBranch = null;
         }
     }
 }

@@ -65,6 +65,12 @@ namespace Assets.Scripts.Genetic_Algorithm
             return new RuleSet(rules);
         }
 
+        public Color CrossOverLeafColour(Color leftParentColour, Color rightParentColour)
+        {
+            float randomWeighting = (float)_randomGenerator.NextDouble();
+            return new Color(Mathf.Lerp(leftParentColour.r, rightParentColour.r, randomWeighting), Mathf.Lerp(leftParentColour.g, rightParentColour.g, randomWeighting), Mathf.Lerp(leftParentColour.b, rightParentColour.b, randomWeighting));
+        }
+
         public string RemoveGeneticRedundancies(string rule)
         {
             for (int i = 0; i < rule.Length - 1; ++i)
