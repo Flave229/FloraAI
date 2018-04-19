@@ -104,7 +104,6 @@ namespace Assets.Scripts.Render
             OptimiseMeshes(ref _cylinders);
             if (_cylinders.Count > 0)
                 _cylinders[0].GetComponent<Renderer>().material.color = new Color(0.4f, 0.2f, 0);
-            UnityEngine.Profiling.Profiler.EndSample();
         }
 
         private void OptimiseMeshes(ref List<GameObject> gameObjects)

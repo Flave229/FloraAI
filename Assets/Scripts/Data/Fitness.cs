@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Runtime.Remoting.Messaging;
+using UnityEngine;
 
 namespace Assets.Scripts.Data
 {
@@ -31,14 +32,45 @@ namespace Assets.Scripts.Data
             //if (LeafCount < 20)
             //    return LeafCount - 20;
             //    //return 0;
+            float totalColourEnergy = CalculateColourEnergyFactor(sunEnergyWeightings);
 
-            //Vector3 colourFilter = new Vector3(1 - LeafColour.r, 1 - LeafColour.g, 1 - LeafColour.b);
-            //float totalColourEnergy = (colourFilter.x * sunEnergyWeightings.x + colourFilter.y * sunEnergyWeightings.y + colourFilter.z * sunEnergyWeightings.z) / 3;
-            //if (totalColourEnergy > 1.8f)
-            //    totalColourEnergy = 1.8f - (totalColourEnergy - 1.8f);
-
-            float fitness = /*(totalColourEnergy * 5) +*/ LeafEnergy - (BranchCost) + punishment; /*- Mathf.Pow(((float) (BranchCount + LeafCount) / 2000), 2)*/; //EnergyLoss;
+            float fitness = totalColourEnergy + LeafEnergy - (BranchCost * 5) + punishment; /*- Mathf.Pow(((float) (BranchCount + LeafCount) / 2000), 2)*/; //EnergyLoss;
             return fitness;
+        }
+
+        public float CalculateColourEnergyFactor(Vector3 sunEnergyWeightings)
+        {
+            Vector3 energyWeightings = LeafEnergyWeightings(sunEnergyWeightings);
+            float totalColourEnergy = (energyWeightings.x + energyWeightings.y + energyWeightings.z);
+            //float minimumEnergy = Mathf.Min(energyWeightings.x, energyWeightings.y, energyWeightings.z);
+            //totalColourEnergy -= minimumEnergy * 2;
+            //if (totalColourEnergy > 0.5f)
+            //    totalColourEnergy = 0.5f - (totalColourEnergy - 0.5f);
+
+
+            return totalColourEnergy * 10;
+        }
+
+        public Vector3 LeafEnergyWeightings(Vector3 sunEnergyWeightings)
+        {
+            Vector3 colour = new Vector3(LeafColour.r, LeafColour.g, LeafColour.b);
+            //float colourMagnitude = colour.x + colour.y + colour.z;
+            //if (colourMagnitude > 1.8f)
+            //{
+            //    float newMagnitude = 1.8f;
+            //    float difference = newMagnitude / colourMagnitude;
+            //    colour = new Vector3(colour.x * difference, colour.y * difference, colour.z * difference);
+            //}
+            
+            Vector3 colourFilter = new Vector3(1 - colour.x, 1 - colour.y, 1 - colour.z);
+            if (colourFilter.x <= colourFilter.y && colourFilter.x <= colourFilter.z)
+                colourFilter.x *= -1;
+            else if (colourFilter.y <= colourFilter.x && colourFilter.y <= colourFilter.z)
+                colourFilter.y *= -1;
+            else
+                colourFilter.z *= -1;
+
+            return new Vector3(colourFilter.x * sunEnergyWeightings.x, colourFilter.y * sunEnergyWeightings.y, colourFilter.z * sunEnergyWeightings.z);
         }
     }
 }

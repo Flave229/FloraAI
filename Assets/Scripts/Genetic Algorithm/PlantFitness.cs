@@ -17,7 +17,7 @@ namespace Assets.Scripts.Genetic_Algorithm
             _unitBranchVolume = Mathf.PI * Mathf.Pow(0.02f, 2);
             _minimumBranchDiameter = 0.005f;
             Color sunColour = leafFitness.GetSunInformation().Colour;
-            _sunEnergyWeightings = new Vector3(sunColour.r / (670 / 437.5f), sunColour.g / (532.5f / 437.5f), sunColour.b);
+            _sunEnergyWeightings = new Vector3(Mathf.Pow(sunColour.r / (670 / 437.5f) * 4.1f, 2), Mathf.Pow(sunColour.g / (532.5f / 437.5f) * 3, 2), Mathf.Pow(sunColour.b * 2.9f, 2)).normalized;
         }
 
         public float EvaluateFitness(Plant plant)

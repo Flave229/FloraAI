@@ -26,17 +26,20 @@ namespace Assets.Scripts
 
         public int MaximumGrowthIterations;
         public int MaximumGeneticIterations;
-        public int DrawEveryXIterations;
         public double WinterAltitude;
         public double SummerAltitude;
         public double Azimuth;
-        public Color SunColour;
+        private Color _sunColour;
         private Text _iterationText;
         private Text _debugOutput;
         private Plant _fittestPlant;
+        private bool _paused;
+        private bool _finalRender;
 
         private void Awake()
         {
+            _paused = true;
+            _finalRender = false;
             _iterations = 0;
             _currentPlant = 0;
             IRenderSystem renderSystem = new NullRenderSystem();
@@ -69,7 +72,7 @@ namespace Assets.Scripts
                 WinterAltitude = WinterAltitude,
                 Azimuth = Azimuth,
                 SummerAltitude = SummerAltitude,
-                Colour = SunColour
+                Colour = _sunColour
             }, 0.01f);
             //Dictionary<string, List<LSystemRule>> rules = new Dictionary<string, List<LSystemRule>>
             //{
@@ -142,7 +145,7 @@ namespace Assets.Scripts
         {
             GameObject sun = FindObjectOfType<Light>().gameObject;
             sun.transform.rotation.Set((float)(WinterAltitude + SummerAltitude) / 2, (float)Azimuth, 0, 1);
-            sun.GetComponent<Light>().color = SunColour;
+            _sunColour = sun.GetComponent<Light>().color;
 
             _iterationText = GameObject.Find("IterationCount").GetComponent<Text>();
             _debugOutput = GameObject.Find("DebugOutput").GetComponent<Text>();
@@ -152,15 +155,29 @@ namespace Assets.Scripts
         {
             try
             {
+                if (Input.GetKeyDown(KeyCode.Return))
+                    _paused = !_paused;
+
+                bool renderPlants = Input.GetKeyDown(KeyCode.R);
+
+                if (_paused)
+                    return;
+
                 if (_delayIteration > 0)
                 {
                     _delayIteration -= Time.deltaTime;
                     return;
                 }
                 if (_iterations >= MaximumGeneticIterations)
-                    return;
+                {
+                    if (_finalRender)
+                        return;
 
-                if (_iterations % DrawEveryXIterations == 0 && _iterations != 0)
+                    _finalRender = true;
+                    renderPlants = true;
+                }
+
+                if (renderPlants && _iterations != 0)
                 {
                     foreach (Plant plant in _plants)
                     {
@@ -188,7 +205,7 @@ namespace Assets.Scripts
                 }
                 else
                 {
-                    if (_currentPlant < _plants.Count)
+                    if (_currentPlant + 1 < _plants.Count)
                     {
                         for (int i = 0; i < 5; ++i)
                         {
@@ -197,17 +214,14 @@ namespace Assets.Scripts
                                 _plants[_currentPlant + i].Update();
                             }
                             _plants[_currentPlant + i].Generate();
-                            //_plants[_currentPlant + i].LindenMayerSystem.ClearCommandString();
-                            //GC.Collect();
+                            _plants[_currentPlant + i].LindenMayerSystem.ClearCommandString();
+                            GC.Collect();
                         }
                         _currentPlant += 5;
 
                         return;
                     }
-
-                    _fittestPlant = _genetics.GetFittestPlant(_plants);
-                    foreach (var plant in _plants.Where(x => x != _fittestPlant))
-                        plant.LindenMayerSystem.ClearCommandString();
+                    _currentPlant = 0;
                 }
                 
                 //Debug.Log("Iteration " + _iterations);

@@ -30,7 +30,7 @@ namespace Assets.Scripts.Genetic_Algorithm
             _mutation = new PlantMutation(randomGenerator, mutationChance);
             _selection = new PlantSelection(randomGenerator);
             _fitness = new PlantFitness(new LeafFitness(sunInformation));
-            _sunInformation = new SunInformation();
+            _sunInformation = sunInformation;
         }
 
         public List<Plant> GenerateChildPopulation(List<Plant> parents)
@@ -60,7 +60,7 @@ namespace Assets.Scripts.Genetic_Algorithm
             {
                 thread.Join();
             }
-
+            
             List<List<ILSystem>> parentPairs = _selection.SelectParentPairs(fitnessPerParent.ToList(), 50);
 
             Plant[] childPlants = new Plant[parentPairs.Count];
@@ -100,8 +100,8 @@ namespace Assets.Scripts.Genetic_Algorithm
 
         public Plant GetFittestPlant(List<Plant> parents)
         {
-            Plant fittestPlant = parents[0];
-            float maxFitnessValue = 0;
+            Plant fittestPlant = null;
+            float maxFitnessValue = float.MinValue;
             foreach (Plant plant in parents)
             {
                 float fitness = _fitness.EvaluateFitness(plant);
