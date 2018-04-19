@@ -21,19 +21,22 @@ namespace Assets.Scripts.Export
             Start();
 
             StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.Append("#" + objectsToExport[0].name + ".obj"
+            stringBuilder.Append("#" + fileName + ".obj"
                                     + "\n#" + System.DateTime.Now.ToLongDateString()
                                     + "\n#" + System.DateTime.Now.ToLongTimeString()
                                     + "\n#--------"
                                     + "\n\n");
-            Transform transform = objectsToExport[0].transform;
-            Vector3 originalPosition = transform.position;
-            transform.position = Vector3.zero;
+            foreach (var gameObject in objectsToExport)
+            {
+                Transform transform = gameObject.transform;
+                Vector3 originalPosition = transform.position;
+                transform.position = Vector3.zero;
 
-            ProcessTransformation(transform, ref stringBuilder);
+                ProcessTransformation(transform, ref stringBuilder);
+                transform.position = originalPosition;
+            }
+
             WriteToFile(stringBuilder.ToString(), fileLocation, fileName);
-            transform.position = originalPosition;
-
             End();
             return fileLocation + "/" + fileName + ".obj";
         }
@@ -79,9 +82,8 @@ namespace Assets.Scripts.Export
 
             foreach (var vertex in mesh.vertices)
             {
-                Vector3 transformedVertex = transform.TransformPoint(vertex);
                 ++vertexCount;
-                stringBuilder.Append(string.Format("v {0} {1} {2}\n", transformedVertex.x, transformedVertex.y, -transformedVertex.z));
+                stringBuilder.Append(string.Format("v {0} {1} {2}\n", vertex.x, vertex.y, -vertex.z));
             }
             stringBuilder.Append("\n");
             foreach (var normal in mesh.normals)

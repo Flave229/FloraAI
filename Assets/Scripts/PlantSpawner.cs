@@ -130,7 +130,7 @@ namespace Assets.Scripts
             for (int i = 0; i < 50; ++i)
             {
                 ILSystem randomLSystem = lindenMayerSystemGenerator.GenerateRandomLSystem();
-                initialPopulation.Add(new Plant(randomLSystem, fakeTurtlePen, new PersistentPlantGeometryStorage(), new Vector3(transform.position.x + 1, transform.position.y + 0.775f, transform.position.z + 1), new Color((float)randomGenerator.NextDouble(), (float)randomGenerator.NextDouble(), (float)randomGenerator.NextDouble())));
+                initialPopulation.Add(new Plant(randomLSystem, fakeTurtlePen, new PersistentPlantGeometryStorage(), Vector3.zero, new Color((float)randomGenerator.NextDouble(), (float)randomGenerator.NextDouble(), (float)randomGenerator.NextDouble())));
             }
 
             _plants = initialPopulation;
@@ -194,7 +194,7 @@ namespace Assets.Scripts
                     _fittestPlant = _genetics.GetFittestPlant(_plants);
                     Plant plantToDraw = new Plant(_fittestPlant.LindenMayerSystem, _realTurtlePen,
                         new PersistentPlantGeometryStorage(),
-                        new Vector3(transform.position.x + 1, transform.position.y + 0.775f, transform.position.z + 1),
+                        Vector3.zero, 
                         _fittestPlant.LindenMayerSystem.GetLeafColor());
 
                     foreach (var plant in _plants.Where(x => x != _fittestPlant))
@@ -203,6 +203,10 @@ namespace Assets.Scripts
                     //Debug.Log("Attempting to draw plant with total geometry count of " + (fittestPlant.Fitness.LeafCount + fittestPlant.Fitness.BranchCount));
                     plantToDraw.Generate();
                     _fittestPlant.RenderedGeometry = plantToDraw.RenderedGeometry;
+                    foreach (var geometry in _fittestPlant.RenderedGeometry)
+                    {
+                        geometry.transform.position = new Vector3(transform.position.x + 1, transform.position.y + 0.775f, transform.position.z + 1);
+                    }
                 }
                 else
                 {

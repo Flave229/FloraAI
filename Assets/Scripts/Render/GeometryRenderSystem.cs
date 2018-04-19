@@ -16,9 +16,9 @@ namespace Assets.Scripts.Render
             _cylinders = new List<GameObject>();
         }
 
-        private GameObject CreateMasterGameObject()
+        private GameObject CreateMasterGameObject(string name)
         {
-            GameObject masterGameObject = new GameObject("masterObject");
+            GameObject masterGameObject = new GameObject(name);
             masterGameObject.AddComponent<MeshFilter>();
             masterGameObject.AddComponent<MeshRenderer>();
             return masterGameObject;
@@ -97,7 +97,7 @@ namespace Assets.Scripts.Render
 
         public List<GameObject> FinalisePlant(Color leafColour)
         {
-            OptimiseMeshes(ref _leaves);
+            OptimiseMeshes(ref _leaves, "Leaves");
             if (_leaves.Count > 0)
             {
                 Material leafMaterial = _leaves[0].GetComponent<Renderer>().material;
@@ -107,7 +107,7 @@ namespace Assets.Scripts.Render
                 leafMaterial.SetFloat("_SpecularHighlights", 0f);
                 leafMaterial.SetFloat("_Glossiness", 0f);
             }
-            OptimiseMeshes(ref _cylinders);
+            OptimiseMeshes(ref _cylinders, "Branches");
             if (_cylinders.Count > 0)
                 _cylinders[0].GetComponent<Renderer>().material.color = new Color(0.4f, 0.2f, 0);
 
@@ -115,13 +115,13 @@ namespace Assets.Scripts.Render
         }
 
 
-        private void OptimiseMeshes(ref List<GameObject> gameObjects)
+        private void OptimiseMeshes(ref List<GameObject> gameObjects, string name)
         {
             if (gameObjects.Count <= 0)
                 return;
 
-            if (gameObjects[0].name != "masterObject")
-                gameObjects.Insert(0, CreateMasterGameObject());
+            if (gameObjects[0].name != name)
+                gameObjects.Insert(0, CreateMasterGameObject(name));
 
             CombineInstance[] combiners = new CombineInstance[gameObjects.Count];
 
