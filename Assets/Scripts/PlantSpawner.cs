@@ -202,6 +202,7 @@ namespace Assets.Scripts
                     
                     //Debug.Log("Attempting to draw plant with total geometry count of " + (fittestPlant.Fitness.LeafCount + fittestPlant.Fitness.BranchCount));
                     plantToDraw.Generate();
+                    _fittestPlant.RenderedGeometry = plantToDraw.RenderedGeometry;
                 }
                 else
                 {

@@ -55,31 +55,20 @@ namespace Assets.Scripts.Genetic_Algorithm
             if (randomChance >= _mutationChance)
                 return leafColour;
 
-            int channelToMutate = _randomGenerator.Next(0, 3);
-            int channelToMoveTo = _randomGenerator.Next(0, 3);
-            if (channelToMoveTo == channelToMutate)
-            {
-                if (channelToMoveTo == 0)
-                    channelToMoveTo = 2;
-                else
-                    --channelToMoveTo;
-            }
-            float colourChange = (float)_randomGenerator.NextDouble() / 10;
-            float colourChangeSecond = (float)_randomGenerator.NextDouble() / 10;
-
+            int channelToMutate = _randomGenerator.Next(0, 6);
+            float colourChange = (float)_randomGenerator.NextDouble() / 3;
             if (channelToMutate == 0)
-                leafColour.r -= colourChange;
+                leafColour.r += colourChange;
             else if (channelToMutate == 1)
-                leafColour.g -= colourChange;
+                leafColour.r -= colourChange;
             else if (channelToMutate == 2)
+                leafColour.g += colourChange;
+            else if (channelToMutate == 3)
+                leafColour.g -= colourChange;
+            else if (channelToMutate == 4)
+                leafColour.b += colourChange;
+            else if (channelToMutate == 5)
                 leafColour.b -= colourChange;
-
-            if (channelToMoveTo == 0)
-                leafColour.r += colourChangeSecond;
-            else if (channelToMoveTo == 1)
-                leafColour.g += colourChangeSecond;
-            else if (channelToMoveTo == 2)
-                leafColour.b += colourChangeSecond;
 
             if (leafColour.r > 1)
                 leafColour.r = 1.0f;

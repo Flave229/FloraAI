@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 namespace Assets.Scripts.Render
 {
@@ -7,6 +8,6 @@ namespace Assets.Scripts.Render
         void DrawCylinder(Vector3 sourcePosition, Vector3 targetPosition, float diameter);
         void DrawQuad(Vector3 position, Vector3 direction, Color color, ref Vector3 right);
         void ClearObjects();
-        void FinalisePlant(Color leafColour);
+        List<GameObject> FinalisePlant(Color leafColour);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using Assets.Scripts.Export;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -45,6 +46,12 @@ namespace Assets.Scripts
 
                     child.gameObject.SetActive(!child.gameObject.activeSelf);
                 }
+            }
+
+            if (Input.GetKeyDown(KeyCode.O))
+            {
+                string fileLocation = ObjExporter.ExportGameObject(_plantSpawners[_currentIndex].GetFittestPlant().RenderedGeometry);
+                _debugOutput.text = "Saved plant to: " + fileLocation;
             }
 
             bool changed = false;

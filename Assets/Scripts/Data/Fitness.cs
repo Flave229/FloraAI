@@ -65,7 +65,7 @@ namespace Assets.Scripts.Data
             Vector3 colourFilter = new Vector3(1 - colour.x, 1 - colour.y, 1 - colour.z);
             if (colourFilter.x <= colourFilter.y && colourFilter.x <= colourFilter.z)
                 colourFilter.x *= -1;
-            else if (colourFilter.y <= colourFilter.x && colourFilter.y <= colourFilter.z)
+            else if (colourFilter.y <= colourFilter.z)
                 colourFilter.y *= -1;
             else
                 colourFilter.z *= -1;

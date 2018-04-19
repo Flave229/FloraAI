@@ -52,8 +52,8 @@ namespace Assets.Scripts.TurtleGeometry
             _increasePitchQuaternion = Quaternion.AngleAxis(RotationStep, new Vector3(1, 0, 0));
             _decreasePitchQuaternion = Quaternion.AngleAxis(-RotationStep, new Vector3(1, 0, 0));
         }
-        
-        public void Draw(PersistentPlantGeometryStorage geometryStorage, Vector3 startingPosition, string commandString, Color leafColor)
+
+        public List<GameObject> Draw(PersistentPlantGeometryStorage geometryStorage, Vector3 startingPosition, string commandString, Color leafColor)
         {
             SetupQuaternions();
             geometryStorage.StartPlant();
@@ -108,7 +108,7 @@ namespace Assets.Scripts.TurtleGeometry
                 }
             }
 
-            _renderSystem.FinalisePlant(leafColor);
+            return _renderSystem.FinalisePlant(leafColor);
         }
 
         private void DecreaseBranchDiameter(PersistentPlantGeometryStorage geometryStorage)

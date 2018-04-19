@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 namespace Assets.Scripts.Render
 {
@@ -24,9 +25,9 @@ namespace Assets.Scripts.Render
             return;
         }
 
-        public void FinalisePlant(Color leafColour)
+        public List<GameObject> FinalisePlant(Color leafColour)
         {
-            return;
+            return new List<GameObject>();
         }
     }
 }

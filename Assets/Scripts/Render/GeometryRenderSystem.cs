@@ -21,7 +21,6 @@ namespace Assets.Scripts.Render
             GameObject masterGameObject = new GameObject("masterObject");
             masterGameObject.AddComponent<MeshFilter>();
             masterGameObject.AddComponent<MeshRenderer>();
-            masterGameObject.AddComponent<Renderer>();
             return masterGameObject;
         }
 
@@ -96,15 +95,25 @@ namespace Assets.Scripts.Render
             //}
         }
 
-        public void FinalisePlant(Color leafColour)
+        public List<GameObject> FinalisePlant(Color leafColour)
         {
             OptimiseMeshes(ref _leaves);
             if (_leaves.Count > 0)
-                _leaves[0].GetComponent<Renderer>().material.color = leafColour;
+            {
+                Material leafMaterial = _leaves[0].GetComponent<Renderer>().material;
+                leafMaterial.shader = Shader.Find("UI/Default");
+                leafMaterial.color = leafColour;
+                leafMaterial.EnableKeyword("_SPECULARHIGHLIGHTS_OFF");
+                leafMaterial.SetFloat("_SpecularHighlights", 0f);
+                leafMaterial.SetFloat("_Glossiness", 0f);
+            }
             OptimiseMeshes(ref _cylinders);
             if (_cylinders.Count > 0)
                 _cylinders[0].GetComponent<Renderer>().material.color = new Color(0.4f, 0.2f, 0);
+
+            return new List<GameObject> { _leaves[0], _cylinders[0] };
         }
+
 
         private void OptimiseMeshes(ref List<GameObject> gameObjects)
         {

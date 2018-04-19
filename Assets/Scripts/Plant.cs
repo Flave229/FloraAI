@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Assets.Scripts.Data;
 using Assets.Scripts.LSystems;
 using Assets.Scripts.Render;
@@ -15,6 +16,7 @@ namespace Assets.Scripts
         public readonly Vector3 Position;
         public PersistentPlantGeometryStorage GeometryStorage;
         public Fitness Fitness;
+        public List<GameObject> RenderedGeometry;
 
         public Plant(ILSystem lindenMayerSystem, TurtlePen turtlePen, PersistentPlantGeometryStorage geometryStorage, Vector3 position, Color leafColour)
         {
@@ -44,7 +46,7 @@ namespace Assets.Scripts
 
         public void Generate()
         {
-            _turtlePen.Draw(GeometryStorage, Position, LindenMayerSystem.GetCommandString(), LindenMayerSystem.GetLeafColor());
+            RenderedGeometry = _turtlePen.Draw(GeometryStorage, Position, LindenMayerSystem.GetCommandString(), LindenMayerSystem.GetLeafColor());
         }
     }
 }
