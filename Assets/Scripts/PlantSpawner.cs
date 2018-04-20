@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using Assets.Scripts.Common;
 using Assets.Scripts.Data;
 using Assets.Scripts.Genetic_Algorithm;
 using Assets.Scripts.LSystems;
 using Assets.Scripts.Render;
 using Assets.Scripts.TurtleGeometry;
-using Moq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -72,7 +70,7 @@ namespace Assets.Scripts
                 WinterAltitude = WinterAltitude,
                 Azimuth = Azimuth,
                 SummerAltitude = SummerAltitude,
-                Colour = _sunColour
+                Light = FindObjectOfType<Light>().color
             }, 0.01f);
             //Dictionary<string, List<LSystemRule>> rules = new Dictionary<string, List<LSystemRule>>
             //{
@@ -125,11 +123,12 @@ namespace Assets.Scripts
             //_plants = _genetics.GenerateChildPopulation(new List<Plant> { plant1, plant2 });
 
             System.Random randomGenerator = new System.Random();
-            LSystemGenerator lindenMayerSystemGenerator = new LSystemGenerator(randomGenerator);
+            LSystemGenerator lindenMayerSystemGenerator = LSystemGenerator.Instance();
             List<Plant> initialPopulation = new List<Plant>();
+            List<LSystem> staticLSystemSet = lindenMayerSystemGenerator.GetStaticLSystemSets();
             for (int i = 0; i < 50; ++i)
             {
-                ILSystem randomLSystem = lindenMayerSystemGenerator.GenerateRandomLSystem();
+                ILSystem randomLSystem = staticLSystemSet[i];
                 initialPopulation.Add(new Plant(randomLSystem, fakeTurtlePen, new PersistentPlantGeometryStorage(), Vector3.zero, new Color((float)randomGenerator.NextDouble(), (float)randomGenerator.NextDouble(), (float)randomGenerator.NextDouble())));
             }
 
@@ -139,6 +138,12 @@ namespace Assets.Scripts
         public Plant GetFittestPlant()
         {
             return _fittestPlant;
+        }
+
+        public void UpdateSunColour()
+        {
+            Color newColour = FindObjectOfType<Light>().color;
+            _genetics.UpdateSunInformation(newColour);
         }
 
         private void Start()

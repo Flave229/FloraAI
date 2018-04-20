@@ -33,6 +33,11 @@ namespace Assets.Scripts.Genetic_Algorithm
             _sunInformation = sunInformation;
         }
 
+        public void UpdateSunInformation(Color newColour)
+        {
+            _sunInformation.Light = newColour;
+        }
+
         public List<Plant> GenerateChildPopulation(List<Plant> parents)
         {
             //Dictionary<ILSystem, float> fitnessPerParent = new Dictionary<ILSystem, float>(parents.Count);

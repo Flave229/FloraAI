@@ -1,4 +1,12 @@
-﻿using NUnit.Framework;
+﻿using System.Collections.Generic;
+using Assets.Scripts;
+using Assets.Scripts.Common;
+using Assets.Scripts.Data;
+using Assets.Scripts.Genetic_Algorithm;
+using Assets.Scripts.LSystems;
+using Assets.Scripts.Render;
+using Assets.Scripts.TurtleGeometry;
+using NUnit.Framework;
 using UnityEngine;
 
 namespace Assets.Testing
@@ -8,20 +16,78 @@ namespace Assets.Testing
         [Test]
         public void ThenTemp()
         {
-            float logarithmicHeightModifier = Mathf.Max(Mathf.Min(Mathf.Log(1 + 1, 11), 1), 0);
-            Debug.Log("Log base 11 at value 1: " + logarithmicHeightModifier);
+            Plant plant = new Plant(new LSystem(new RuleSet(new Dictionary<string, List<LSystemRule>>
+            {
+                {
+                    "A", new List<LSystemRule>
+                    {
+                        new LSystemRule
+                        {
+                            Rule = "![AFAFF]LF\\S",
+                            Probability = 1
+                        }
+                    }
+                },
+                {
+                    "L", new List<LSystemRule>
+                    {
+                        new LSystemRule
+                        {
+                            Rule = "[OO&-O-O]&O^O",
+                            Probability = 1
+                        }
+                    }
+                },
+                {
+                    "S", new List<LSystemRule>
+                    {
+                        new LSystemRule
+                        {
+                            Rule = "!&+[+F^A[!-&!\\F]]!F",
+                            Probability = 1
+                        }
+                    }
+                },
+                {
+                    "F", new List<LSystemRule>
+                    {
+                        new LSystemRule
+                        {
+                            Rule = "-[^FAL-L]L+F",
+                            Probability = 1
+                        }
+                    }
+                }
+            }), "A"), new TurtlePen(new NullRenderSystem())
+                {
+                    BranchReductionRate = new MinMax<float>
+                    {
+                        Max = 0.8f,
+                        Min = 0.8f
+                    },
+                    ForwardStep = 0.1f,
+                    RotationStep = 22.5f,
+                    BranchDiameter = 0.1f
+            }, new PersistentPlantGeometryStorage(), Vector3.zero,
+            Color.white);
 
-            logarithmicHeightModifier = Mathf.Max(Mathf.Min(Mathf.Log(5 + 1, 11), 1), 0);
-            Debug.Log("Log base 11 at value 5: " + logarithmicHeightModifier);
+            for (int i = 0; i < 4; ++i)
+            {
+                plant.Update();
+            }
+            plant.Generate();
 
-            logarithmicHeightModifier = Mathf.Max(Mathf.Min(Mathf.Log(10 + 1, 11), 1), 0);
-            Debug.Log("Log base 11 at value 10: " + logarithmicHeightModifier);
+            PlantFitness fitnessEval = new PlantFitness(new LeafFitness(new SunInformation
+            {
+                Azimuth = 240,
+                WinterAltitude = 30,
+                SummerAltitude = 60,
+                Light = Color.green
+            }));
 
-            logarithmicHeightModifier = Mathf.Max(Mathf.Min(Mathf.Log(15 + 1, 11), 1), 0);
-            Debug.Log("Log base 11 at value 15: " + logarithmicHeightModifier);
-
-            logarithmicHeightModifier = Mathf.Max(Mathf.Min(Mathf.Log(20 + 1, 11), 1), 0);
-            Debug.Log("Log base 11 at value 20: " + logarithmicHeightModifier);
+            float fitness = fitnessEval.EvaluateFitness(plant);
+            Debug.Log(fitness);
+            Debug.Log("Leaf Fitness: " + plant.Fitness.LeafEnergy);
         }
     }
 }

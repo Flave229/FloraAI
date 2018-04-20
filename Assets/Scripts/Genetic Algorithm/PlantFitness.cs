@@ -16,7 +16,7 @@ namespace Assets.Scripts.Genetic_Algorithm
             _leafFitness = leafFitness;
             _unitBranchVolume = Mathf.PI * Mathf.Pow(0.02f, 2);
             _minimumBranchDiameter = 0.005f;
-            Color sunColour = leafFitness.GetSunInformation().Colour;
+            Color sunColour = leafFitness.GetSunInformation().Light;
             _sunEnergyWeightings = new Vector3(Mathf.Pow(sunColour.r / (670 / 437.5f) * 4.1f, 2), Mathf.Pow(sunColour.g / (532.5f / 437.5f) * 3, 2), Mathf.Pow(sunColour.b * 2.9f, 2)).normalized;
         }
 
@@ -117,7 +117,8 @@ namespace Assets.Scripts.Genetic_Algorithm
                 float branchToLeafRelation = 1 - Mathf.InverseLerp(0.02f, 0.06f, branch.Diameter);
                 ++fitness.LeafCount;
                 fitness.CumulativeHeight += childLeaf.Position.y;
-                fitness.LeafEnergy += branchToLeafRelation * _leafFitness.EvaluatePhotosyntheticRate(childLeaf);
+                float leafFitness = _leafFitness.EvaluatePhotosyntheticRate(childLeaf);
+                fitness.LeafEnergy += branchToLeafRelation * leafFitness;
             }
 
             // Making the assumption that a branch with radius 0.01 is able to support 1 leaf at 100% photosynthetic rate

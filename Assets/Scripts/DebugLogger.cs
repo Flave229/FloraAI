@@ -14,25 +14,64 @@ namespace Assets.Scripts
         private Image _sunPanel;
         private Material _dirtColour;
         private Material _selectedColour;
+        private Text _redInput;
+        private Text _greenInput;
+        private Text _blueInput;
+        private float _previousRed;
+        private float _previousGreen;
+        private float _previousBlue;
+        private Light _light;
 
         void Start()
         {
             _plantSpawners = FindObjectsOfType<PlantSpawner>().OrderBy(x => x.transform.GetSiblingIndex()).ToArray();
             _debugOutput = GameObject.Find("DebugOutput").GetComponent<Text>();
-            _sunOutput = GameObject.Find("SunOutput").GetComponent<Text>();
-            Light sun = FindObjectOfType<Light>();
-            Vector3 color = new Vector3(sun.color.r, sun.color.g, sun.color.b);
-            _sunOutput.text = color.ToString();
+            _light = FindObjectOfType<Light>();
+            Vector3 color = new Vector3(_light.color.r, _light.color.g, _light.color.b);
             _currentIndex = 0;
             _sunPanel = GameObject.Find("SunPanel").GetComponent<Image>();
-            _sunPanel.color = sun.color;
+            _sunPanel.color = _light.color;
 
             _dirtColour = Resources.Load<Material>("Material/Dirt");
             _selectedColour = Resources.Load<Material>("Material/SelectedDirt");
+            _redInput = GameObject.Find("RedInput").transform.Find("Text").GetComponent<Text>();
+            _previousRed = color.x;
+            _greenInput = GameObject.Find("GreenInput").transform.Find("Text").GetComponent<Text>();
+            _previousGreen = color.y;
+            _blueInput = GameObject.Find("BlueInput").transform.Find("Text").GetComponent<Text>();
+            _previousBlue = color.z;
         }
 
         void Update()
         {
+            if (_redInput.text != "" && float.Parse(_redInput.text) != _previousRed)
+            {
+                _previousRed = float.Parse(_redInput.text);
+                _light.color = new Color(_previousRed, _previousGreen, _previousBlue);
+                _sunPanel.color = _light.color;
+
+                foreach (var plantSpawner in _plantSpawners)
+                    plantSpawner.UpdateSunColour();
+            }
+            if (_greenInput.text != "" && float.Parse(_greenInput.text) != _previousGreen)
+            {
+                _previousGreen = float.Parse(_greenInput.text);
+                _light.color = new Color(_previousRed, _previousGreen, _previousBlue);
+                _sunPanel.color = _light.color;
+
+                foreach (var plantSpawner in _plantSpawners)
+                    plantSpawner.UpdateSunColour();
+            }
+            if (_blueInput.text != "" && float.Parse(_blueInput.text) != _previousBlue)
+            {
+                _previousBlue = float.Parse(_blueInput.text);
+                _light.color = new Color(_previousRed, _previousGreen, _previousBlue);
+                _sunPanel.color = _light.color;
+
+                foreach (var plantSpawner in _plantSpawners)
+                    plantSpawner.UpdateSunColour();
+            }
+
             if (Input.GetKeyDown(KeyCode.Escape))
                 Application.Quit();
 

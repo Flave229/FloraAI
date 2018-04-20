@@ -8,18 +8,41 @@ namespace Assets.Scripts.LSystems
         private readonly Random _randomGenerator;
         private List<string> _avaliableRuleKeys;
         private List<string> _avaliableCharacters;
+        private static List<LSystem> _staticLSystemSet;
+        private static LSystemGenerator _instance;
 
-        public LSystemGenerator(Random randomGenerator)
+        private LSystemGenerator(Random randomGenerator)
         {
             _randomGenerator = randomGenerator;
             _avaliableRuleKeys = new List<string> { "L", "S", "A", "F" };
             _avaliableCharacters = new List<string> { "F", "L", "S", "A", "+", "-", "&", "^", "\\", "/", "!" };
+            _staticLSystemSet = new List<LSystem>();
+        }
+
+        public static LSystemGenerator Instance()
+        {
+            if (_instance != null)
+                return _instance;
+
+            _instance = new LSystemGenerator(new Random());
+            return _instance;
         }
 
         public LSystem GenerateRandomLSystem()
         {
             RuleSet randomRuleSet = GenerateRandomRules();
             return new LSystem(randomRuleSet, "A");
+        }
+
+        public List<LSystem> GetStaticLSystemSets()
+        {
+            if (_staticLSystemSet.Count > 0)
+                return _staticLSystemSet;
+
+            for (int i = 0; i < 50; ++i)
+                _staticLSystemSet.Add(GenerateRandomLSystem());
+
+            return _staticLSystemSet;
         }
 
         private RuleSet GenerateRandomRules()

@@ -7,6 +7,6 @@ namespace Assets.Scripts.Data
         public double WinterAltitude { get; set; }
         public double SummerAltitude { get; set; }
         public double Azimuth { get; set; }
-        public Color Colour { get; set; }
+        public Color Light { get; set; }
     }
 }
