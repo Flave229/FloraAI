@@ -1,0 +1,5 @@
+L: [-O-O\OO]/[-O-O\OO]^O
+S: -L^\&[!L[FL\!+F]!F]!F
+A: [S[FFL]-^-[FFL]A]AL&\&F
+F: FS/+[SALA[&S&L]L]A/F
+RGBA(0.201, 0.381, 0.581, 1.000)

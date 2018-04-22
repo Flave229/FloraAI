@@ -33,15 +33,13 @@ namespace Assets.Scripts
         private Plant _fittestPlant;
         private bool _paused;
         private bool _finalRender;
+        private TurtlePen _fakeTurtlePen;
 
         private void Awake()
         {
             _paused = true;
-            _finalRender = false;
-            _iterations = 0;
-            _currentPlant = 0;
             IRenderSystem renderSystem = new NullRenderSystem();
-            TurtlePen fakeTurtlePen = new TurtlePen(renderSystem)
+            _fakeTurtlePen = new TurtlePen(renderSystem)
             {
                 ForwardStep = 0.1f,
                 RotationStep = 22.5f,
@@ -51,7 +49,6 @@ namespace Assets.Scripts
                     Min = 0.8f,
                     Max = 0.8f
                 }
-                //RotationStep = 2.0f
             };
             _realTurtlePen = new TurtlePen(new GeometryRenderSystem())
             {
@@ -63,73 +60,35 @@ namespace Assets.Scripts
                     Min = 0.8f,
                     Max = 0.8f
                 }
-                //RotationStep = 2.0f
             };
-            _genetics = new PlantGenetics(new System.Random(), fakeTurtlePen, new SunInformation
+            _genetics = new PlantGenetics(new System.Random(), _fakeTurtlePen, new SunInformation
             {
                 WinterAltitude = WinterAltitude,
                 Azimuth = Azimuth,
                 SummerAltitude = SummerAltitude,
                 Light = FindObjectOfType<Light>().color
             }, 0.01f);
-            //Dictionary<string, List<LSystemRule>> rules = new Dictionary<string, List<LSystemRule>>
-            //{
-            //    {
-            //        "A",  new List<LSystemRule>
-            //        {
-            //            new LSystemRule
-            //            {
-            //                Probability = 1,
-            //                Rule = "[&FL!A]/////'[&FL!A]///////'[&FL!A]"
-            //            }
-            //        }
-            //    },
-            //    {
-            //        "F",  new List<LSystemRule>
-            //        {
-            //            new LSystemRule
-            //            {
-            //                Probability = 1,
-            //                Rule = "S/////F"
-            //            }
-            //        }
-            //    },
-            //    {
-            //        "S",  new List<LSystemRule>
-            //        {
-            //            new LSystemRule
-            //            {
-            //                Probability = 1,
-            //                Rule = "FL"
-            //            }
-            //        }
-            //    },
-            //    {
-            //        "L",  new List<LSystemRule>
-            //        {
-            //            new LSystemRule
-            //            {
-            //                Probability = 1,
-            //                Rule = "['''^^O]"
-            //            }
-            //        }
-            //    }
-            //};
-            //RuleSet ruleSet = new RuleSet(rules);
-            //ILSystem lindenMayerSystem = new LSystem(ruleSet, "A");
-            //Plant plant1 = new Plant(lindenMayerSystem, fakeTurtlePen, new PersistentPlantGeometryStorage(), new Vector3(transform.position.x + 1, transform.position.y + 0.775f, transform.position.z + 1));
-            //ILSystem lindenMayerSystem2 = new LSystem(ruleSet, "A");
-            //Plant plant2 = new Plant(lindenMayerSystem2, fakeTurtlePen, new PersistentPlantGeometryStorage(), new Vector3(transform.position.x + 1, transform.position.y + 0.775f, transform.position.z + 1));
-            //_plants = _genetics.GenerateChildPopulation(new List<Plant> { plant1, plant2 });
+
+            StartGeneticAlgorithm();
+        }
+
+        public void StartGeneticAlgorithm()
+        {
+            _iterations = 0;
+            _currentPlant = 0;
+            _finalRender = false;
+            if (_iterationText != null)
+                _iterationText.text = "Iterations: " + _iterations;
 
             System.Random randomGenerator = new System.Random();
             LSystemGenerator lindenMayerSystemGenerator = LSystemGenerator.Instance();
             List<Plant> initialPopulation = new List<Plant>();
-            List<LSystem> staticLSystemSet = lindenMayerSystemGenerator.GetStaticLSystemSets();
+            //List<LSystem> staticLSystemSet = lindenMayerSystemGenerator.GetStaticLSystemSets().ConvertAll(x => new LSystem(x.GetRuleSet(), "A"));
             for (int i = 0; i < 50; ++i)
             {
-                ILSystem randomLSystem = staticLSystemSet[i];
-                initialPopulation.Add(new Plant(randomLSystem, fakeTurtlePen, new PersistentPlantGeometryStorage(), Vector3.zero, new Color((float)randomGenerator.NextDouble(), (float)randomGenerator.NextDouble(), (float)randomGenerator.NextDouble())));
+                //ILSystem randomLSystem = staticLSystemSet[i];
+                ILSystem randomLSystem = lindenMayerSystemGenerator.GenerateRandomLSystem();
+                initialPopulation.Add(new Plant(randomLSystem, _fakeTurtlePen, new PersistentPlantGeometryStorage(), Vector3.zero, new Color((float)randomGenerator.NextDouble(), (float)randomGenerator.NextDouble(), (float)randomGenerator.NextDouble())));
             }
 
             _plants = initialPopulation;
@@ -140,10 +99,30 @@ namespace Assets.Scripts
             return _fittestPlant;
         }
 
+        public bool GetPaused()
+        {
+            return _paused;
+        }
+
         public void UpdateSunColour()
         {
             Color newColour = FindObjectOfType<Light>().color;
             _genetics.UpdateSunInformation(newColour);
+        }
+
+        public void TogglePause()
+        {
+            _paused = !_paused;
+        }
+
+        public void SetMaxIterationCount(int iterations)
+        {
+            MaximumGeneticIterations = iterations;
+        }
+
+        public int GetIterationCount()
+        {
+            return _iterations;
         }
 
         private void Start()
@@ -160,9 +139,6 @@ namespace Assets.Scripts
         {
             try
             {
-                if (Input.GetKeyDown(KeyCode.Return))
-                    _paused = !_paused;
-
                 bool renderPlants = Input.GetKeyDown(KeyCode.R);
 
                 if (_paused)
@@ -173,7 +149,7 @@ namespace Assets.Scripts
                     _delayIteration -= Time.deltaTime;
                     return;
                 }
-                if (_iterations >= MaximumGeneticIterations)
+                if (_iterations >= MaximumGeneticIterations - 1)
                 {
                     if (_finalRender)
                         return;
@@ -182,7 +158,7 @@ namespace Assets.Scripts
                     renderPlants = true;
                 }
 
-                if (renderPlants && _iterations != 0)
+                if (renderPlants)
                 {
                     foreach (Plant plant in _plants)
                     {

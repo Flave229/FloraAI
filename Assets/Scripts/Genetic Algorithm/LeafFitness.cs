@@ -28,6 +28,9 @@ namespace Assets.Scripts.Genetic_Algorithm
             float summerDot = Mathf.Max(Vector3.Dot(normalisedLeafNormal, summerToSun), 0);
             float winterDot = Mathf.Max(Vector3.Dot(normalisedLeafNormal, winterToSun), 0);
 
+            if (leaf.Position.y < 0)
+                return 0; // I do not want leaves going into the ground to perform well at all
+
             //return (((summerDot + winterDot)) + (Mathf.Log(leaf.Position.y, 11))) / 3;
             return (((summerDot + winterDot)) + Mathf.Pow(Mathf.Min(leaf.Position.y / 3, 2), 2)) / 6;
             //return (((summerDot + winterDot)) + Mathf.Min(leaf.Position.y / 3, 2)) / 4;

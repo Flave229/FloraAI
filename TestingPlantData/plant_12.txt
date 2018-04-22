@@ -1,0 +1,5 @@
+L: /[+O-[O\O\OOO]O/O]OO&&!O
+S: F[+F\FF]/F+F
+A: SSS+[AA\[+SF/A-L]S&+A]+F
+F: /-![-/+A[+/LA]L]F
+RGBA(0.174, 0.000, 0.553, 1.000)

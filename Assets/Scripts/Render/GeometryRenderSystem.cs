@@ -79,7 +79,7 @@ namespace Assets.Scripts.Render
             var boxCollider = quad.GetComponent<BoxCollider>();
             Object.Destroy(boxCollider);
             quad.transform.position = position;
-            quad.transform.localScale = new Vector3(0.1f, 0.1f, 0.00001f);
+            quad.transform.localScale = new Vector3(0.00001f, 0.1f, 0.1f);
             quad.transform.LookAt(direction);
             quad.transform.up = direction;
             quad.GetComponent<Renderer>().material.color = color;
@@ -111,7 +111,7 @@ namespace Assets.Scripts.Render
             if (_cylinders.Count > 0)
                 _cylinders[0].GetComponent<Renderer>().material.color = new Color(0.4f, 0.2f, 0);
 
-            return new List<GameObject> { _leaves[0], _cylinders[0] };
+            return new List<GameObject> { _leaves.Count > 0 ? _leaves[0] : new GameObject(), _cylinders.Count > 0 ? _cylinders[0] : new GameObject() };
         }
 
 

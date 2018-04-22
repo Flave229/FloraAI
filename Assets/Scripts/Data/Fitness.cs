@@ -34,7 +34,7 @@ namespace Assets.Scripts.Data
             //    //return 0;
             float totalColourEnergy = CalculateColourEnergyFactor(sunEnergyWeightings);
 
-            float fitness = totalColourEnergy + LeafEnergy - (BranchCost * 5) + punishment; /*- Mathf.Pow(((float) (BranchCount + LeafCount) / 2000), 2)*/; //EnergyLoss;
+            float fitness = totalColourEnergy + LeafEnergy - (BranchCost * 5) + punishment;// - EnergyLoss; // Mathf.Pow(((float) (BranchCount + LeafCount) / 2000), 2)*/; //
             return fitness;
         }
 

@@ -1,4 +1,7 @@
-﻿using System.Linq;
+﻿using System;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
 using Assets.Scripts.Export;
 using UnityEngine;
 using UnityEngine.UI;
@@ -21,6 +24,11 @@ namespace Assets.Scripts
         private float _previousGreen;
         private float _previousBlue;
         private Light _light;
+        private Text _iterationInput;
+        private int _previousIterations;
+        private Stopwatch _stopWatch;
+        private Text _timeText;
+        private bool _timerRunning;
 
         void Start()
         {
@@ -40,7 +48,16 @@ namespace Assets.Scripts
             _previousGreen = color.y;
             _blueInput = GameObject.Find("BlueInput").transform.Find("Text").GetComponent<Text>();
             _previousBlue = color.z;
+
+            _iterationInput = GameObject.Find("IterationInput").transform.Find("Text").GetComponent<Text>();
+            _previousIterations = int.Parse(_iterationInput.text);
+
+            _timeText = GameObject.Find("TimeLabel").GetComponent<Text>();
+            _timerRunning = false;
+
+            _stopWatch = new Stopwatch();
         }
+
 
         void Update()
         {
@@ -72,8 +89,65 @@ namespace Assets.Scripts
                     plantSpawner.UpdateSunColour();
             }
 
+            int maxIterationCount;
+            int.TryParse(_iterationInput.text, out maxIterationCount);
+
+            if (_iterationInput.text != "" && maxIterationCount != _previousIterations)
+            {
+                _previousIterations = maxIterationCount;
+
+                foreach (var plantSpawner in _plantSpawners)
+                    plantSpawner.SetMaxIterationCount(_previousIterations);
+            }
+
+            _timeText.text = "Time Running: " + _stopWatch.Elapsed;
+
             if (Input.GetKeyDown(KeyCode.Escape))
                 Application.Quit();
+
+            if (Input.GetKeyDown(KeyCode.Return))
+            {
+                foreach (var plantSpawner in _plantSpawners)
+                    plantSpawner.TogglePause();
+
+                if (_timerRunning)
+                    _stopWatch.Stop();
+                else
+                    _stopWatch.Start();
+
+                _timerRunning = !_timerRunning;
+                GameObject.Find("IterationInput").GetComponent<InputField>().readOnly = true;
+            }
+
+            if (Input.GetKeyDown(KeyCode.P))
+            {
+                foreach (var plantSpawner in _plantSpawners)
+                {
+                    plantSpawner.StartGeneticAlgorithm();
+                    if (plantSpawner.GetPaused())
+                        plantSpawner.TogglePause();
+                }
+
+                _stopWatch.Reset();
+                _stopWatch.Start();
+                _timerRunning = true;
+                
+                GameObject.Find("IterationInput").GetComponent<InputField>().readOnly = true;
+            }
+
+            if (_plantSpawners[0].GetIterationCount() >= maxIterationCount)
+            {
+                if (_timerRunning)
+                {
+                    for(int i = 0; i < _plantSpawners.Length; ++i)
+                    {
+                        Plant fittestPlant = _plantSpawners[i].GetFittestPlant();
+                        CapturePlantDetails(fittestPlant, i);
+                    }
+                }
+                _stopWatch.Stop();
+                _timerRunning = false;
+            }
 
             if (Input.GetKeyDown(KeyCode.U))
             {
@@ -157,6 +231,28 @@ namespace Assets.Scripts
                                  "\n";
             _debugOutput.text += "Total Fitness: " + plantToShowInfoOn.Fitness.TotalFitness(
                                      sunEnergyWeightings);
+        }
+
+        private void CapturePlantDetails(Plant fittestPlant, int index)
+        {
+            string fileName = "plant_" + index;
+            string fileLocation = Path.Combine(Environment.CurrentDirectory, "TestingPlantData");
+            FileInfo fileInfo = new FileInfo(fileLocation + "\\" + fileName);
+            fileInfo.Directory.Create();
+
+            var rules = fittestPlant.LindenMayerSystem.GetRuleSet().Rules;
+            string info = "";
+
+            foreach (var rule in rules)
+            {
+                info += rule.Key + ": " + rule.Value[0].Rule + "\n";
+            }
+            info += fittestPlant.LindenMayerSystem.GetLeafColor();
+
+            using (StreamWriter writer = new StreamWriter(fileLocation + "/" + fileName + ".txt"))
+            {
+                writer.Write(info);
+            }
         }
     }
 }
