@@ -1,5 +1,0 @@
-L: O&O[+O!O/O\O]O-!O
-S: S/!L[S-^L]L
-A: [&F]LFL
-F: [SL/^FSA][SL/^FSA]S\^L
-RGBA(0.422, 0.247, 0.362, 1.000)

@@ -1,5 +1,0 @@
-L: [OO/&OO]!-!OO
-S: AF[!SL\L]^F
-A: ![FLALL]+SF
-F: [[AL[LFL/L]/F-F]-AF]-AF
-RGBA(0.475, 0.298, 0.746, 1.000)
